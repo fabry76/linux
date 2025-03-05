@@ -30,6 +30,10 @@ pacman -S --needed nss-mdns inetutils net-tools avahi --noconfirm
 systemctl enable avahi-daemon
 systemctl enable bluetooth.service
 
+# flatpak
+pacman -S --needed flatpak --noconfirm
+flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
 # cockpit
 pacman -S --needed cockpit-machines cockpit-podman cockpit-packagekit cockpit-storaged cockpit-files qemu-base dnsmasq virt-viewer pcp virt-install --noconfirm
 systemctl enable libvirtd.socket
