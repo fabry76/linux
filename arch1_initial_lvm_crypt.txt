@@ -118,4 +118,3 @@ reboot
 ##SUDO SU
 systemd-cryptenroll /dev/nvme0n1p2 --wipe-slot=empty --tpm2-device=auto
 systemd-cryptenroll /dev/nvme0n1p2 --recovery-key
-

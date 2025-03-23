@@ -104,5 +104,3 @@ sbctl sign -s /boot/grub/x86_64-efi/grub.efi
 exit
 umount -a
 reboot
-
-
