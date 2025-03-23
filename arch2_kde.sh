@@ -15,7 +15,7 @@ echo "setxkbmap it" | sudo tee -a /usr/share/sddm/scripts/Xsetup
 pacman -S --needed pipewire pipewire-audio pipewire-alsa pipewire-pulse wireplumber --noconfirm
 
 # applications
-pacman -S --needed firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship transmission-qt isoimagewriter vlc libreoffice-fresh gimp kolourpaint --noconfirm
+pacman -S --needed firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship ktorrent isoimagewriter vlc libreoffice-fresh kolourpaint --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
