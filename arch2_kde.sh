@@ -2,7 +2,7 @@
 pacman -Syyu
 
 # kde
-pacman -S --needed plasma kwalletmanager plasma-wayland-protocols sddm ark dolphin konsole kate kalk spectacle libxvmc kdialog print-manager system-config-printer ksystemlog partitionmanager kamoso gwenview power-profiles-daemon dmidecode geoclue2 kdegraphics-thumbnailers ktorrent kolourpaint --noconfirm
+pacman -S --needed plasma kwalletmanager plasma-wayland-protocols sddm pipewire-alsa ark dolphin konsole kate kalk spectacle libxvmc kdialog print-manager system-config-printer ksystemlog partitionmanager kamoso gwenview power-profiles-daemon dmidecode geoclue2 kdegraphics-thumbnailers ktorrent kolourpaint --noconfirm
 
 # remove components
 pacman -Rd --nodeps plasma-browser-integration --noconfirm
@@ -10,9 +10,6 @@ pacman -Rd --nodeps plasma-browser-integration --noconfirm
 # sddm
 systemctl enable sddm
 echo "setxkbmap it" | sudo tee -a /usr/share/sddm/scripts/Xsetup
-
-# audio
-pacman -S --needed pipewire pipewire-audio pipewire-alsa pipewire-pulse wireplumber --noconfirm
 
 # applications
 pacman -S --needed firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship isoimagewriter vlc  --noconfirm
@@ -40,7 +37,6 @@ pacman -S --needed cockpit-machines cockpit-podman cockpit-packagekit cockpit-st
 systemctl enable libvirtd.socket
 systemctl enable cockpit.socket
 usermod -a -G libvirt fabri
-virsh net-autostart default
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
 sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 
