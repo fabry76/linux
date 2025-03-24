@@ -12,7 +12,7 @@ systemctl enable bluetooth
 pacman -Rs --nodeps epiphany --noconfirm
 
 # applications
-pacman -S --needed libreoffice-fresh vlc firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship transmission-gtk gimp pinta --noconfirm
+pacman -S --needed vlc firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship transmission-gtk pinta --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
@@ -22,7 +22,7 @@ pacman -S --needed speech-dispatcher curl fastfetch rust wget bash-completion so
 # flatpak
 pacman -S --needed flatpak --noconfirm
 flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --system flathub com.mattjakeman.ExtensionManager -y
+flatpak install --system flathub com.mattjakeman.ExtensionManager org.onlyoffice.desktopeditors -y
 
 # fonts & icons
 pacman -S --needed papirus-icon-theme ttf-ubuntu-font-family ttf-opensans ttf-carlito ttf-caladea ttf-liberation ttf-inconsolata ttf-dejavu noto-fonts adobe-source-code-pro-fonts adobe-source-sans-fonts adobe-source-serif-fonts nerd-fonts --noconfirm
@@ -36,7 +36,6 @@ pacman -S --needed cockpit-machines cockpit-podman cockpit-packagekit cockpit-st
 systemctl enable libvirtd.socket
 systemctl enable cockpit.socket
 usermod -a -G libvirt fabri
-virsh net-autostart default
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
 sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 
