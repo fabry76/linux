@@ -9,7 +9,7 @@ pacman -Rd --nodeps plasma-browser-integration --noconfirm
 
 # sddm
 systemctl enable sddm
-echo "setxkbmap it" | sudo tee -a /usr/share/sddm/scripts/Xsetup
+echo "setxkbmap it" | tee -a /usr/share/sddm/scripts/Xsetup
 
 # applications
 pacman -S --needed firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship isoimagewriter vlc  --noconfirm
@@ -61,4 +61,5 @@ END
 
 # various
 sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chromium.desktop
+echo "StartupNotify=false" | tee -a /usr/share/applications/vlc.desktop
 cp /home/fabri/Git/linux/etc/org.onlyoffice.desktopeditors.desktop /var/lib/flatpak/app/org.onlyoffice.desktopeditors/current/active/export/share/applications/org.onlyoffice.desktopeditors.desktop
