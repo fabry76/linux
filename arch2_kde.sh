@@ -58,3 +58,7 @@ tee -a /etc/fstab  << END
 # map fastgate usb storage
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount	0 0
 END
+
+# various
+sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chromium.desktop
+cp /home/fabri/Git/linux/etc/org.onlyoffice.desktopeditors.desktop /var/lib/flatpak/app/org.onlyoffice.desktopeditors/current/active/export/share/applications/org.onlyoffice.desktopeditors.desktop
