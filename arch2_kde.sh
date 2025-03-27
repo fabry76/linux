@@ -47,7 +47,7 @@ ufw enable
 ufw allow mdns
 
 # printing and scanning
-pacman -S --needed sane skanlite cups cups-pdf --noconfirm
+pacman -S --needed sane skanpage cups cups-pdf --noconfirm
 systemctl enable cups
 sed -i 's/resolve/mdns_minimal [NOTFOUND=return] resolve/g' /etc/nsswitch.conf
 sed -i 's+#Out /var/spool/cups-pdf/${USER}+Out /home/${USER}/Documents+g' /etc/cups/cups-pdf.conf

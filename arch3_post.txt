@@ -1,4 +1,4 @@
-c#starship
+#starship
 ##nano .bashrc and add -> eval "$(starship init bash)"
 cp ~/Git/linux/etc/starship.toml ~/.config
 
