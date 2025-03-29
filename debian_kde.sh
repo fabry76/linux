@@ -5,16 +5,16 @@ apt update && apt upgrade -y
 apt install firmware-linux firmware-sof-signed firmware-realtek -y
 
 # desktop environment
-apt install kde-plasma-desktop ark kalk kde-spectacle okular ksystemlog skanlite isoimagewriter -y
+apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint kamoso vlc gwenview -y
 
 # pipewire
 apt install pipewire pipewire-alsa pipewire-jack pipewire-audio wireplumber pipewire-pulse -y
 
 # apps & utilities
-apt install gimp gwenview pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes transmission-qt gimp libreoffice libreoffice-plasma kolourpaint kamoso dracut-core fwupd apt-show-versions debsums -y
+apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums -y
 
 # multimedia
-apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
+apt install ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
 apt install ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea papirus-icon-theme -y
@@ -51,7 +51,7 @@ sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
 sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 
 # printing and scanning
-apt install sane cups printer-driver-all printer-driver-cups-pdf simple-scan print-manager -y
+apt install sane cups printer-driver-all printer-driver-cups-pdf simple-scan print-manager skanpage -y
 systemctl enable cups
 adduser fabri lpadmin
 
