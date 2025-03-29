@@ -2,7 +2,7 @@
 pacman -Syyu
 
 # kde
-pacman -S --needed plasma kwalletmanager plasma-wayland-protocols sddm pipewire-alsa ark dolphin konsole kate kalk spectacle libxvmc kdialog print-manager system-config-printer ksystemlog partitionmanager kamoso gwenview power-profiles-daemon dmidecode geoclue2 kdegraphics-thumbnailers ktorrent kolourpaint --noconfirm
+pacman -S --needed plasma kwalletmanager plasma-wayland-protocols sddm pipewire-alsa ark dolphin konsole kate kalk spectacle libxvmc kdialog print-manager system-config-printer ksystemlog partitionmanager kamoso gwenview power-profiles-daemon dmidecode geoclue2 kdegraphics-thumbnailers ktorrent kolourpaint isoimagewriter --noconfirm
 
 # remove components
 pacman -Rd --nodeps plasma-browser-integration --noconfirm
@@ -12,12 +12,12 @@ systemctl enable sddm
 echo "setxkbmap it" | tee -a /usr/share/sddm/scripts/Xsetup
 
 # applications
-pacman -S --needed firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship isoimagewriter vlc  --noconfirm
+pacman -S --needed firefox chromium vim nano htop fastfetch timeshift podman distrobox starship vlc  --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
 # utilities
-pacman -S --needed speech-dispatcher curl fastfetch rust wget bash-completion sof-firmware appstream plocate unrar unzip 7zip fuse2 ffmpeg ffmpegthumbs ffmpegthumbnailer gst-libav gst-plugins-ugly dnsutils whois --noconfirm
+pacman -S --needed speech-dispatcher curl fastfetch less rust wget bash-completion sof-firmware appstream plocate unrar unzip 7zip fuse2 ffmpeg ffmpegthumbs ffmpegthumbnailer gst-libav gst-plugins-ugly dnsutils whois --noconfirm
 
 # fonts
 pacman -S --needed ttf-ubuntu-font-family ttf-opensans ttf-carlito ttf-caladea ttf-liberation ttf-inconsolata ttf-dejavu noto-fonts adobe-source-code-pro-fonts adobe-source-sans-fonts adobe-source-serif-fonts nerd-fonts --noconfirm

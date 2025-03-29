@@ -2,22 +2,21 @@
 pacman -Syyu
 
 # gnome
-pacman -S --needed gnome gnome-tweaks file-roller seahorse gnome-themes-extra sassc bluez dmidecode --noconfirm
+pacman -S --needed gnome gnome-tweaks file-roller seahorse gnome-themes-extra sassc bluez dmidecode transmission-gtk pinta --noconfirm
 
 # gdm
 systemctl enable gdm
-systemctl enable bluetooth
 
 # remove components
 pacman -Rs --nodeps epiphany --noconfirm
 
 # applications
-pacman -S --needed vlc firefox chromium vim nano less htop fastfetch timeshift podman distrobox starship transmission-gtk pinta --noconfirm
+pacman -S --needed vlc firefox chromium vim nano htop fastfetch timeshift podman distrobox starship  --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
 # utilities
-pacman -S --needed speech-dispatcher curl fastfetch rust wget bash-completion sof-firmware appstream plocate unrar unzip 7zip fuse2 ffmpeg ffmpegthumbs ffmpegthumbnailer gst-libav gst-plugins-ugly dnsutils whois --noconfirm
+pacman -S --needed speech-dispatcher curl fastfetch less rust wget bash-completion sof-firmware appstream plocate unrar unzip 7zip fuse2 ffmpeg ffmpegthumbs ffmpegthumbnailer gst-libav gst-plugins-ugly dnsutils whois --noconfirm
 
 # flatpak
 pacman -S --needed flatpak --noconfirm
@@ -30,6 +29,7 @@ pacman -S --needed papirus-icon-theme ttf-ubuntu-font-family ttf-opensans ttf-ca
 # network
 pacman -S --needed nss-mdns inetutils net-tools avahi --noconfirm
 systemctl enable avahi-daemon
+systemctl enable bluetooth
 
 # cockpit
 pacman -S --needed cockpit-machines cockpit-podman cockpit-packagekit cockpit-storaged cockpit-files qemu-base dnsmasq virt-viewer pcp --noconfirm
@@ -61,3 +61,8 @@ tee -a /etc/fstab  << END
 # map fastgate usb storage
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount	0 0
 END
+
+# various
+sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chromium.desktop
+echo "StartupNotify=false" | tee -a /usr/share/applications/vlc.desktop
+cp /home/fabri/Git/linux/etc/org.onlyoffice.desktopeditors.desktop /var/lib/flatpak/app/org.onlyoffice.desktopeditors/current/active/export/share/applications/org.onlyoffice.desktopeditors.desktop
