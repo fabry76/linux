@@ -27,24 +27,25 @@ pacman -S --needed nss-mdns inetutils net-tools avahi --noconfirm
 systemctl enable avahi-daemon
 systemctl enable bluetooth.service
 
-# flatpak
-pacman -S --needed flatpak --noconfirm
-flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --system flathub org.onlyoffice.desktopeditors -y
+# firewall
+pacman -S --needed ufw iptables --noconfirm
+systemctl enable ufw.service
+ufw enable
+ufw allow mdns
 
 # cockpit
 pacman -S --needed cockpit-machines cockpit-podman cockpit-packagekit cockpit-storaged cockpit-files qemu-base dnsmasq virt-viewer pcp virt-install --noconfirm
+sed -i 's/#firewall_backend = "nftables"/firewall_backend = "iptables"/g' /etc/libvirt/network.conf
 systemctl enable libvirtd.socket
 systemctl enable cockpit.socket
 usermod -a -G libvirt fabri
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
 sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 
-# firewall
-pacman -S --needed ufw --noconfirm
-systemctl enable ufw.service
-ufw enable
-ufw allow mdns
+# flatpak
+pacman -S --needed flatpak --noconfirm
+flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --system flathub org.onlyoffice.desktopeditors -y
 
 # printing and scanning
 pacman -S --needed sane skanpage cups cups-pdf --noconfirm
