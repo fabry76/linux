@@ -5,10 +5,7 @@ apt update && apt upgrade -y
 apt install firmware-linux firmware-sof-signed firmware-realtek -y
 
 # desktop environment
-apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint kamoso vlc gwenview -y
-
-# pipewire
-apt install pipewire pipewire-alsa pipewire-jack pipewire-audio wireplumber pipewire-pulse -y
+apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint kamoso vlc gwenview pipewire-jack -y
 
 # apps & utilities
 apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums -y
@@ -18,6 +15,24 @@ apt install ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaa
 
 # fonts & icons
 apt install ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea papirus-icon-theme -y
+
+# network
+apt install avahi-daemon ufw plasma-firewall -y
+ufw enable
+ufw allow mdns
+sed -i 's/false/true/g' /etc/NetworkManager/NetworkManager.conf
+
+# cockpit
+apt install cockpit cockpit-podman cockpit-machines cockpit-sosreport -y
+adduser fabri libvirt
+virsh net-autostart default
+sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
+sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
+
+# printing and scanning
+apt install sane cups printer-driver-all printer-driver-cups-pdf simple-scan print-manager skanpage -y
+systemctl enable cups
+adduser fabri lpadmin
 
 # firefox
 install -d -m 0755 /etc/apt/keyrings
@@ -37,23 +52,14 @@ sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packag
 rm -f packages.microsoft.gpg
 apt update && apt install code -y
 
-# network
-apt install avahi-daemon ufw plasma-firewall -y
-ufw enable
-ufw allow mdns
-sed -i 's/false/true/g' /etc/NetworkManager/NetworkManager.conf
-
-# cockpit
-apt install cockpit cockpit-podman cockpit-machines cockpit-sosreport -y
-adduser fabri libvirt
-virsh net-autostart default
-sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
-sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
-
-# printing and scanning
-apt install sane cups printer-driver-all printer-driver-cups-pdf simple-scan print-manager skanpage -y
-systemctl enable cups
-adduser fabri lpadmin
+# onlyoffice
+mkdir -p -m 700 ~/.gnupg
+gpg --no-default-keyring --keyring gnupg-ring:/tmp/onlyoffice.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CB2DE8E5
+chmod 644 /tmp/onlyoffice.gpg
+chown root:root /tmp/onlyoffice.gpg
+mv /tmp/onlyoffice.gpg /usr/share/keyrings/onlyoffice.gpg
+echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' | sudo tee -a /etc/apt/sources.list.d/onlyoffice.list
+apt update && apt install onlyoffice-desktopeditors -y
 
 # locale
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
@@ -76,9 +82,5 @@ tee -a /etc/fstab  << END
 END
 
 # remove components
-#apt purge plasma-browser-integration konqueror zutty avahi-autoipd -y
+apt purge plasma-browser-integration konqueror zutty -y
 apt autoremove -y
-
-# lid setting
-sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf
-sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/g' /etc/systemd/logind.conf
