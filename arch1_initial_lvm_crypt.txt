@@ -105,6 +105,7 @@ sbctl sign -s /boot/vmlinuz-linux
 sbctl sign -s /boot/EFI/GRUB/grubx64.efi
 sbctl sign -s /usr/lib/fwupd/efi/fwupdx64.efi -o /usr/lib/fwupd/efi/fwupdx64.efi.signed
 cp /usr/share/shim/shimx64.efi /boot/EFI/GRUB/
+cp /usr/share/shim/shimx64.efi /boot/EFI/arch/
 sbctl sign -s /boot/EFI/GRUB/shimx64.efi
 sbctl sign -s /boot/grub/x86_64-efi/core.efi
 sbctl sign -s /boot/grub/x86_64-efi/grub.efi
