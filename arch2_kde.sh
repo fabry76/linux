@@ -60,6 +60,11 @@ tee -a /etc/fstab  << END
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount	0 0
 END
 
+# sleep
+tee -a /etc/fstab  << END
+/etc/systemd/sleep.conf.d/freeze.conf
+END
+
 # various
 sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chromium.desktop
 echo "StartupNotify=false" | tee -a /usr/share/applications/vlc.desktop
