@@ -29,6 +29,9 @@ locale-gen
 #starship
 curl -sS https://starship.rs/install.sh | sh
 
+#brave
+/home/fabri# curl -fsS https://dl.brave.com/install.sh | sh
+
 #vcode (sudo su)
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
@@ -44,6 +47,7 @@ rm -f ./onlyoffice-desktopeditors_amd64.deb
 exit
 distrobox-export --app code
 distrobox-export --app onlyoffice-desktopeditors
+distrobox-export --app brave
 exit
 
 #fine sessione
