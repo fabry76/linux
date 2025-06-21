@@ -25,7 +25,7 @@ ufw enable
 ufw allow mdns
 
 # printing and scanning
-apt install sane printer-driver-cups-pdf simple-scan -y
+apt install sane printer-driver-all printer-driver-cups-pdf simple-scan -y
 adduser fabri lpadmin
 
 # fastgate
