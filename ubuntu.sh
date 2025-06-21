@@ -1,5 +1,5 @@
 # install applications
-apt install ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-clocks gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl wget htop net-tools apt-transport-https vim shotwell transmission vlc dracut-core apt-show-versions debsums -y
+apt install ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-clocks gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl wget htop net-tools apt-transport-https vim shotwell transmission showtime dracut-core apt-show-versions debsums -y
 
 # fonts & icons
 apt install fonts-crosextra-carlito fonts-crosextra-caladea -y
