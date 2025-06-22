@@ -1,15 +1,11 @@
 # install applications
-apt install ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-clocks gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl wget htop net-tools apt-transport-https vim shotwell transmission showtime dracut-core apt-show-versions debsums -y
+apt install ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-clocks gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl wget htop net-tools apt-transport-https vim shotwell transmission vlc dracut-core apt-show-versions debsums distrobox -y
 
 # fonts & icons
 apt install fonts-crosextra-carlito fonts-crosextra-caladea -y
 
-# snaps
-snap install onlyoffice-desktopeditors 
-snap install --classic code
-
 # cockpit
-apt install cockpit cockpit-podman cockpit-machines pcp cockpit-sosreport  -y
+apt install cockpit cockpit-podman cockpit-machines pcp cockpit-sosreport -y
 adduser fabri libvirt
 virsh net-autostart default
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
@@ -19,6 +15,17 @@ sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 curl -fSsL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/google-chrome.gpg >> /dev/null
 echo deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main | sudo tee /etc/apt/sources.list.d/google-chrome.list
 apt update && apt install google-chrome-stable -y
+
+# code
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+rm -f packages.microsoft.gpg
+apt update && apt install code -y
+
+# onlyoffice
+wget https://github.com/ONLYOFFICE/DesktopEditors/releases/latest/download/onlyoffice-desktopeditors_amd64.deb
+apt install -f ./onlyoffice-desktopeditors_amd64.deb
 
 # firewall
 ufw enable
