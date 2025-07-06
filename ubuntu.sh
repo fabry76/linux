@@ -5,7 +5,7 @@ apt install vlc ubuntu-restricted-extras gnome-shell-extension-manager gnome-wea
 apt install fonts-crosextra-carlito fonts-crosextra-caladea -y
 
 # cockpit
-apt install cockpit cockpit-podman cockpit-machines pcp cockpit-sosreport -y
+apt install cockpit cockpit-podman cockpit-machines pcp cockpit-sosreport virt-viewer -y
 adduser fabri libvirt
 virsh net-autostart default
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
