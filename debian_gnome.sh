@@ -18,10 +18,10 @@ apt update && apt install firefox -y
 apt install gnome-core gnome-shell-extension-dashtodock gnome-weather gnome-calendar gnome-clocks gnome-tweaks file-roller seahorse transmission-gtk shotwell -y
 
 # apps & utilities
-apt install timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core fwupd apt-show-versions debsums distrobox -y
+apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core fwupd apt-show-versions debsums distrobox -y
 
 # multimedia
-apt install ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly vlc -y
+apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
 apt install yaru-theme-gnome-shell yaru-theme-icon papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
@@ -32,6 +32,11 @@ adduser fabri libvirt
 virsh net-autostart default
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
 sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
+
+# printing and scanning
+apt install cups printer-driver-all printer-driver-cups-pdf sane-utils simple-scan -y
+systemctl enable cups
+adduser fabri lpadmin
 
 # code
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -53,11 +58,6 @@ apt install gufw -y
 sed -i 's/false/true/g' /etc/NetworkManager/NetworkManager.conf
 ufw enable
 ufw allow mdns
-
-# printing and scanning
-apt install cups printer-driver-all printer-driver-cups-pdf sane-utils simple-scan -y
-systemctl enable cups
-adduser fabri lpadmin
 
 # grub
 sed -i 's/quiet/quiet loglevel=3 splash/g' /etc/default/grub
