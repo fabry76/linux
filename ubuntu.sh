@@ -24,7 +24,7 @@ apt update && apt install code -y
 
 # onlyoffice
 wget https://github.com/ONLYOFFICE/DesktopEditors/releases/latest/download/onlyoffice-desktopeditors_amd64.deb
-apt install -f ./onlyoffice-desktopeditors_amd64.deb
+apt install -f ./onlyoffice-desktopeditors_amd64.deb -y
 
 # firewall
 ufw enable
