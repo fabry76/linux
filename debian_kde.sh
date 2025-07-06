@@ -8,8 +8,14 @@ locale-gen
 # firmware
 apt install firmware-linux firmware-sof-signed firmware-realtek -y
 
+# firefox
+install -d -m 0755 /etc/apt/keyrings
+wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+apt update && apt install firefox -y
+
 # desktop environment
-apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint kamoso gwenview -y
+apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint kamoso gwenview kio-gdrive software-properties-qt -y
 
 # apps & utilities
 apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums distrobox -y
@@ -21,22 +27,16 @@ apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0
 apt install ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
 
 # cockpit
-apt install cockpit cockpit-podman cockpit-machines cockpit-sosreport -y
+apt install cockpit cockpit-podman cockpit-machines cockpit-sosreport virt-viewer -y
 adduser fabri libvirt
 virsh net-autostart default
 sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
 sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 
 # printing and scanning
-apt install cups printer-driver-all printer-driver-cups-pdf print-manager sane-utils skanpage -y
+apt install cups printer-driver-all printer-driver-cups-pdf print-manager skanpage -y
 systemctl enable cups
 adduser fabri lpadmin
-
-# firefox
-install -d -m 0755 /etc/apt/keyrings
-wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
-echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
-apt update && apt install firefox -y
 
 # code
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -51,14 +51,13 @@ apt install -f ./google-chrome-stable_current_amd64.deb -y
 
 # onlyoffice
 wget https://github.com/ONLYOFFICE/DesktopEditors/releases/latest/download/onlyoffice-desktopeditors_amd64.deb
-apt install -f ./onlyoffice-desktopeditors_amd64.deb
+apt install -f ./onlyoffice-desktopeditors_amd64.deb -y
 
-# firewall network
-apt install avahi-daemon ufw plasma-firewall -y
+# firewall
+apt install ufw -y
 sed -i 's/false/true/g' /etc/NetworkManager/NetworkManager.conf
 ufw enable
 ufw allow mdns
-
 
 # grub
 sed -i 's/quiet/quiet loglevel=3 splash/g' /etc/default/grub
@@ -69,7 +68,7 @@ update-grub
 plymouth-set-default-theme -R lines
 
 # fastgate
-apt install cifs-utils smbclient -y
+apt install cifs-utils -y
 tee -a /etc/fstab  << END
 # map fastgate usb storage
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs user=admin,vers=1.0,dir_mode=0777,file_mode=0777,pass=admin,x-systemd.after=network-online.target,user 0 0
