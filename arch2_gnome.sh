@@ -63,6 +63,6 @@ tee -a /etc/fstab  << END
 END
 
 # various
-sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chromium.desktop
+sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chrome.desktop
 echo "StartupNotify=false" | tee -a /usr/share/applications/vlc.desktop
 cp /home/fabri/Git/linux/etc/org.onlyoffice.desktopeditors.desktop /var/lib/flatpak/app/org.onlyoffice.desktopeditors/current/active/export/share/applications/org.onlyoffice.desktopeditors.desktop
