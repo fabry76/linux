@@ -15,7 +15,7 @@ echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://package
 apt update && apt install firefox -y
 
 # desktop environment
-apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint kamoso gwenview kio-gdrive -y
+apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint kamoso gwenview -y
 
 # apps & utilities
 apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums distrobox -y
