@@ -24,7 +24,7 @@ apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file pl
 apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
-apt install yaru-theme-gnome-shell yaru-theme-icon papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
+apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
 
 # cockpit
 apt install cockpit cockpit-podman cockpit-machines cockpit-sosreport virt-viewer -y
