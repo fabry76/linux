@@ -26,12 +26,10 @@ apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0
 # fonts & icons
 apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
 
-# cockpit
-apt install cockpit cockpit-podman cockpit-machines cockpit-sosreport virt-viewer -y
+# virtual
+apt install virt-manager virt-viewer -y
 adduser fabri libvirt
 virsh net-autostart default
-sed -i 's/#user = "libvirt-qemu"/user = "fabri"/g' /etc/libvirt/qemu.conf
-sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 
 # printing and scanning
 apt install cups printer-driver-all printer-driver-cups-pdf simple-scan -y
@@ -77,6 +75,3 @@ tee -a /etc/fstab  << END
 # map fastgate usb storage
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs user=admin,vers=1.0,dir_mode=0777,file_mode=0777,pass=admin
 END
-
-# various
-sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/google-chrome.desktop
