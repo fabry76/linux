@@ -18,10 +18,10 @@ apt update && apt install firefox -y
 apt install gnome-core gnome-shell-extension-dash-to-panel gnome-weather gnome-calendar gnome-clocks gnome-tweaks file-roller seahorse transmission-gtk shotwell -y
 
 # apps & utilities
-apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core fwupd apt-show-versions debsums distrobox -y
+apt install timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums distrobox -y
 
 # multimedia
-apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
+apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi -y
 
 # fonts & icons
 apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
@@ -32,7 +32,7 @@ adduser fabri libvirt
 virsh net-autostart default
 
 # printing and scanning
-apt install cups printer-driver-all printer-driver-cups-pdf simple-scan -y
+apt install printer-driver-all printer-driver-cups-pdf -y
 systemctl enable cups
 adduser fabri lpadmin
 
