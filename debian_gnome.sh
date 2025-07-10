@@ -31,8 +31,8 @@ systemctl enable cups
 adduser fabri lpadmin
 
 # code
-wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
-apt update && apt install code -y
+curl -O -J -L https://update.code.visualstudio.com/latest/linux-deb-x64/stable
+apt install -f ./code*.deb -y
 
 # chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
