@@ -31,9 +31,11 @@ systemctl enable cups
 adduser fabri lpadmin
 
 # code
-curl -O -J -L https://update.code.visualstudio.com/latest/linux-deb-x64/stable
-apt install -f ./code*.deb -y
-echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+rm -f packages.microsoft.gpg
+apt update && apt install code -y
 
 # chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
