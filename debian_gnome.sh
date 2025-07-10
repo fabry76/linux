@@ -33,6 +33,7 @@ adduser fabri lpadmin
 # code
 curl -O -J -L https://update.code.visualstudio.com/latest/linux-deb-x64/stable
 apt install -f ./code*.deb -y
+echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections
 
 # chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
