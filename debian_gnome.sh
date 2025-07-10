@@ -15,7 +15,7 @@ apt install gnome-core gnome-themes-extra gnome-shell-extension-dash-to-panel gn
 apt install timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums distrobox -y
 
 # multimedia
-apt install vlc ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi -y
+apt install vlc vlc-plugin-pipewire ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi -y
 
 # fonts & icons
 apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
