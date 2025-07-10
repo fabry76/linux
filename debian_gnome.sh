@@ -31,7 +31,7 @@ systemctl enable cups
 adduser fabri lpadmin
 
 # code
-echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections
+wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
 apt update && apt install code -y
 
 # chrome
