@@ -1,5 +1,5 @@
 # install applications
-apt install vlc ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim shotwell transmission dracut-core apt-show-versions debsums distrobox -y
+apt install vlc ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim transmission dracut-core apt-show-versions debsums distrobox -y
 
 # fonts & icons
 apt install fonts-crosextra-carlito fonts-crosextra-caladea -y
