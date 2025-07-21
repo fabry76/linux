@@ -7,15 +7,7 @@ flatpak install flathub com.mattjakeman.ExtensionManager -y
 
 dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
-dnf4 group install multimedia -y
-dnf swap 'ffmpeg-free' 'ffmpeg' --allowerasing -y # Switch to full FFMPEG.
-dnf upgrade @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y # Installs gstreamer components. Required if you use Gnome Videos and other dependent applications.
-sudo dnf group install -y sound-and-video # Installs useful Sound and Video complementary packages.
-
-dnf install ffmpegthumbnailer libva-utils google-chrome-stable fastfetch htop vim gnome-tweaks transmission unrar -y
-
-dnf swap libva-intel-media-driver intel-media-driver --allowerasing -y
-dnf install libva-intel-driver -y
+dnf install vlc ffmpegthumbnailer google-chrome-stable fastfetch htop vim gnome-tweaks transmission unrar -y
 
 dnf install papirus-icon-theme cabextract adw-gtk3-theme -y
 rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
