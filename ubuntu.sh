@@ -1,8 +1,8 @@
 # install applications
-apt install gnome-snapshot ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim transmission dracut-core apt-show-versions debsums distrobox -y
+apt install ubuntu-restricted-extras gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks gnome-snapshot ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim transmission dracut-core apt-show-versions debsums distrobox -y
 
-# fonts & icons
-apt install fonts-crosextra-carlito fonts-crosextra-caladea -y
+# office
+apt install libreoffice-writer libreoffice-calc libreoffice-impress libreoffice-gnome libreoffice-style-breeze fonts-crosextra-carlito fonts-crosextra-caladea -y
 
 # virtual
 apt install virt-manager virt-viewer -y
@@ -15,7 +15,6 @@ apt install -f ./google-chrome-stable_current_amd64.deb -y
 
 # snaps
 snap install --classic code
-snap install onlyoffice-desktopeditors
 
 # firewall
 ufw enable
