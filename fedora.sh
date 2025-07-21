@@ -17,7 +17,7 @@ dnf install ffmpegthumbnailer libva-utils google-chrome-stable fastfetch htop vi
 dnf swap libva-intel-media-driver intel-media-driver --allowerasing -y
 dnf install libva-intel-driver -y
 
-dnf install yaru-icon-theme papirus-icon-theme cabextract adw-gtk3-theme -y
+dnf install papirus-icon-theme cabextract adw-gtk3-theme -y
 rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
 
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
