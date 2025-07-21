@@ -1,49 +1,40 @@
-# dnf
-tee -a /etc/dnf/dnf.conf << END
-max_parallel_downloads=10
-fastestmirror=True
-END
-
-# update
 dnf update -y
 
-# remove extensions and programs
-dnf remove gnome-shell-extension-* -y
+hostnamectl set-hostname FEDORA
 
-# rpm fusion
-dnf install \
-  https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-dnf install \
-  https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
-# media codecs
-dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel -y
-dnf install lame\* --exclude=lame-devel -y
-dnf group upgrade --with-optional Multimedia -y
-dnf install ffmpeg-devel -y
+dnf4 group install multimedia -y
+dnf swap 'ffmpeg-free' 'ffmpeg' --allowerasing -y # Switch to full FFMPEG.
+dnf upgrade @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y # Installs gstreamer components. Required if you use Gnome Videos and other dependent applications.
+sudo dnf group install -y sound-and-video # Installs useful Sound and Video complementary packages.
 
-# apps
-dnf install vlc ffmpegthumbnailer google-chrome-stable gimp neofetch htop shotwell vim gnome-tweaks transmission gnome-extensions-app unrar gnome-shell-extension-dash-to-panel -y
+dnf install ffmpegthumbnailer libva-utils google-chrome-stable fastfetch htop vim gnome-tweaks transmission unrar -y
 
-# themes, fonts & icons
-dnf install yaru-icon-theme papirus-icon-theme cabextract xorg-x11-font-utils adw-gtk3-theme -y
+dnf swap libva-intel-media-driver intel-media-driver --allowerasing -y
+dnf install libva-intel-driver -y
+
+dnf install yaru-icon-theme papirus-icon-theme cabextract adw-gtk3-theme -y
 rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
 
-# vscode
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 dnf update -y
 dnf install code -y
 
-# firewall
 dnf install firewall-config -y
 cp /home/fabri/Git/linux/etc/ffw.xml /usr/lib/firewalld/zones
 firewall-cmd --reload
 firewall-cmd --set-default-zone ffw
 
-# fastgate
 tee -a /etc/fstab  << END
 # map fastgate usb storage
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs user=admin,vers=1.0,dir_mode=0777,file_mode=0777,pass=admin
 END
+
+fwupdmgr refresh --force
+fwupdmgr get-devices # Lists devices with available updates.
+fwupdmgr get-updates # Fetches list of available updates.
+fwupdmgr update -y
