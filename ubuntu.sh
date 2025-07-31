@@ -21,6 +21,7 @@ apt update && apt install onlyoffice-desktopeditors fonts-crosextra-carlito font
 
 # snaps
 snap install --classic code
+snap install pinta
 
 # firewall
 ufw enable
