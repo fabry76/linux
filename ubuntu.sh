@@ -49,6 +49,7 @@ GRUB_RECORDFAIL_TIMEOUT=5
 END
 update-grub
 
-# lid setting
+# varie
 sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf
 sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/g' /etc/systemd/logind.conf
+fc-cache -fv
