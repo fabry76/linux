@@ -9,8 +9,9 @@ dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(r
 
 dnf install vlc ffmpegthumbnailer google-chrome-stable fastfetch htop vim gnome-tweaks transmission unrar -y
 
-dnf install papirus-icon-theme cabextract adw-gtk3-theme -y
+dnf install papirus-icon-theme adw-gtk3-theme cabextract xorg-x11-font-utils fontconfig -y
 rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+fc-cache -fv
 
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
