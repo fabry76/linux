@@ -10,18 +10,9 @@ virsh net-autostart default
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 apt install -f ./google-chrome-stable_current_amd64.deb -y
 
-# onlyoffice
-mkdir -p -m 700 ~/.gnupg
-gpg --no-default-keyring --keyring gnupg-ring:/tmp/onlyoffice.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CB2DE8E5
-chmod 644 /tmp/onlyoffice.gpg
-chown root:root /tmp/onlyoffice.gpg
-mv /tmp/onlyoffice.gpg /usr/share/keyrings/onlyoffice.gpg
-echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' | sudo tee -a /etc/apt/sources.list.d/onlyoffice.list
-apt update && apt install onlyoffice-desktopeditors fonts-crosextra-carlito fonts-crosextra-caladea -y
-
 # snaps
 snap install --classic code
-snap install pinta
+snap install pinta onlyoffice-desktopeditors
 
 # firewall
 ufw enable
