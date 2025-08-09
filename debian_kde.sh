@@ -39,6 +39,7 @@ adduser fabri lpadmin
 # chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 apt install -f ./google-chrome-stable_current_amd64.deb -y
+rm -f ./google-chrome-stable_current_amd64.deb
 
 # firewall
 apt install ufw -y
