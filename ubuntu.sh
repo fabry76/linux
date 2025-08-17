@@ -13,8 +13,8 @@ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 apt install -f ./google-chrome-stable_current_amd64.deb -y
 
 # snaps
-snap install --classic code
 snap install pinta onlyoffice-desktopeditors
+snap install --classic code
 
 # firewall
 ufw enable
