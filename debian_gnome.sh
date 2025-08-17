@@ -8,14 +8,17 @@ locale-gen
 # firmware
 apt install firmware-linux firmware-sof-signed firmware-realtek -y
 
-# desktop environment
-apt install gnome-core gnome-themes-extra gnome-shell-extension-dash-to-panel gnome-weather gnome-calendar gnome-clocks gnome-tweaks gnome-snapshot file-roller seahorse transmission-gtk -y
+# de
+apt install gnome-core showtime+ papers+ gnome-console+ firefox-esr+ network-manager+ --no-install-recommends -y
+
+# de extra 
+apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dash-to-panel gnome-tweaks file-roller seahorse transmission-gtk -y
 
 # apps & utilities
-apt install snapd timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums distrobox -y
+apt install snapd timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums -y
 
 # multimedia
-apt install vlc vlc-plugin-pipewire ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi -y
+apt install ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi streamer1.0-libav gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
 apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
@@ -25,7 +28,7 @@ apt install virt-manager virt-viewer -y
 adduser fabri libvirt
 virsh net-autostart default
 
-# printing and scanning
+# printing
 apt install printer-driver-all printer-driver-cups-pdf -y
 systemctl enable cups
 adduser fabri lpadmin
@@ -34,8 +37,8 @@ adduser fabri lpadmin
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 apt install -f ./google-chrome-stable_current_amd64.deb -y
 
-# firewall
-apt install gufw -y
+# firewall and network
+apt install gufw avahi-daemon -y
 sed -i 's/false/true/g' /etc/NetworkManager/NetworkManager.conf
 ufw enable
 ufw allow mdns
