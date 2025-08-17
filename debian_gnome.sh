@@ -18,7 +18,7 @@ apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs 
 apt install snapd timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums -y
 
 # multimedia
-apt install ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi streamer1.0-libav gstreamer1.0-plugins-ugly -y
+apt install ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-vaapi gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
 apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
