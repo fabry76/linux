@@ -1,5 +1,5 @@
 # install applications
-apt install ubuntu-restricted-extras showtime ffmpeg gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks gnome-snapshot ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim transmission dracut-core apt-show-versions debsums -y
+apt install ubuntu-restricted-extras showtime ffmpeg gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim transmission dracut-core apt-show-versions debsums -y
 
 # vlc vlc-plugin-pipewire 
 
