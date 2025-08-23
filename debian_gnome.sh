@@ -12,7 +12,7 @@ apt install firmware-linux firmware-sof-signed firmware-realtek -y
 apt install gnome-core showtime+ papers+ gnome-console+ firefox-esr+ network-manager+ --no-install-recommends -y
 
 # de extra 
-apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dash-to-panel gnome-tweaks file-roller seahorse transmission-gtk libgsf-bin -y
+apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dash-to-panel gnome-tweaks file-roller seahorse libgsf-bin -y
 
 # apps & utilities
 apt install snapd timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums -y
@@ -32,10 +32,6 @@ virsh net-autostart default
 apt install printer-driver-all printer-driver-cups-pdf -y
 systemctl enable cups
 adduser fabri lpadmin
-
-# chrome
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-apt install -f ./google-chrome-stable_current_amd64.deb -y
 
 # firewall and network
 apt install ufw avahi-daemon -y
