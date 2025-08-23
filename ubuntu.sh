@@ -6,11 +6,8 @@ apt install virt-manager virt-viewer -y
 adduser fabri libvirt
 virsh net-autostart default
 
-# brave
-curl -fsS https://dl.brave.com/install.sh | sh
-
 # snaps
-snap install pinta onlyoffice-desktopeditors
+snap install pinta onlyoffice-desktopeditors brave
 snap install --classic code
 
 # firewall
