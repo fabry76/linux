@@ -12,7 +12,7 @@ apt install firmware-linux firmware-sof-signed firmware-realtek -y
 apt install gnome-core showtime+ papers+ gnome-console+ -y
 
 # de extra 
-apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dash-to-panel gnome-tweaks file-roller seahorse -y
+apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dash-to-panel gnome-tweaks file-roller seahorse fwupd -y
 
 # apps & utilities
 apt install snapd timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums -y
