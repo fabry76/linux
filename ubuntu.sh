@@ -7,7 +7,7 @@ adduser fabri libvirt
 virsh net-autostart default
 
 # snaps
-snap install pinta onlyoffice-desktopeditors brave transmission
+snap install pinta onlyoffice-desktopeditors brave chromium-ffmpeg transmission
 snap install --classic code
 
 # firewall
