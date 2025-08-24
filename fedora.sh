@@ -7,7 +7,7 @@ flatpak install flathub com.mattjakeman.ExtensionManager -y
 
 dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
-dnf install vlc ffmpegthumbnailer google-chrome-stable fastfetch htop vim gnome-tweaks transmission unrar -y
+dnf install showtime ffmpegthumbnailer fastfetch htop vim gnome-tweaks unrar -y
 
 dnf install papirus-icon-theme adw-gtk3-theme cabextract xorg-x11-font-utils fontconfig -y
 rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
