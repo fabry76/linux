@@ -1,10 +1,5 @@
 # install applications
-apt install ubuntu-restricted-extras showtime ffmpeg gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim dracut-core apt-show-versions debsums fwupd -y
-
-# virtual
-apt install virt-manager virt-viewer -y
-adduser fabri libvirt
-virsh net-autostart default
+apt install ubuntu-restricted-extras showtime ffmpeg gnome-shell-extension-manager gnome-boxes gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim dracut-core apt-show-versions debsums fwupd -y
 
 # snaps
 snap install pinta onlyoffice-desktopeditors brave chromium-ffmpeg transmission
