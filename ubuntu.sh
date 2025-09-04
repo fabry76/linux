@@ -1,5 +1,5 @@
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free showtime ffmpeg gnome-shell-extension-manager gnome-boxes gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim dracut-core apt-show-versions debsums fwupd -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free showtime ffmpeg gnome-shell-extension-manager gnome-boxes gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim apt-show-versions fwupd -y
 
 # brave
 curl -fsS https://dl.brave.com/install.sh | sh
