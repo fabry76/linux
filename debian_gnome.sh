@@ -12,7 +12,7 @@ apt install firmware-linux firmware-sof-signed firmware-realtek -y
 apt install gnome-core showtime+ papers+ gnome-console+ -y
 
 # de extra 
-apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dashtodock gnome-tweaks file-roller seahorse fwupd -y
+apt install gnome-themes-extra gnome-sound-recorder gnome-shell-extension-prefs gnome-shell-extension-dashtodock gnome-tweaks gnome-boxes file-roller seahorse fwupd -y
 
 # apps & utilities
 apt install snapd timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes apt-transport-https dracut-core apt-show-versions debsums -y
@@ -25,11 +25,6 @@ apt install ffmpeg ffmpegfs ffmpegthumbnailer libavcodec-extra gstreamer1.0-vaap
 
 # fonts & icons
 apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
-
-# virtual
-apt install virt-manager virt-viewer -y
-adduser fabri libvirt
-virsh net-autostart default
 
 # printing
 apt install printer-driver-all printer-driver-cups-pdf -y
