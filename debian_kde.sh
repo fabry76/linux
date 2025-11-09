@@ -18,13 +18,13 @@ echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://package
 apt update && apt install firefox -y
 
 # apps & utilities
-apt install snapd pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums distrobox -y
+apt install snapd pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums -y
 
 # multimedia
 apt install vlc vlc-plugin-pipewire ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
-apt install papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
+apt install ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
 
 # virtual
 apt install virt-manager virt-viewer -y
@@ -36,10 +36,8 @@ apt install cups printer-driver-all printer-driver-cups-pdf print-manager skanpa
 systemctl enable cups
 adduser fabri lpadmin
 
-# chrome
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-apt install -f ./google-chrome-stable_current_amd64.deb -y
-rm -f ./google-chrome-stable_current_amd64.deb -f
+# brave
+curl -fsS https://dl.brave.com/install.sh | sh
 
 # firewall
 apt install ufw -y
