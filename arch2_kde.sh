@@ -12,7 +12,7 @@ systemctl enable sddm
 echo "setxkbmap it" | tee -a /usr/share/sddm/scripts/Xsetup
 
 # applications
-pacman -S --needed firefox chromium vim nano htop fastfetch timeshift podman distrobox starship vlc  --noconfirm
+pacman -S --needed firefox vim nano htop fastfetch timeshift podman distrobox starship vlc  --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
@@ -65,6 +65,4 @@ tee -a /etc/fstab  << END
 END
 
 # various
-sed -i 's/StartupNotify=true/StartupNotify=false/g' /usr/share/applications/chromium.desktop
 echo "StartupNotify=false" | tee -a /usr/share/applications/vlc.desktop
-cp /home/fabri/Git/linux/etc/org.onlyoffice.desktopeditors.desktop /var/lib/flatpak/app/org.onlyoffice.desktopeditors/current/active/export/share/applications/org.onlyoffice.desktopeditors.desktop
