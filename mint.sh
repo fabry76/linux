@@ -12,7 +12,7 @@ curl -fsS https://dl.brave.com/install.sh | sh
 rm -rf /etc/apt/preferences.d/nosnap.pref
 
 # install applications
-apt install snapd ubuntu-restricted-extras intel-media-va-driver-non-free curl htop vim fwupd transmission -y
+apt install snapd ubuntu-restricted-extras intel-media-va-driver-non-free curl htop vim fwupd -y
 
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf -y
