@@ -20,7 +20,6 @@ adduser fabri lpadmin
 
 # virtual
 apt install virt-manager virt-viewer -y
-adduser fabri libvirt
 virsh net-autostart default
 
 # firewall
