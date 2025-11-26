@@ -18,6 +18,11 @@ apt install snapd ubuntu-restricted-extras intel-media-va-driver-non-free htop v
 apt install printer-driver-all printer-driver-cups-pdf -y
 adduser fabri lpadmin
 
+# virtual
+apt install virt-manager virt-viewer -y
+adduser fabri libvirt
+virsh net-autostart default
+
 # firewall
 ufw enable
 ufw allow mdns
