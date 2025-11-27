@@ -8,11 +8,11 @@ apt update && apt upgrade -y
 # brave
 curl -fsS https://dl.brave.com/install.sh | sh
 
-# snaps
-rm -rf /etc/apt/preferences.d/nosnap.pref
+# flatpaks
+flatpak install org.onlyoffice.desktopeditors -y
 
 # install applications
-apt install snapd ubuntu-restricted-extras intel-media-va-driver-non-free htop vim -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free htop vim -y
 
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf -y
