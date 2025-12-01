@@ -12,7 +12,7 @@ curl -fsS https://dl.brave.com/install.sh | sh
 apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code transmission -y
 
 # flatpaks
-remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install org.onlyoffice.desktopeditors -y
 
 # printing and scanning
