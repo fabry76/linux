@@ -1,5 +1,5 @@
 # purge apps
-apt purge libreoffice* thunderbird -y
+apt purge libreoffice* -y
 apt autoremove -y
 
 # update repositories
