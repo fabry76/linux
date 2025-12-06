@@ -35,7 +35,7 @@ mount --mkdir /dev/mapper/main-home /mnt/home
 mount --mkdir /dev/nvme0n1p1 /mnt/boot
 
 #install base system
-pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware nano intel-ucode lvm2 cryptsetup
+pacstrap /mnt base base-devel linux linux-headers linux-firmware nano intel-ucode lvm2 cryptsetup
 
 #Generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
