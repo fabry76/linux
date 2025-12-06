@@ -30,7 +30,7 @@ locale-gen
 curl -sS https://starship.rs/install.sh | sh
 
 #brave
-/home/fabri# curl -fsS https://dl.brave.com/install.sh | sh
+curl -fsS https://dl.brave.com/install.sh | sh
 
 #vcode (sudo su)
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -41,7 +41,7 @@ apt update && apt install code -y
 
 exit
 distrobox-export --app code
-distrobox-export --app brave
+distrobox-export --app brave-browser
 exit
 
 #fine sessione
