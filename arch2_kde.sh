@@ -1,17 +1,23 @@
 # refresh mirrors
 pacman -Syyu
 
-# cosmic
-pacman -S --needed cosmic cosmic-greeter --noconfirm
-systemctl enable cosmic-greeter.service
+# kde
+pacman -S --needed plasma kwalletmanager plasma-wayland-protocols sddm pipewire-alsa ark dolphin konsole kate kalk spectacle libxvmc kdialog print-manager system-config-printer ksystemlog partitionmanager kamoso gwenview power-profiles-daemon dmidecode geoclue2 kdegraphics-thumbnailers ktorrent kolourpaint isoimagewriter --noconfirm
+
+# remove components
+pacman -Rd --nodeps plasma-browser-integration --noconfirm
+
+# sddm
+systemctl enable sddm
+echo "setxkbmap it" | tee -a /usr/share/sddm/scripts/Xsetup
 
 # applications
-pacman -S --needed firefox vim nano htop timeshift podman distrobox starship transmission-gtk  --noconfirm
+pacman -S --needed firefox vim nano htop fastfetch timeshift podman distrobox starship vlc  --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
 # utilities
-pacman -S --needed gvfs gvfs-smb speech-dispatcher curl fastfetch less rust wget bash-completion sof-firmware plocate unrar unzip 7zip fuse2 ffmpeg ffmpegthumbs ffmpegthumbnailer gst-libav gst-plugins-ugly dnsutils whois --noconfirm
+pacman -S --needed speech-dispatcher curl fastfetch less rust wget bash-completion sof-firmware appstream plocate unrar unzip 7zip fuse2 ffmpeg ffmpegthumbs ffmpegthumbnailer gst-libav gst-plugins-ugly dnsutils whois --noconfirm
 
 # fonts
 pacman -S --needed ttf-ubuntu-font-family ttf-opensans ttf-carlito ttf-caladea ttf-liberation ttf-inconsolata ttf-dejavu noto-fonts adobe-source-code-pro-fonts adobe-source-sans-fonts adobe-source-serif-fonts nerd-fonts --noconfirm
@@ -39,10 +45,9 @@ sed -i 's/#group = "libvirt-qemu"/group = "libvirt"/g' /etc/libvirt/qemu.conf
 # flatpak
 pacman -S --needed flatpak --noconfirm
 flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub org.onlyoffice.desktopeditors -y
 
 # printing and scanning
-pacman -S --needed sane simple-scan cups cups-pdf --noconfirm
+pacman -S --needed sane skanpage cups cups-pdf --noconfirm
 systemctl enable cups
 sed -i 's/resolve/mdns_minimal [NOTFOUND=return] resolve/g' /etc/nsswitch.conf
 sed -i 's+#Out /var/spool/cups-pdf/${USER}+Out /home/${USER}/Documents+g' /etc/cups/cups-pdf.conf
@@ -58,3 +63,6 @@ END
 tee -a /etc/fstab  << END
 /etc/systemd/sleep.conf.d/freeze.conf
 END
+
+# various
+echo "StartupNotify=false" | tee -a /usr/share/applications/vlc.desktop
