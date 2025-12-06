@@ -12,7 +12,7 @@ systemctl enable sddm
 echo "setxkbmap it" | tee -a /usr/share/sddm/scripts/Xsetup
 
 # applications
-pacman -S --needed firefox vim nano htop fastfetch timeshift podman distrobox starship vlc  --noconfirm
+pacman -S --needed firefox vim nano htop fastfetch timeshift podman distrobox starship vlc vlc-plugins-all --noconfirm
 systemctl enable cronie
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 fabri
 
