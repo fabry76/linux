@@ -18,7 +18,7 @@ plymouth-set-default-theme -R spinner
 
 ##exit
 #distrobox
-distrobox create -n debian -i debian:latest --hostname "$(uname -n)" --additional-packages "build-essential nano git net-tools curl gnome-keyring desktop-file-utils"
+distrobox create -n debian -i debian:latest --hostname "$(uname -n)" --additional-packages "build-essential nano git net-tools curl gnome-keyring desktop-file-utils firefox-esr"
 distrobox enter debian
 
 #SUDO SU
@@ -29,9 +29,6 @@ locale-gen
 #starship
 curl -sS https://starship.rs/install.sh | sh
 
-#brave
-curl -fsS https://dl.brave.com/install.sh | sh
-
 #vcode (sudo su)
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
@@ -41,7 +38,7 @@ apt update && apt install code -y
 
 exit
 distrobox-export --app code
-distrobox-export --app brave-browser
+distrobox-export --app firefox-esr
 exit
 
 #fine sessione
