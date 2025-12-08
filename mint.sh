@@ -8,9 +8,6 @@ apt update && apt upgrade -y
 # brave
 curl -fsS https://dl.brave.com/install.sh | sh
 
-# flatpaks
-flatpak install org.onlyoffice.desktopeditors -y
-
 # install applications
 apt install ubuntu-restricted-extras intel-media-va-driver-non-free htop vim -y
 
@@ -19,7 +16,7 @@ apt install printer-driver-all printer-driver-cups-pdf -y
 adduser fabri lpadmin
 
 # virtual
-apt install cockpit-machines -y
+apt install cockpit cockpit-machines -y
 systemctl enable cockpit.socket
 
 # firewall
