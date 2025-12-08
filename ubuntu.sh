@@ -1,5 +1,9 @@
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free showtime ffmpeg gnome-shell-extension-manager gnome-boxes gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim apt-show-versions fwupd -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free showtime ffmpeg gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim apt-show-versions fwupd -y
+
+# cockpit
+apt install cockpit cockpit-machines virt-viewer -y
+systemctl enable --now cockpit.socket
 
 # brave
 curl -fsS https://dl.brave.com/install.sh | sh

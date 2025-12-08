@@ -18,7 +18,7 @@ plymouth-set-default-theme -R spinner
 
 ##exit
 #distrobox
-distrobox create -n debian -i debian:latest --hostname "$(uname -n)" --additional-packages "build-essential nano git net-tools curl gnome-keyring desktop-file-utils firefox-esr"
+distrobox create -n debian -i debian:latest --hostname "$(uname -n)" --additional-packages "build-essential nano git net-tools curl gnome-keyring desktop-file-utils"
 distrobox enter debian
 
 #SUDO SU
@@ -38,7 +38,6 @@ apt update && apt install code -y
 
 exit
 distrobox-export --app code
-distrobox-export --app firefox-esr
 exit
 
 #fine sessione
