@@ -19,8 +19,8 @@ apt install printer-driver-all printer-driver-cups-pdf -y
 adduser fabri lpadmin
 
 # virtual
-apt install virt-manager virt-viewer -y
-virsh net-autostart default
+apt install cockpit-machines -y
+systemctl enable cockpit.socket
 
 # firewall
 ufw enable
