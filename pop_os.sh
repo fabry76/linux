@@ -9,7 +9,7 @@ apt update && apt upgrade -y
 #curl -fsS https://dl.brave.com/install.sh | sh
 
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code transmission gnome-calculator google-chrome -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code transmission gnome-calculator google-chrome-stable -y
 
 # cockpit
 apt install cockpit cockpit-machines -y
