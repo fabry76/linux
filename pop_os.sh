@@ -6,10 +6,14 @@ apt autoremove -y
 apt update && apt upgrade -y
 
 # brave
-curl -fsS https://dl.brave.com/install.sh | sh
+#curl -fsS https://dl.brave.com/install.sh | sh
 
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code transmission gnome-calculator -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code transmission gnome-calculator google-chrome -y
+
+# cockpit
+apt install cockpit cockpit-machines -y
+systemctl enable cockpit.socket
 
 # flatpaks
 #flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
