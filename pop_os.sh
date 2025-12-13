@@ -16,7 +16,6 @@ apt install cockpit cockpit-machines -y
 systemctl enable cockpit.socket
 
 # flatpaks
-#flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 #flatpak install org.onlyoffice.desktopeditors -y
 
 # printing and scanning
