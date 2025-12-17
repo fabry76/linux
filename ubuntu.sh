@@ -6,7 +6,7 @@ apt install cockpit cockpit-machines -y
 systemctl enable cockpit.socket
 
 # brave
-curl -fsS https://dl.brave.com/install.sh | sh
+# curl -fsS https://dl.brave.com/install.sh | sh
 
 # snaps
 snap install pinta onlyoffice-desktopeditors transmission

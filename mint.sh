@@ -5,9 +5,6 @@ apt autoremove -y
 # update repositories
 apt update && apt upgrade -y
 
-# brave
-curl -fsS https://dl.brave.com/install.sh | sh
-
 # install applications
 apt install ubuntu-restricted-extras intel-media-va-driver-non-free htop vim -y
 
