@@ -13,7 +13,7 @@ apt install cockpit cockpit-machines -y
 systemctl enable cockpit.socket
 
 # flatpaks
-#flatpak install org.onlyoffice.desktopeditors -y
+flatpak install org.onlyoffice.desktopeditors -y
 
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf -y
