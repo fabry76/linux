@@ -6,14 +6,11 @@ apt autoremove -y
 apt update && apt upgrade -y
 
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code transmission gnome-calculator google-chrome-stable -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free timeshift curl htop vim fwupd code gnome-calculator google-chrome-stable -y
 
 # cockpit
 apt install cockpit cockpit-machines -y
 systemctl enable cockpit.socket
-
-# flatpaks
-flatpak install org.onlyoffice.desktopeditors -y
 
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf -y
