@@ -1,0 +1,3 @@
+mousewheel.default.delta_multiplier_y	      25
+apz.gtk.kinetic_scroll.enabled  false
+apz.gtk.touchpad_pinch.enabled  false

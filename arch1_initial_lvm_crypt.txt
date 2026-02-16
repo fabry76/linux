@@ -1,0 +1,122 @@
+#Set KB language
+loadkeys it.map.gz
+
+##Enable SSH from remote if needed
+#Set root password
+passwd
+
+#Enable SSH service
+systemctl start sshd.service
+
+#Update the system clock
+timedatectl set-ntp true
+
+#View disks and partitions
+lsblk
+
+#Create 3 partitions (Remove existing!)
+cfdisk /dev/nvme0n1
+
+Device             Start       End   Sectors  Size Type
+/dev/nvme0n1p1      2048   1050623   1048576  1G EFI System
+/dev/nvme0n1p2   1050624 500117503 499066880  237.5G Linux filesystem
+
+cryptsetup -y -v luksFormat /dev/nvme0n1p2
+cryptsetup open /dev/nvme0n1p2 luks
+pvcreate /dev/mapper/luks 
+vgcreate main /dev/mapper/luks
+lvcreate -L 100G main -n home
+lvcreate -l 100%FREE main -n root
+mkfs.ext4 /dev/mapper/main-home
+mkfs.ext4 /dev/mapper/main-root
+mkfs.fat -F32 /dev/nvme0n1p1
+mount /dev/mapper/main-root /mnt
+mount --mkdir /dev/mapper/main-home /mnt/home
+mount --mkdir /dev/nvme0n1p1 /mnt/boot
+
+#install base system
+pacstrap /mnt base base-devel linux linux-headers linux-firmware nano intel-ucode lvm2 cryptsetup
+
+#Generate fstab
+genfstab -U /mnt >> /mnt/etc/fstab
+
+#Change root into the new system:
+arch-chroot /mnt /bin/bash
+
+#Set the time zone
+ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
+
+#synch hw clock to system clock
+hwclock --systohc
+
+#Locale 
+nano /etc/locale.gen *(uncomment US and IT)
+locale-gen
+echo "LANG=en_US.UTF-8" | tee -a /etc/locale.conf
+
+#hostname
+echo "arco" | tee -a /etc/hostname
+
+tee -a /etc/hosts  << END
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   arco.localdomain    arco
+END
+
+#packages
+pacman -S grub sbctl efibootmgr networkmanager xdg-user-dirs git openssh plymouth shim apparmor fwupd exfatprogs
+
+#services
+systemctl enable NetworkManager
+systemctl enable sshd.service
+systemctl enable apparmor.service
+
+#mkinitcpio
+nano /etc/mkinitcpio.conf
+*HOOKS= after "block" type "encrypt" "lvm2" "plymouth"
+mkinitcpio -P
+
+#grub
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock
+
+sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
+sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 splash"/g' /etc/default/grub
+sed -i 's/#GRUB_DISABLE_SUBMENU=y/GRUB_DISABLE_SUBMENU=y/g' /etc/default/grub
+sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/g' /etc/default/grub
+echo "GRUB_SAVEDEFAULT="true"" | tee -a /etc/default/grub
+
+*blkid copy id of /dev/nvme0n1p2
+nano /etc/default/grub
+*GRUB_CMDLINE_LINUX="cryptdevice=UUID=686c1b2e-1e3e-47cc-8576-94bc5631adcf:luks root=/dev/mapper/main-root lsm=landlock,lockdown,yama,integrity,apparmor,bpf"
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+#users
+useradd -m -G wheel fabri
+passwd fabri
+EDITOR=nano visudo
+*uncomment line %wheel ALL=(ALL:ALL) ALL
+
+#secure boot keys (RESET SECURE BOOT KEYS AND TPM FROM BIOS FIRST)
+sbctl create-keys
+sbctl enroll-keys -m (#Output will be !!File is immutable - perform a chattr -i /sys/xxxxx)
+
+sbctl sign -s /boot/vmlinuz-linux-lts
+sbctl sign -s /boot/EFI/GRUB/grubx64.efi
+sbctl sign -s /usr/lib/fwupd/efi/fwupdx64.efi -o /usr/lib/fwupd/efi/fwupdx64.efi.signed
+cp /usr/share/shim/shimx64.efi /boot/EFI/GRUB/
+cp /usr/share/shim/shimx64.efi /boot/EFI/arch/
+sbctl sign -s /boot/EFI/GRUB/shimx64.efi
+sbctl sign -s /boot/EFI/arch/shimx64.efi
+sbctl sign -s /boot/grub/x86_64-efi/core.efi
+sbctl sign -s /boot/grub/x86_64-efi/grub.efi
+
+#exit and unmount
+exit
+umount -a
+reboot
+
+#enrolling the TPM
+##SUDO SU
+systemd-cryptenroll /dev/nvme0n1p2 --wipe-slot=empty --tpm2-device=auto
+systemd-cryptenroll /dev/nvme0n1p2 --recovery-key

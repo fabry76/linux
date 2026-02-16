@@ -1,0 +1,106 @@
+#Set KB language
+loadkeys it.map.gz
+
+##Enable SSH from remote if needed
+#Set root password
+passwd
+
+#Enable SSH service
+systemctl start sshd.service
+
+#Update the system clock
+timedatectl set-ntp true
+
+#View disks and partitions
+lsblk
+
+#Create 3 partitions (Remove existing!)
+cfdisk /dev/nvme0n1
+
+Device             Start       End   Sectors  Size Type
+/dev/nvme0n1p1      2048   1050623   1048576  1G EFI System
+/dev/nvme0n1p2   1050624 500117503 499066880  237.5G Linux filesystem
+
+mkfs.fat -F32 /dev/nvme0n1p1
+mkfs.ext4 /dev/nvme0n1p2
+mount --mkdir /dev/nvme0n1p1 /mnt/boot
+mount /dev/nvme0n1p2 /mnt
+
+#install base system
+pacstrap /mnt base base-devel linux linux-headers linux-firmware nano intel-ucode
+
+#Generate fstab
+genfstab -U /mnt >> /mnt/etc/fstab
+
+#Change root into the new system:
+arch-chroot /mnt /bin/bash
+
+#Set the time zone
+ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
+
+#synch hw clock to system clock
+hwclock --systohc
+
+#Locale 
+nano /etc/locale.gen *(uncomment US and IT)
+locale-gen
+echo "LANG=en_US.UTF-8" | tee -a /etc/locale.conf
+
+#hostname
+echo "arco" | tee -a /etc/hostname
+
+tee -a /etc/hosts  << END
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   arco.localdomain    arco
+END
+
+#packages
+pacman -S grub sbctl efibootmgr networkmanager xdg-user-dirs git openssh plymouth shim apparmor fwupd exfatprogs
+
+#services
+systemctl enable NetworkManager
+systemctl enable sshd.service
+systemctl enable apparmor.service
+
+#mkinitcpio
+nano /etc/mkinitcpio.conf
+*HOOKS= after "block" type -> "plymouth"
+mkinitcpio -P
+
+#grub
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock
+
+sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
+sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 splash"/g' /etc/default/grub
+sed -i 's/#GRUB_DISABLE_SUBMENU=y/GRUB_DISABLE_SUBMENU=y/g' /etc/default/grub
+sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/g' /etc/default/grub
+echo "GRUB_SAVEDEFAULT="true"" | tee -a /etc/default/grub
+
+*nano /etc/default/grub
+*GRUB_CMDLINE_LINUX="root=/dev/nvme0n1p2 lsm=landlock,lockdown,yama,integrity,apparmor,bpf"
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+#users
+useradd -m -G wheel fabri
+passwd fabri
+EDITOR=nano visudo
+*uncomment line %wheel ALL=(ALL:ALL) ALL
+
+#secure boot keys (RESET SECURE BOOT KEYS AND TPM FROM BIOS FIRST)
+sbctl create-keys
+sbctl enroll-keys -m (#Output will be !!File is immutable - perform a chattr -i /sys/xxxxx)
+
+sbctl sign -s /boot/vmlinuz-linux
+sbctl sign -s /boot/EFI/GRUB/grubx64.efi
+sbctl sign -s /usr/lib/fwupd/efi/fwupdx64.efi -o /usr/lib/fwupd/efi/fwupdx64.efi.signed
+cp /usr/share/shim/shimx64.efi /boot/EFI/GRUB/
+sbctl sign -s /boot/EFI/GRUB/shimx64.efi
+sbctl sign -s /boot/grub/x86_64-efi/core.efi
+sbctl sign -s /boot/grub/x86_64-efi/grub.efi
+
+#exit and unmount
+exit
+umount -a
+reboot

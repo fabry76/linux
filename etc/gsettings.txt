@@ -1,0 +1,2 @@
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-locations false
+gsettings set org.gnome.mutter center-new-windows true
