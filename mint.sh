@@ -13,7 +13,7 @@ apt install printer-driver-all printer-driver-cups-pdf -y
 adduser fabri lpadmin
 
 # virtual
-apt install cockpit cockpit-machines virt-viewer
+apt install cockpit cockpit-machines virt-viewer -y
 systemctl enable cockpit.socket
 
 # firewall
