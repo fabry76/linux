@@ -17,7 +17,7 @@ apt install cockpit cockpit-machines virt-viewer -y
 systemctl enable cockpit.socket
 
 # brave
-curl -fsS https://dl.brave.com/install.sh | sh
+# curl -fsS https://dl.brave.com/install.sh | sh
 
 # firewall
 ufw enable
