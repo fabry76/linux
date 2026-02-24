@@ -16,9 +16,6 @@ adduser fabri lpadmin
 apt install cockpit cockpit-machines virt-viewer -y
 systemctl enable cockpit.socket
 
-# brave
-# curl -fsS https://dl.brave.com/install.sh | sh
-
 # firewall
 ufw enable
 ufw allow mdns
