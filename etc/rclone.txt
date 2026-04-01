@@ -1,0 +1,1 @@
+@reboot rclone mount gdrive: /home/fabri/gdrive/ --daemon --vfs-cache-mode full --dir-cache-time 2y
