@@ -1,2 +1,1 @@
-@reboot rclone mount gdrive: /home/fabri/Documents --daemon --vfs-cache-mode full --vfs-cache-max-age 9999h
-
+@reboot rclone mount gdrive: /home/fabri/Documents --daemon --vfs-cache-mode=full --dir-cache-time=5000h --vfs-cache-max-age=9999h --transfers=10 --checkers=8 --drive-chunk-size=64M
