@@ -3,7 +3,7 @@ apt purge libreoffice* -y
 apt autoremove -y
 
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free htop vim filezilla rclone -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free htop vim filezilla -y
 
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf -y
