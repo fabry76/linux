@@ -17,8 +17,15 @@ wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /et
 echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
 apt update && apt install firefox -y
 
+#vcode
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+rm -f packages.microsoft.gpg
+apt update && apt install code -y
+
 # apps & utilities
-apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums -y
+apt install pkexec timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums filezilla -y
 
 # multimedia
 apt install vlc vlc-plugin-pipewire vlc-plugin-base ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
@@ -29,15 +36,11 @@ apt install ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts
 # virtual
 apt install virt-manager virt-viewer -y
 adduser fabri libvirt
-virsh net-autostart default
 
 # printing and scanning
 apt install cups printer-driver-all printer-driver-cups-pdf print-manager skanpage -y
 systemctl enable cups
 adduser fabri lpadmin
-
-# brave
-curl -fsS https://dl.brave.com/install.sh | sh
 
 # firewall
 apt install ufw -y
