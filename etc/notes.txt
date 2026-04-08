@@ -1,6 +1,3 @@
-# vlc on debian
-apt install vlc vlc-plugin-pipewire vlc-plugin-base 
-
 # brave
 curl -fsS https://dl.brave.com/install.sh | sh
 
