@@ -11,7 +11,6 @@ ufw allow mdns
 
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf sane simple-scan -y
-adduser fabri lpadmin
 
 # fastgate
 apt install cifs-utils smbclient -y
