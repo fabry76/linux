@@ -1,12 +1,20 @@
-# update repositories
-apt update && apt upgrade -y
+# enable backports
+tee /etc/apt/sources.list.d/debian-backports.sources << END
+Types: deb deb-src
+URIs: http://deb.debian.org/debian
+Suites: trixie-backports
+Components: main contrib non-free non-free-firmware
+Enabled: yes
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+END
+apt update && apt install -t trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux -y
 
 # locale
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 # firmware
-apt install firmware-linux firmware-sof-signed firmware-realtek -y
+apt install firmware-sof-signed firmware-realtek -y
 
 # desktop environment
 apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint kamoso gwenview okular kcharselect kcolorchooser filelight kweather -y
