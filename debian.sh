@@ -29,6 +29,11 @@ apt install mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gs
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 apt install ttf-mscorefonts-installer papirus-icon-theme fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
 
+# chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+apt install ./google-chrome-stable_current_amd64.deb -y
+rm google-chrome-stable_current_amd64.deb
+
 # vscode
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/vscode.gpg
 tee /etc/apt/sources.list.d/vscode.sources << END
@@ -41,10 +46,18 @@ Architectures: amd64 arm64 armhf
 END
 apt update && apt install code -y
 
+# onlyoffice
+mkdir -p -m 700 ~/.gnupg
+gpg --no-default-keyring --keyring gnupg-ring:/tmp/onlyoffice.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CB2DE8E5
+chmod 644 /tmp/onlyoffice.gpg
+chown root:root /tmp/onlyoffice.gpg
+mv /tmp/onlyoffice.gpg /usr/share/keyrings/onlyoffice.gpg
+echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' | sudo tee -a /etc/apt/sources.list.d/onlyoffice.list
+apt update && apt install onlyoffice-desktopeditors -y   
+
 # flatpak
 apt install flatpak plasma-discover-backend-flatpak -y
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --noninteractive flathub org.onlyoffice.desktopeditors
 
 # virtual
 apt install virt-manager virt-viewer qemu-system -y
@@ -66,6 +79,11 @@ update-grub
 
 # plymouth themes
 plymouth-set-default-theme -R lines
+
+# starship
+curl -sS https://starship.rs/install.sh | sh -s -- -y
+runuser -u fabri -- sh -c 'echo "eval \"\$(starship init bash)\"" >> /home/fabri/.bashrc'
+runuser -u fabri -- sh -c 'cp /home/fabri/Git/linux/etc/starship.toml /home/fabri/.config'
 
 # fastgate
 apt install cifs-utils -y

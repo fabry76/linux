@@ -59,11 +59,9 @@ style = "bright-white"
 format = "$all_status$ahead_behind"
 
 [hostname]
-ssh_only = false
-format = "<[$hostname]($style)>"
-trim_at = "-"
-style = "bold dimmed white"
-disabled = true
+format = "💻 [$hostname]($style) "
+style = "bold bright-green"
+disabled = false
 
 [package]
 disabled = true
@@ -90,13 +88,16 @@ show_always = true
 format = "via [🤖 $version](bold green) "
 
 [os]
-format = "on $name [$symbol]($style)"
-style = "bold red"
+format = "on [$name 🌀]($style) "
+style = "bold bright-red"
 disabled = false
 
 [os.symbols]
-Arch = "󰣇 "
-Debian =  " "
+Debian = "🌀"
+
+
+
+
 
 
 
