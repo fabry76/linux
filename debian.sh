@@ -1,4 +1,9 @@
-# enable backports
+#!/bin/bash
+set -e
+
+###############################################
+# 1. Enable backports
+###############################################
 tee /etc/apt/sources.list.d/debian-backports.sources << END
 Types: deb deb-src
 URIs: http://deb.debian.org/debian
@@ -7,35 +12,76 @@ Components: main contrib non-free non-free-firmware
 Enabled: yes
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 END
-apt update && apt install -t trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux -y
 
-# locale
+apt update
+apt install -y -t trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+
+###############################################
+# 2. Locale
+###############################################
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
-# firmware
-apt install firmware-sof-signed firmware-realtek intel-media-va-driver-non-free -y
+###############################################
+# 3. BLOCK FIREFOX-ESR
+###############################################
+tee /etc/apt/preferences.d/no-firefox-esr << 'EOF'
+Package: firefox-esr
+Pin: release *
+Pin-Priority: -1
+EOF
 
-# desktop environment
-apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons -y
+###############################################
+# 4. KDE Desktop
+###############################################
+apt install -y kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons
 
-# apps & utilities
-apt install rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla -y
+###############################################
+# 5. Apps & Utilities
+###############################################
+apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla
 
-# multimedia
-apt install mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
+###############################################
+# 6. Multimedia
+###############################################
+apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 
-# fonts & icons
+###############################################
+# 7. Fonts & Icons
+###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt install ttf-mscorefonts-installer papirus-icon-theme fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
+apt install -y ttf-mscorefonts-installer papirus-icon-theme fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
 
-# chrome
+###############################################
+# 8. Google Chrome
+###############################################
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-apt install ./google-chrome-stable_current_amd64.deb -y
+apt install -y ./google-chrome-stable_current_amd64.deb
 rm google-chrome-stable_current_amd64.deb
 
-# vscode
+###############################################
+# 9. Firefox (Mozilla official repo)
+###############################################
+install -d -m 0755 /etc/apt/keyrings
+wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
+chmod 644 /etc/apt/keyrings/mozilla.gpg
+
+tee /etc/apt/sources.list.d/mozilla.sources << 'EOF'
+Types: deb
+URIs: https://packages.mozilla.org/apt
+Suites: mozilla
+Components: main
+Signed-By: /etc/apt/keyrings/mozilla.gpg
+EOF
+
+apt update
+apt install -y firefox
+
+###############################################
+# 10. VSCode
+###############################################
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/vscode.gpg
+
 tee /etc/apt/sources.list.d/vscode.sources << END
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
@@ -44,59 +90,87 @@ Components: main
 Signed-By: /usr/share/keyrings/vscode.gpg
 Architectures: amd64 arm64 armhf
 END
-apt update && apt install code -y
 
-# onlyoffice
+apt update
+apt install -y code
+
+###############################################
+# 11. ONLYOFFICE
+###############################################
 mkdir -p -m 700 ~/.gnupg
 gpg --no-default-keyring --keyring gnupg-ring:/tmp/onlyoffice.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CB2DE8E5
 chmod 644 /tmp/onlyoffice.gpg
-chown root:root /tmp/onlyoffice.gpg
 mv /tmp/onlyoffice.gpg /usr/share/keyrings/onlyoffice.gpg
-echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' | sudo tee -a /etc/apt/sources.list.d/onlyoffice.list
-apt update && apt install onlyoffice-desktopeditors -y   
 
-# flatpak
-apt install flatpak plasma-discover-backend-flatpak -y
+echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' \
+  > /etc/apt/sources.list.d/onlyoffice.list
+
+apt update
+apt install -y onlyoffice-desktopeditors
+
+###############################################
+# 12. Flatpak
+###############################################
+apt install -y flatpak plasma-discover-backend-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# virtual
-apt install virt-manager virt-viewer qemu-system -y
+###############################################
+# 13. Virtualization
+###############################################
+apt install -y virt-manager virt-viewer qemu-system
 
-# printing and scanning
-apt install cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage -y
+###############################################
+# 14. Printing & Scanning
+###############################################
+apt install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
 systemctl enable cups
 
-# firewall
-apt install ufw -y
+###############################################
+# 15. Firewall
+###############################################
+apt install -y ufw
 sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 ufw enable
 ufw allow mdns
 
-# grub
+###############################################
+# 16. GRUB
+###############################################
 sed -i 's/quiet/quiet loglevel=3 splash/g' /etc/default/grub
 sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
 update-grub
 
-# plymouth themes
+###############################################
+# 17. Plymouth
+###############################################
 plymouth-set-default-theme -R lines
 
-# starship
+###############################################
+# 18. Starship
+###############################################
 curl -sS https://starship.rs/install.sh | sh -s -- -y
 runuser -u fabri -- sh -c 'echo "eval \"\$(starship init bash)\"" >> /home/fabri/.bashrc'
 runuser -u fabri -- sh -c 'cp /home/fabri/Git/linux/etc/starship.toml /home/fabri/.config'
 
-# fastgate
-apt install cifs-utils -y
-tee -a /etc/fstab  << END
+###############################################
+# 19. Fastgate CIFS
+###############################################
+apt install -y cifs-utils
+
+tee -a /etc/fstab << END
 # map fastgate usb storage
-//192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount	0 0
+//192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount 0 0
 END
 
-# varie
+###############################################
+# 20. Misc
+###############################################
 apt-file update
 usermod -aG libvirt,kvm,lpadmin fabri
 runuser -u fabri -- sh -c 'install -D /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/mpv.conf'
 
-# remove components
-apt purge plasma-browser-integration konqueror zutty -y
+###############################################
+# 21. Remove unwanted components
+###############################################
+apt purge -y plasma-browser-integration konqueror zutty
 apt autoremove -y
