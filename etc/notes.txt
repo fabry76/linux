@@ -13,5 +13,5 @@ Signed-By: /etc/apt/keyrings/packages.mozilla.org.asc
 EOF
 sudo apt update && sudo apt install firefox
 
-
+# vlc
 vlc vlc-plugin-pipewire
