@@ -14,7 +14,7 @@ sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 # firmware
-apt install firmware-sof-signed firmware-realtek -y
+apt install firmware-sof-signed firmware-realtek intel-media-va-driver-non-free -y
 
 # desktop environment
 apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons -y
@@ -77,8 +77,7 @@ END
 # varie
 usermod -aG libvirt,kvm,lpadmin fabri
 apt-file update
-runuser -u "fabri" -- mkdir -p /home/fabri/.config/mpv
-runuser -u "fabri" -- cp /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/
+runuser -u fabri -- sh -c 'install -D /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/mpv.conf'
 
 # remove components
 apt purge plasma-browser-integration konqueror zutty -y
