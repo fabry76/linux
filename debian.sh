@@ -75,8 +75,8 @@ tee -a /etc/fstab  << END
 END
 
 # varie
-usermod -aG libvirt,kvm,lpadmin fabri
 apt-file update
+usermod -aG libvirt,kvm,lpadmin fabri
 runuser -u fabri -- sh -c 'install -D /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/mpv.conf'
 
 # remove components
