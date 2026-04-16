@@ -17,41 +17,45 @@ locale-gen
 apt install firmware-sof-signed firmware-realtek -y
 
 # desktop environment
-apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint kamoso gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons -y
+apt install kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons -y
 
 # apps & utilities
-apt install pkexec rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes dracut-core fwupd apt-show-versions debsums filezilla -y
+apt install rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla -y
 
 # multimedia
-apt install vlc vlc-plugin-pipewire vlc-plugin-base ffmpeg ffmpegfs libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
+apt install mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 
 # fonts & icons
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 apt install ttf-mscorefonts-installer papirus-icon-theme fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea -y
 
 # vscode
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
-sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-rm -f packages.microsoft.gpg
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/vscode.gpg
+tee /etc/apt/sources.list.d/vscode.sources << END
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Signed-By: /usr/share/keyrings/vscode.gpg
+Architectures: amd64 arm64 armhf
+END
 apt update && apt install code -y
 
 # flatpak
 apt install flatpak plasma-discover-backend-flatpak -y
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub org.onlyoffice.desktopeditors -y
+flatpak install -y --noninteractive flathub org.onlyoffice.desktopeditors
 
 # virtual
-apt install virt-manager virt-viewer -y
-adduser fabri libvirt
+apt install virt-manager virt-viewer qemu-system -y
 
 # printing and scanning
-apt install cups printer-driver-all printer-driver-cups-pdf print-manager skanpage -y
+apt install cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage -y
 systemctl enable cups
-adduser fabri lpadmin
 
 # firewall
 apt install ufw -y
-sed -i 's/false/true/g' /etc/NetworkManager/NetworkManager.conf
+sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 ufw enable
 ufw allow mdns
 
@@ -69,6 +73,12 @@ tee -a /etc/fstab  << END
 # map fastgate usb storage
 //192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount	0 0
 END
+
+# varie
+usermod -aG libvirt,kvm,lpadmin fabri
+apt-file update
+runuser -u "fabri" -- mkdir -p /home/fabri/.config/mpv
+runuser -u "fabri" -- cp /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/
 
 # remove components
 apt purge plasma-browser-integration konqueror zutty -y
