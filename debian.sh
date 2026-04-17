@@ -54,10 +54,10 @@ apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file
 apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{base,good,bad,ugly}
 
 ###############################################
-# 7. Fonts & Icons
+# 7. Icons & Fonts
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt install -y ttf-mscorefonts-installer papirus-icon-theme fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
+apt install -y papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-font-awesome
 
 ###############################################
 # 8. Google Chrome
