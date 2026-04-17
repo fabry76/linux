@@ -140,7 +140,6 @@ systemctl enable cups
 # 15. Firewall
 ###############################################
 apt install -y ufw
-sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 ufw status | grep -q "Status: active" || ufw --force enable
 ufw allow mdns || true
 
