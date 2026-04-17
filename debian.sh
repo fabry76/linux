@@ -3,7 +3,7 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-TARGET_USER="${SUDO_USER:-$(logname)}"
+TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
 HOME_DIR=$(eval echo "~$TARGET_USER")
 
 ###############################################
@@ -49,7 +49,7 @@ apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file
 ###############################################
 # 6. Multimedia
 ###############################################
-apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{base,good,bad,ugly}
 
 ###############################################
 # 7. Fonts & Icons
