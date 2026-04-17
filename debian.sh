@@ -88,6 +88,7 @@ apt install -y firefox
 # 10. VSCode
 ###############################################
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/vscode.gpg
+chmod 644 /usr/share/keyrings/vscode.gpg
 
 tee /etc/apt/sources.list.d/vscode.sources << END
 Types: deb
