@@ -141,8 +141,8 @@ systemctl enable cups
 ###############################################
 apt install -y ufw
 sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-ufw enable
-ufw allow mdns
+ufw status | grep -q "Status: active" || ufw enable
+ufw allow mdns || true
 
 ###############################################
 # 16. Fastgate CIFS
@@ -152,8 +152,7 @@ apt install -y cifs-utils
 MOUNT_POINT="$HOME_DIR/Fastgate"
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 
-CIFS_LINE="# map fastgate usb storage
-//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
+CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
 
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 
