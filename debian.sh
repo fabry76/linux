@@ -1,5 +1,10 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
+export DEBIAN_FRONTEND=noninteractive
+
+TARGET_USER="${SUDO_USER:-$(logname)}"
+HOME_DIR=$(eval echo "~$TARGET_USER")
 
 ###############################################
 # 1. Enable backports
@@ -155,17 +160,17 @@ sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
 update-grub
 
 ###############################################
-# 18. Starship
+# 18. Config
 ###############################################
-runuser -u fabri -- sh -c 'echo "eval \"\$(starship init bash)\"" >> /home/fabri/.bashrc'
-runuser -u fabri -- sh -c 'cp /home/fabri/Git/linux/etc/starship.toml /home/fabri/.config'
+runuser -u "$TARGET_USER" -- sh -c 'echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
+runuser -u "$TARGET_USER" -- sh -c 'cp "$HOME/Git/linux/etc/starship.toml" "$HOME/.config"'
+runuser -u "$TARGET_USER" -- sh -c 'install -D "$HOME/Git/linux/etc/mpv.conf" "$HOME/.config/mpv/mpv.conf"'
 
 ###############################################
 # 20. Misc
 ###############################################
 apt-file update
 usermod -aG libvirt,kvm,lpadmin fabri
-runuser -u fabri -- sh -c 'install -D /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/mpv.conf'
 plymouth-set-default-theme -R lines
 
 ###############################################
