@@ -15,7 +15,7 @@ URIs: http://deb.debian.org/debian
 Suites: trixie-backports
 Components: main contrib non-free non-free-firmware
 Enabled: yes
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+Signed-By: /etc/apt/keyrings/debian-archive-keyring.gpg
 END
 
 apt update
@@ -87,15 +87,15 @@ apt install -y firefox
 ###############################################
 # 10. VSCode
 ###############################################
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/vscode.gpg
-chmod 644 /usr/share/keyrings/vscode.gpg
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/vscode.gpg
+chmod 644 /etc/apt/keyrings/vscode.gpg
 
 tee /etc/apt/sources.list.d/vscode.sources << END
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
-Signed-By: /usr/share/keyrings/vscode.gpg
+Signed-By: /etc/apt/keyrings/vscode.gpg
 Architectures: amd64 arm64 armhf
 END
 
@@ -105,16 +105,16 @@ apt install -y code
 ###############################################
 # 11. ONLYOFFICE
 ###############################################
-mkdir -p /usr/share/keyrings
-curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /usr/share/keyrings/onlyoffice.gpg
-chmod 644 /usr/share/keyrings/onlyoffice.gpg
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /etc/apt/keyrings/onlyoffice.gpg
+chmod 644 /etc/apt/keyrings/onlyoffice.gpg
 
 tee /etc/apt/sources.list.d/onlyoffice.sources << END
 Types: deb
 URIs: https://download.onlyoffice.com/repo/debian
 Suites: squeeze
 Components: main
-Signed-By: /usr/share/keyrings/onlyoffice.gpg
+Signed-By: /etc/apt/keyrings/onlyoffice.gpg
 END
 
 apt update
