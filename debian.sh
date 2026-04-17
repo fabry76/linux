@@ -150,7 +150,7 @@ ufw allow mdns
 apt install -y cifs-utils
 
 MOUNT_POINT="$HOME_DIR/Fastgate"
-runuser -u "$TARGET_USER" -- sh -c 'mkdir -p "$MOUNT_POINT"'
+runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 
 CIFS_LINE="# map fastgate usb storage
 //192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
