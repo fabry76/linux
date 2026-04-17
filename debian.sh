@@ -15,7 +15,7 @@ URIs: http://deb.debian.org/debian
 Suites: trixie-backports
 Components: main contrib non-free non-free-firmware
 Enabled: yes
-Signed-By: /etc/apt/keyrings/debian-archive-keyring.gpg
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 END
 
 apt update
@@ -143,6 +143,9 @@ systemctl enable cups
 apt install -y ufw
 ufw status | grep -q "Status: active" || ufw --force enable
 ufw allow mdns || true
+if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
+   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+fi
 
 ###############################################
 # 16. Fastgate CIFS
