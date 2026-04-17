@@ -97,13 +97,17 @@ apt install -y code
 ###############################################
 # 11. ONLYOFFICE
 ###############################################
-mkdir -p -m 700 ~/.gnupg
-gpg --no-default-keyring --keyring gnupg-ring:/tmp/onlyoffice.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CB2DE8E5
-chmod 644 /tmp/onlyoffice.gpg
-mv /tmp/onlyoffice.gpg /usr/share/keyrings/onlyoffice.gpg
+mkdir -p /usr/share/keyrings
+curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /usr/share/keyrings/onlyoffice.gpg
+chmod 644 /usr/share/keyrings/onlyoffice.gpg
 
-echo 'deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main' \
-  > /etc/apt/sources.list.d/onlyoffice.list
+tee /etc/apt/sources.list.d/onlyoffice.sources << END
+Types: deb
+URIs: https://download.onlyoffice.com/repo/debian
+Suites: squeeze
+Components: main
+Signed-By: /usr/share/keyrings/onlyoffice.gpg
+END
 
 apt update
 apt install -y onlyoffice-desktopeditors
