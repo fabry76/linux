@@ -4,7 +4,7 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
-HOME=$(eval echo "~$TARGET_USER")
+TARGET_HOME=$(eval echo "~$TARGET_USER")
 
 ###############################################
 # 1. Enable backports
@@ -149,7 +149,7 @@ ufw allow mdns || true
 ###############################################
 apt install -y cifs-utils
 
-MOUNT_POINT="$HOME/Fastgate"
+MOUNT_POINT="$TARGET_HOME/Fastgate"
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 
 CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
@@ -169,9 +169,9 @@ update-grub
 ###############################################
 # 18. Config
 ###############################################
-runuser -u "$TARGET_USER" -- sh -c 'grep -qF "eval \"\$(starship init bash)\"" "$HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
-runuser -u "$TARGET_USER" -- sh -c 'cp "$HOME/Git/linux/etc/starship.toml" "$HOME/.config/starship.toml"'
-runuser -u "$TARGET_USER" -- sh -c 'install -D "$HOME/Git/linux/etc/mpv.conf" "$HOME/.config/mpv/mpv.conf"'
+runuser -u "$TARGET_USER" -- sh -c 'grep -qF "eval \"\$(starship init bash)\"" "$TARGET_HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$TARGET_HOME/.bashrc"'
+runuser -u "$TARGET_USER" -- sh -c 'cp "$TARGET_HOME/Git/linux/etc/starship.toml" "$TAGET_HOME/.config/starship.toml"'
+runuser -u "$TARGET_USER" -- sh -c 'install -D "$TARGET_HOME/Git/linux/etc/mpv.conf" "$TARGET_HOME/.config/mpv/mpv.conf"'
 
 ###############################################
 # 20. Misc
