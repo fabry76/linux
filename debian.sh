@@ -60,9 +60,11 @@ apt install -y ttf-mscorefonts-installer papirus-icon-theme fonts-ubuntu fonts-c
 ###############################################
 # 8. Google Chrome
 ###############################################
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-apt install -y ./google-chrome-stable_current_amd64.deb
-rm google-chrome-stable_current_amd64.deb
+if ! dpkg -s google-chrome-stable >/dev/null 2>&1; then
+  wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  apt install -y ./google-chrome-stable_current_amd64.deb
+  rm -f google-chrome-stable_current_amd64.deb
+fi
 
 ###############################################
 # 9. Firefox (Mozilla official repo)
@@ -155,23 +157,26 @@ END
 ###############################################
 # 17. GRUB
 ###############################################
-sed -i 's/quiet/quiet loglevel=3 splash/g' /etc/default/grub
-sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
+if ! grep -q "loglevel=3" /etc/default/grub; then
+  sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="/&loglevel=3 splash /' /etc/default/grub
+fi
+sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
+
 update-grub
 
 ###############################################
 # 18. Config
 ###############################################
-runuser -u "$TARGET_USER" -- sh -c 'echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
+runuser -u "$TARGET_USER" -- sh -c 'grep -qxF "eval \"\$(starship init bash)\"" "$HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
 runuser -u "$TARGET_USER" -- sh -c 'cp "$HOME/Git/linux/etc/starship.toml" "$HOME/.config"'
 runuser -u "$TARGET_USER" -- sh -c 'install -D "$HOME/Git/linux/etc/mpv.conf" "$HOME/.config/mpv/mpv.conf"'
 
 ###############################################
 # 20. Misc
 ###############################################
-apt-file update
-usermod -aG libvirt,kvm,lpadmin fabri
-plymouth-set-default-theme -R lines
+apt-file update || true
+usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
+plymouth-set-default-theme lines -R || true
 
 ###############################################
 # 21. Remove unwanted components
