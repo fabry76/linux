@@ -4,7 +4,7 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
-HOME_DIR=$(eval echo "~$TARGET_USER")
+HOME=$(eval echo "~$TARGET_USER")
 
 ###############################################
 # 1. Enable backports
@@ -149,7 +149,7 @@ ufw allow mdns || true
 ###############################################
 apt install -y cifs-utils
 
-MOUNT_POINT="$HOME_DIR/Fastgate"
+MOUNT_POINT="$HOME/Fastgate"
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 
 CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
