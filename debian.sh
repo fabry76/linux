@@ -141,7 +141,7 @@ systemctl enable cups
 ###############################################
 apt install -y ufw
 sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-ufw status | grep -q "Status: active" || ufw enable
+ufw status | grep -q "Status: active" || ufw --force enable
 ufw allow mdns || true
 
 ###############################################
@@ -169,7 +169,7 @@ update-grub
 ###############################################
 # 18. Config
 ###############################################
-runuser -u "$TARGET_USER" -- sh -c 'grep -qxF "eval \"\$(starship init bash)\"" "$HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
+runuser -u "$TARGET_USER" -- sh -c 'grep -qF "eval \"\$(starship init bash)\"" "$HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
 runuser -u "$TARGET_USER" -- sh -c 'cp "$HOME/Git/linux/etc/starship.toml" "$HOME/.config/starship.toml"'
 runuser -u "$TARGET_USER" -- sh -c 'install -D "$HOME/Git/linux/etc/mpv.conf" "$HOME/.config/mpv/mpv.conf"'
 
