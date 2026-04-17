@@ -41,7 +41,7 @@ EOF
 ###############################################
 # 4. KDE Desktop
 ###############################################
-apt install -y kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons
+apt install -y kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
 
 ###############################################
 # 5. Apps & Utilities
