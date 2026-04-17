@@ -172,19 +172,19 @@ update-grub
 ###############################################
 # 18. Config
 ###############################################
-runuser -u "$TARGET_USER" -- sh -c 'grep -qF "eval \"\$(starship init bash)\"" "$TARGET_HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$TARGET_HOME/.bashrc"'
-runuser -u "$TARGET_USER" -- sh -c 'cp "$TARGET_HOME/Git/linux/etc/starship.toml" "$TARGET_HOME/.config/starship.toml"'
-runuser -u "$TARGET_USER" -- sh -c 'install -D "$TARGET_HOME/Git/linux/etc/mpv.conf" "$TARGET_HOME/.config/mpv/mpv.conf"'
+runuser -u "$TARGET_USER" -- sh -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
+runuser -u "$TARGET_USER" -- sh -c "cp \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
+runuser -u "$TARGET_USER" -- sh -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
 
 ###############################################
-# 20. Misc
+# 19. Misc
 ###############################################
 apt-file update || true
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R || true
 
 ###############################################
-# 21. Remove unwanted components
+# 20. Remove unwanted components
 ###############################################
 apt purge -y plasma-browser-integration konqueror zutty
 apt autoremove -y
