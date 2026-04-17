@@ -171,7 +171,7 @@ update-grub
 # 18. Config
 ###############################################
 runuser -u "$TARGET_USER" -- sh -c 'grep -qxF "eval \"\$(starship init bash)\"" "$HOME/.bashrc" || echo "eval \"\$(starship init bash)\"" >> "$HOME/.bashrc"'
-runuser -u "$TARGET_USER" -- sh -c 'cp "$HOME/Git/linux/etc/starship.toml" "$HOME/.config"'
+runuser -u "$TARGET_USER" -- sh -c 'cp "$HOME/Git/linux/etc/starship.toml" "$HOME/.config/starship.toml"'
 runuser -u "$TARGET_USER" -- sh -c 'install -D "$HOME/Git/linux/etc/mpv.conf" "$HOME/.config/mpv/mpv.conf"'
 
 ###############################################
