@@ -6,6 +6,8 @@ export DEBIAN_FRONTEND=noninteractive
 TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
 TARGET_HOME=$(eval echo "~$TARGET_USER")
 
+install -d -m 0755 /etc/apt/keyrings
+
 ###############################################
 # 1. Enable backports
 ###############################################
@@ -69,7 +71,6 @@ fi
 ###############################################
 # 9. Firefox (Mozilla official repo)
 ###############################################
-install -d -m 0755 /etc/apt/keyrings
 wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
 chmod 644 /etc/apt/keyrings/mozilla.gpg
 
@@ -105,7 +106,6 @@ apt install -y code
 ###############################################
 # 11. ONLYOFFICE
 ###############################################
-mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /etc/apt/keyrings/onlyoffice.gpg
 chmod 644 /etc/apt/keyrings/onlyoffice.gpg
 
