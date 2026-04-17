@@ -39,7 +39,7 @@ apt install -y kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewrit
 ###############################################
 # 5. Apps & Utilities
 ###############################################
-apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla
+apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship
 
 ###############################################
 # 6. Multimedia
@@ -134,26 +134,7 @@ ufw enable
 ufw allow mdns
 
 ###############################################
-# 16. GRUB
-###############################################
-sed -i 's/quiet/quiet loglevel=3 splash/g' /etc/default/grub
-sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
-update-grub
-
-###############################################
-# 17. Plymouth
-###############################################
-plymouth-set-default-theme -R lines
-
-###############################################
-# 18. Starship
-###############################################
-curl -sS https://starship.rs/install.sh | sh -s -- -y
-runuser -u fabri -- sh -c 'echo "eval \"\$(starship init bash)\"" >> /home/fabri/.bashrc'
-runuser -u fabri -- sh -c 'cp /home/fabri/Git/linux/etc/starship.toml /home/fabri/.config'
-
-###############################################
-# 19. Fastgate CIFS
+# 16. Fastgate CIFS
 ###############################################
 apt install -y cifs-utils
 
@@ -163,11 +144,25 @@ tee -a /etc/fstab << END
 END
 
 ###############################################
+# 17. GRUB
+###############################################
+sed -i 's/quiet/quiet loglevel=3 splash/g' /etc/default/grub
+sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/g' /etc/default/grub
+update-grub
+
+###############################################
+# 18. Starship
+###############################################
+runuser -u fabri -- sh -c 'echo "eval \"\$(starship init bash)\"" >> /home/fabri/.bashrc'
+runuser -u fabri -- sh -c 'cp /home/fabri/Git/linux/etc/starship.toml /home/fabri/.config'
+
+###############################################
 # 20. Misc
 ###############################################
 apt-file update
 usermod -aG libvirt,kvm,lpadmin fabri
 runuser -u fabri -- sh -c 'install -D /home/fabri/Git/linux/etc/mpv.conf /home/fabri/.config/mpv/mpv.conf'
+plymouth-set-default-theme -R lines
 
 ###############################################
 # 21. Remove unwanted components
