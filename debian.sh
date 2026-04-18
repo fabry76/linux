@@ -6,6 +6,7 @@ export DEBIAN_FRONTEND=noninteractive
 ###############################################
 TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
 TARGET_HOME=$(eval echo "~$TARGET_USER")
+MOUNT_POINT="$TARGET_HOME/Fastgate"
 
 ###############################################
 # Functions
@@ -23,6 +24,7 @@ write_if_changed() {
 ###############################################
 # Enable Trixie Backports
 ###############################################
+# Enable backports repository
 BACKPORTS_FILE="/etc/apt/sources.list.d/debian-backports.sources"
 read -r -d '' BACKPORTS_CONTENT << 'EOF'
 Types: deb deb-src
@@ -32,31 +34,23 @@ Components: main contrib non-free non-free-firmware
 Enabled: yes
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
-
 if [ ! -f "$BACKPORTS_FILE" ] || ! diff -q <(echo "$BACKPORTS_CONTENT") "$BACKPORTS_FILE" >/dev/null 2>&1; then
   echo "$BACKPORTS_CONTENT" > "$BACKPORTS_FILE"
 fi
 
 # APT Pinning (Kernel & Firmware)
-
 APT_PIN_FILE="/etc/apt/preferences.d/99-backports-isolation"
-
 read -r -d '' APT_PIN_CONTENT << 'EOF'
 Package: *
 Pin: release a=trixie-backports
 Pin-Priority: 100
-
-Package: linux-image-* linux-headers-* firmware-*
-Pin: release a=trixie-backports
-Pin-Priority: 900
 EOF
-
-if [ ! -f "$APT_PIN_FILE" ] || ! diff -q <(echo "$APT_PIN_CONTENT") "$APT_PIN_FILE" >/dev/null 2>&1; then
-  echo "$APT_PIN_CONTENT" > "$APT_PIN_FILE"
+if [ ! -f "$APT_PIN_FILE" ] || ! diff -q <(printf "%s" "$APT_PIN_CONTENT") "$APT_PIN_FILE" >/dev/null 2>&1; then
+  printf "%s" "$APT_PIN_CONTENT" > "$APT_PIN_FILE"
 fi
 
 apt update
-apt install -y trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux
+apt install -y -t trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux
 
 ###############################################
 # Enable contrib + non-free
@@ -84,6 +78,9 @@ apt update
 # Firmware & Drivers
 ###############################################
 apt install -y firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+# To be removed is backports are disabled
+apt-mark hold intel-media-va-driver-non-free
+# To be added if backports are disabled
 #apt install -y firmware-linux
 
 ###############################################
@@ -115,13 +112,13 @@ apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file
 ###############################################
 # Multimedia
 ###############################################
-apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{base,good,bad,ugly}
+apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
 
 ###############################################
 # Fonts & Icons
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-font-awesome
+apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
 apt install -y papirus-icon-theme
 
 ###############################################
@@ -186,28 +183,24 @@ apt install -y virt-manager virt-viewer qemu-system
 # Printing & Scanning
 ###############################################
 apt install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
-systemctl enable cups
 
 ###############################################
 # Firewall
 ###############################################
 apt install -y ufw
-ufw status | grep -q "Status: active" || ufw --force enable
-ufw allow mdns || true
+ufw allow mdns
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 fi
+ufw status | grep -q "Status: active" || ufw --force enable
 
 ###############################################
 # Fastgate SMB Mount
 ###############################################
 apt install -y cifs-utils
 
-MOUNT_POINT="$TARGET_HOME/Fastgate"
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
-
 CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
-
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 
 ###############################################
@@ -217,25 +210,25 @@ if ! grep -q "loglevel=3" /etc/default/grub; then
   sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="/&loglevel=3 splash /' /etc/default/grub
 fi
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
-
 update-grub
 
 ###############################################
 # User Config
 ###############################################
 # Starship
-runuser -u "$TARGET_USER" -- sh -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
-runuser -u "$TARGET_USER" -- sh -c "cp \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
+runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
 # MPV
-runuser -u "$TARGET_USER" -- sh -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
 # Force KDE portal
-runuser -u "$TARGET_USER" -- sh -c "mkdir -p \"$TARGET_HOME/.config/environment.d\" && echo \"GTK_USE_PORTAL=1\" > \"$TARGET_HOME/.config/environment.d/portal.conf\""
+runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environment.d\" && echo \"GTK_USE_PORTAL=1\" > \"$TARGET_HOME/.config/environment.d/portal.conf\""
 
 ###############################################
 # Misc
 ###############################################
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
+systemctl enable cups
 
 ###############################################
 # Remove unwanted components
