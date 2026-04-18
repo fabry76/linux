@@ -132,14 +132,14 @@ apt install -y google-chrome-stable firefox code
 ###############################################
 apt install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system --noninteractive flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
 flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze
 flatpak override org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1
 
 ###############################################
 # Virtualization
 ###############################################
-apt install -y virt-manager virt-viewer qemu-system
+apt install -y virt-manager virt-viewer qemu-kvm bridge-utils
 
 ###############################################
 # Printing & Scanning
