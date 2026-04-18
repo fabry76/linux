@@ -182,5 +182,4 @@ systemctl enable cups
 # Remove unwanted components
 ###############################################
 apt purge -y konqueror zutty
-apt autoremove -y
-apt clean
+apt autoremove -y && apt clean -y
