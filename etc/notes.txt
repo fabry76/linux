@@ -28,6 +28,5 @@ Components: main
 Signed-By: /etc/apt/keyrings/onlyoffice.gpg
 EOF
 )"
-
 apt update
 apt install -y onlyoffice-desktopeditors
