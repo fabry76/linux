@@ -1,144 +1,195 @@
-#!/bin/bash
 set -euo pipefail
-
 export DEBIAN_FRONTEND=noninteractive
 
+###############################################
+# Variables
+###############################################
 TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
 TARGET_HOME=$(eval echo "~$TARGET_USER")
 
-install -d -m 0755 /etc/apt/keyrings
+###############################################
+# Functions
+###############################################
+# write idempotent function
+write_if_changed() {
+  local file="$1"
+  local content="$2"
+
+  if [ ! -f "$file" ] || ! diff -q <(printf "%s" "$content") "$file" >/dev/null 2>&1; then
+    printf "%s" "$content" > "$file"
+  fi
+}
 
 ###############################################
-# 1. Enable backports
+# Enable Trixie Backports
 ###############################################
-tee /etc/apt/sources.list.d/debian-backports.sources << END
+BACKPORTS_FILE="/etc/apt/sources.list.d/debian-backports.sources"
+read -r -d '' BACKPORTS_CONTENT << 'EOF'
 Types: deb deb-src
 URIs: http://deb.debian.org/debian
 Suites: trixie-backports
 Components: main contrib non-free non-free-firmware
 Enabled: yes
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-END
+EOF
+
+if [ ! -f "$BACKPORTS_FILE" ] || ! diff -q <(echo "$BACKPORTS_CONTENT") "$BACKPORTS_FILE" >/dev/null 2>&1; then
+  echo "$BACKPORTS_CONTENT" > "$BACKPORTS_FILE"
+fi
+
+# APT Pinning (Kernel & Firmware)
+
+APT_PIN_FILE="/etc/apt/preferences.d/99-backports-isolation"
+
+read -r -d '' APT_PIN_CONTENT << 'EOF'
+Package: *
+Pin: release a=trixie-backports
+Pin-Priority: 100
+
+Package: linux-image-* linux-headers-* firmware-*
+Pin: release a=trixie-backports
+Pin-Priority: 900
+EOF
+
+if [ ! -f "$APT_PIN_FILE" ] || ! diff -q <(echo "$APT_PIN_CONTENT") "$APT_PIN_FILE" >/dev/null 2>&1; then
+  echo "$APT_PIN_CONTENT" > "$APT_PIN_FILE"
+fi
 
 apt update
-apt install -y -t trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt install -y trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux
 
 ###############################################
-# 2. Locale
+# Enable contrib + non-free
+###############################################
+
+if [ -f /etc/apt/sources.list ]; then
+  sed -i '/^deb / {
+    s/ main\(.*\)$/ main contrib non-free non-free-firmware/
+  }' /etc/apt/sources.list
+
+  sed -i '/^deb-src / {
+    s/ main\(.*\)$/ main contrib non-free non-free-firmware/
+  }' /etc/apt/sources.list
+fi
+
+# Support format .sources (if exists)
+for f in /etc/apt/sources.list.d/*.sources; do
+  [ -f "$f" ] || continue
+  sed -i 's/^Components:.*/Components: main contrib non-free non-free-firmware/' "$f"
+done
+
+apt update
+
+###############################################
+# Firmware & Drivers
+###############################################
+apt install -y firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+#apt install -y firmware-linux
+
+###############################################
+# Locale
 ###############################################
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 ###############################################
-# 3. BLOCK FIREFOX-ESR
+# Block Firefox-ESR
 ###############################################
-tee /etc/apt/preferences.d/no-firefox-esr << 'EOF'
+write_if_changed /etc/apt/preferences.d/no-firefox-esr "$(cat << 'EOF'
 Package: firefox-esr
 Pin: release *
 Pin-Priority: -1
 EOF
+)"
 
 ###############################################
-# 4. KDE Desktop
+# KDE Desktop
 ###############################################
 apt install -y kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
 
 ###############################################
-# 5. Apps & Utilities
+# Apps & Utilities
 ###############################################
 apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship
 
 ###############################################
-# 6. Multimedia
+# Multimedia
 ###############################################
 apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{base,good,bad,ugly}
 
 ###############################################
-# 7. Icons & Fonts
+# Fonts & Icons
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt install -y papirus-icon-theme ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-font-awesome
+apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-font-awesome
+apt install -y papirus-icon-theme
 
 ###############################################
-# 8. Google Chrome
+# Extra Repositories
 ###############################################
-if ! dpkg -s google-chrome-stable >/dev/null 2>&1; then
-  wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  apt install -y ./google-chrome-stable_current_amd64.deb
-  rm -f google-chrome-stable_current_amd64.deb
-fi
-
-###############################################
-# 9. Firefox (Mozilla official repo)
-###############################################
+# Folder
+install -d -m 0755 /etc/apt/keyrings
+# Chrome
+wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google-chrome.gpg
+chmod 644 /etc/apt/keyrings/google-chrome.gpg
+write_if_changed /etc/apt/sources.list.d/google-chrome.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://dl.google.com/linux/chrome/deb/
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/google-chrome.gpg
+EOF
+)"
+# Firefox
 wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
 chmod 644 /etc/apt/keyrings/mozilla.gpg
-
-tee /etc/apt/sources.list.d/mozilla.sources << 'EOF'
+write_if_changed /etc/apt/sources.list.d/mozilla.sources "$(cat << 'EOF'
 Types: deb
 URIs: https://packages.mozilla.org/apt
 Suites: mozilla
 Components: main
 Signed-By: /etc/apt/keyrings/mozilla.gpg
 EOF
-
-apt update
-apt install -y firefox
-
-###############################################
-# 10. VSCode
-###############################################
+)"
+# VSCode
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/vscode.gpg
 chmod 644 /etc/apt/keyrings/vscode.gpg
-
-tee /etc/apt/sources.list.d/vscode.sources << END
+write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
 Signed-By: /etc/apt/keyrings/vscode.gpg
 Architectures: amd64 arm64 armhf
-END
-
+EOF
+)"
+# update & install 
 apt update
-apt install -y code
+apt install -y google-chrome-stable firefox code
 
 ###############################################
-# 11. ONLYOFFICE
+# Flatpak
 ###############################################
-curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /etc/apt/keyrings/onlyoffice.gpg
-chmod 644 /etc/apt/keyrings/onlyoffice.gpg
-
-tee /etc/apt/sources.list.d/onlyoffice.sources << END
-Types: deb
-URIs: https://download.onlyoffice.com/repo/debian
-Suites: squeeze
-Components: main
-Signed-By: /etc/apt/keyrings/onlyoffice.gpg
-END
-
-apt update
-apt install -y onlyoffice-desktopeditors
-
-###############################################
-# 12. Flatpak
-###############################################
-apt install -y flatpak plasma-discover-backend-flatpak
+apt install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system --noninteractive flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
+flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze
+flatpak override org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1
 
 ###############################################
-# 13. Virtualization
+# Virtualization
 ###############################################
 apt install -y virt-manager virt-viewer qemu-system
 
 ###############################################
-# 14. Printing & Scanning
+# Printing & Scanning
 ###############################################
 apt install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
 systemctl enable cups
 
 ###############################################
-# 15. Firewall
+# Firewall
 ###############################################
 apt install -y ufw
 ufw status | grep -q "Status: active" || ufw --force enable
@@ -148,7 +199,7 @@ if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
 fi
 
 ###############################################
-# 16. Fastgate CIFS
+# Fastgate SMB Mount
 ###############################################
 apt install -y cifs-utils
 
@@ -160,7 +211,7 @@ CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 
 ###############################################
-# 17. GRUB
+# GRUB
 ###############################################
 if ! grep -q "loglevel=3" /etc/default/grub; then
   sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="/&loglevel=3 splash /' /etc/default/grub
@@ -170,21 +221,24 @@ sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
 update-grub
 
 ###############################################
-# 18. Config
+# User Config
 ###############################################
+# Starship
 runuser -u "$TARGET_USER" -- sh -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
 runuser -u "$TARGET_USER" -- sh -c "cp \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
+# MPV
 runuser -u "$TARGET_USER" -- sh -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
+# Force KDE portal
+runuser -u "$TARGET_USER" -- sh -c "mkdir -p \"$TARGET_HOME/.config/environment.d\" && echo \"GTK_USE_PORTAL=1\" > \"$TARGET_HOME/.config/environment.d/portal.conf\""
 
 ###############################################
-# 19. Misc
+# Misc
 ###############################################
-apt-file update || true
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
-plymouth-set-default-theme lines -R || true
+plymouth-set-default-theme lines -R
 
 ###############################################
-# 20. Remove unwanted components
+# Remove unwanted components
 ###############################################
 apt purge -y plasma-browser-integration konqueror zutty
 apt autoremove -y
