@@ -100,7 +100,7 @@ apt install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spect
 ###############################################
 # Apps & Utilities
 ###############################################
-apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code
+apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code network-manager-config-connectivity-debian
 
 ###############################################
 # Multimedia
@@ -182,4 +182,4 @@ systemctl enable cups
 # Remove unwanted components
 ###############################################
 apt purge -y konqueror zutty
-apt autoremove -y && apt clean -y
+apt autoremove -y && apt clean
