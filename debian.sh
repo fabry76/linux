@@ -38,8 +38,6 @@ for f in /etc/apt/sources.list.d/*.sources; do
   sed -i 's/^Components:.*/Components: main contrib non-free non-free-firmware/' "$f"
 done
 
-apt update
-
 ###############################################
 # Extra Repositories
 ###############################################
@@ -122,8 +120,7 @@ apt install -y papirus-icon-theme
 apt install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
-flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze
-flatpak override org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1
+flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_USE_PORTAL=1
 
 ###############################################
 # Virtualization
@@ -186,3 +183,4 @@ systemctl enable cups
 ###############################################
 apt purge -y konqueror zutty
 apt autoremove -y
+apt clean
