@@ -5,6 +5,16 @@ curl -fsS https://dl.brave.com/install.sh | sh
 vlc vlc-plugin-pipewire
 
 ###############################################
+# Block Firefox-ESR
+###############################################
+write_if_changed /etc/apt/preferences.d/no-firefox-esr "$(cat << 'EOF'
+Package: firefox-esr
+Pin: release *
+Pin-Priority: -1
+EOF
+)"
+
+###############################################
 # ONLYOFFICE
 ###############################################
 curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /etc/apt/keyrings/onlyoffice.gpg

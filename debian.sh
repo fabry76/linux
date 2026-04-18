@@ -41,49 +41,6 @@ done
 apt update
 
 ###############################################
-# Firmware & Drivers
-###############################################
-apt install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
-
-###############################################
-# Locale
-###############################################
-sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
-locale-gen
-
-###############################################
-# Block Firefox-ESR
-###############################################
-write_if_changed /etc/apt/preferences.d/no-firefox-esr "$(cat << 'EOF'
-Package: firefox-esr
-Pin: release *
-Pin-Priority: -1
-EOF
-)"
-
-###############################################
-# KDE Desktop
-###############################################
-apt install -y kde-plasma-desktop ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
-
-###############################################
-# Apps & Utilities
-###############################################
-apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship
-
-###############################################
-# Multimedia
-###############################################
-apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
-
-###############################################
-# Fonts & Icons
-###############################################
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
-apt install -y papirus-icon-theme
-
-###############################################
 # Extra Repositories
 ###############################################
 # Folder
@@ -123,9 +80,46 @@ Signed-By: /etc/apt/keyrings/vscode.gpg
 Architectures: amd64 arm64 armhf
 EOF
 )"
+
+apt update
+
+###############################################
+# Firmware & Drivers
+###############################################
+apt install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+
+###############################################
+# Locale
+###############################################
+sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+
+###############################################
+# KDE Desktop
+###############################################
+apt install -y kde-plasma-desktop plasma-browser-integration-
+apt install -y ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
+
+###############################################
+# Apps & Utilities
+###############################################
+apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code
+
+###############################################
+# Multimedia
+###############################################
+apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
+
+###############################################
+# Fonts & Icons
+###############################################
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
+apt install -y papirus-icon-theme
+
 # update & install 
 apt update
-apt install -y google-chrome-stable firefox code
+apt install -y google-chrome-stable code
 
 ###############################################
 # Flatpak
