@@ -22,50 +22,16 @@ write_if_changed() {
 }
 
 ###############################################
-# Enable Trixie Backports
-###############################################
-# Enable backports repository
-BACKPORTS_FILE="/etc/apt/sources.list.d/debian-backports.sources"
-read -r -d '' BACKPORTS_CONTENT << 'EOF'
-Types: deb deb-src
-URIs: http://deb.debian.org/debian
-Suites: trixie-backports
-Components: main contrib non-free non-free-firmware
-Enabled: yes
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-if [ ! -f "$BACKPORTS_FILE" ] || ! diff -q <(echo "$BACKPORTS_CONTENT") "$BACKPORTS_FILE" >/dev/null 2>&1; then
-  echo "$BACKPORTS_CONTENT" > "$BACKPORTS_FILE"
-fi
-
-# APT Pinning (Kernel & Firmware)
-APT_PIN_FILE="/etc/apt/preferences.d/99-backports-isolation"
-read -r -d '' APT_PIN_CONTENT << 'EOF'
-Package: *
-Pin: release a=trixie-backports
-Pin-Priority: 100
-EOF
-if [ ! -f "$APT_PIN_FILE" ] || ! diff -q <(printf "%s" "$APT_PIN_CONTENT") "$APT_PIN_FILE" >/dev/null 2>&1; then
-  printf "%s" "$APT_PIN_CONTENT" > "$APT_PIN_FILE"
-fi
-
-apt update
-apt install -y -t trixie-backports linux-image-amd64 linux-headers-amd64 firmware-linux
-
-###############################################
 # Enable contrib + non-free
 ###############################################
-
 if [ -f /etc/apt/sources.list ]; then
   sed -i '/^deb / {
     s/ main\(.*\)$/ main contrib non-free non-free-firmware/
   }' /etc/apt/sources.list
-
   sed -i '/^deb-src / {
     s/ main\(.*\)$/ main contrib non-free non-free-firmware/
   }' /etc/apt/sources.list
 fi
-
 # Support format .sources (if exists)
 for f in /etc/apt/sources.list.d/*.sources; do
   [ -f "$f" ] || continue
@@ -77,11 +43,7 @@ apt update
 ###############################################
 # Firmware & Drivers
 ###############################################
-apt install -y firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
-# To be removed is backports are disabled
-apt-mark hold intel-media-va-driver-non-free
-# To be added if backports are disabled
-#apt install -y firmware-linux
+apt install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # Locale
