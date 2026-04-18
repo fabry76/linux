@@ -116,10 +116,6 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
 apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
 apt install -y papirus-icon-theme
 
-# update & install 
-apt update
-apt install -y google-chrome-stable code
-
 ###############################################
 # Flatpak
 ###############################################
