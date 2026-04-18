@@ -97,8 +97,7 @@ locale-gen
 ###############################################
 # KDE Desktop
 ###############################################
-apt install -y kde-plasma-desktop plasma-browser-integration-
-apt install -y ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
+apt install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter transmission-qt kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
 
 ###############################################
 # Apps & Utilities
@@ -189,5 +188,5 @@ systemctl enable cups
 ###############################################
 # Remove unwanted components
 ###############################################
-apt purge -y plasma-browser-integration konqueror zutty
+apt purge -y konqueror zutty
 apt autoremove -y
