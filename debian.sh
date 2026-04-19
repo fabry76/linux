@@ -9,8 +9,18 @@ apt-get install -y gnupg
 ###############################################
 # Variables
 ###############################################
-TARGET_USER="${SUDO_USER:-${LOGNAME:-$(whoami)}}"
-TARGET_HOME=$(eval echo "~$TARGET_USER")
+if [ -n "${SUDO_USER:-}" ]; then
+    TARGET_USER="$SUDO_USER"
+else
+    TARGET_USER="$(who am i | awk '{print $1}')"
+fi
+
+# fallback 
+if [ -z "$TARGET_USER" ] || [ "$TARGET_USER" = "root" ]; then
+    TARGET_USER="$(logname 2>/dev/null || echo root)"
+fi
+
+TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 MOUNT_POINT="$TARGET_HOME/Fastgate"
 
 ###############################################
