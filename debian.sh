@@ -26,7 +26,6 @@ MOUNT_POINT="$TARGET_HOME/Fastgate"
 ###############################################
 # Functions
 ###############################################
-# write idempotent function
 write_if_changed() {
   local file="$1"
   local content="$2"
