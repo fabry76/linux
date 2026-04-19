@@ -117,8 +117,6 @@ ufw allow mdns
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 fi
-systemctl restart NetworkManager
-sleep 5
 ufw status | grep -q "Status: active" || ufw --force enable
 
 ###############################################
