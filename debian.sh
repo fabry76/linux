@@ -4,7 +4,7 @@
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
-apt install -y gnupg ca-certificates wget
+apt-get install -y gnupg ca-certificates wget
 
 ###############################################
 # Variables
@@ -91,12 +91,12 @@ Architectures: amd64 arm64 armhf
 EOF
 )"
 
-apt update
+apt-get update
 
 ###############################################
 # Firmware & Drivers
 ###############################################
-apt install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # Locale
@@ -107,29 +107,29 @@ locale-gen
 ###############################################
 # KDE Desktop
 ###############################################
-apt install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
+apt-get install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code network-manager-config-connectivity-debian
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code network-manager-config-connectivity-debian nvme-cli
 
 ###############################################
 # Multimedia
 ###############################################
-apt install -y mpv ffmpeg libavcodec-extra gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
+apt-get install -y mpv ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
 
 ###############################################
 # Fonts & Icons
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
-apt install -y papirus-icon-theme
+apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
+apt-get install -y papirus-icon-theme
 
 ###############################################
 # Flatpak
 ###############################################
-apt install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde
+apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
 flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_USE_PORTAL=1
@@ -137,17 +137,17 @@ flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_
 ###############################################
 # Virtualization
 ###############################################
-apt install -y virt-manager virt-viewer qemu-kvm bridge-utils
+apt-get install -y virt-manager virt-viewer qemu-kvm bridge-utils
 
 ###############################################
 # Printing & Scanning
 ###############################################
-apt install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
+apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
 
 ###############################################
 # Firewall
 ###############################################
-apt install -y ufw
+apt-get install -y ufw
 ufw allow mdns
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
@@ -157,7 +157,7 @@ ufw status | grep -q "Status: active" || ufw --force enable
 ###############################################
 # Fastgate SMB Mount
 ###############################################
-apt install -y cifs-utils
+apt-get install -y cifs-utils
 
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
@@ -193,20 +193,5 @@ systemctl enable cups
 ###############################################
 # Remove unwanted components
 ###############################################
-apt purge -y konqueror zutty
-apt autoremove -y && apt clean
-
-###############################################
-# Final Log
-###############################################
-LOG_FILE="$TARGET_HOME/setup.log"
-runuser -u "$TARGET_USER" -- bash -c "cat > \"$LOG_FILE\" <<EOF
-Setup completed successfully!
-
-Date: \$(date)
-User: $TARGET_USER
-Home: $TARGET_HOME
-
-Mounted Fastgate at: $MOUNT_POINT
-EOF
-"
+apt-get purge -y konqueror zutty
+apt-get autoremove -y && apt-get clean
