@@ -183,3 +183,18 @@ systemctl enable cups
 ###############################################
 apt purge -y konqueror zutty
 apt autoremove -y && apt clean
+
+###############################################
+# Final Log
+###############################################
+LOG_FILE="$TARGET_HOME/setup.log"
+runuser -u "$TARGET_USER" -- bash -c "cat > \"$LOG_FILE\" <<EOF
+Setup completed successfully!
+
+Date: \$(date)
+User: $TARGET_USER
+Home: $TARGET_HOME
+
+Mounted Fastgate at: $MOUNT_POINT
+EOF
+"
