@@ -103,12 +103,6 @@ EOF
 apt-get update
 
 ###############################################
-# Locale
-###############################################
-sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
-locale-gen
-
-###############################################
 # Firmware & Drivers
 ###############################################
 apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
@@ -118,16 +112,6 @@ apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-med
 ###############################################
 apt-get install -y kde-plasma-desktop plasma-browser-integration-
 apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
-
-###############################################
-# Firewall
-###############################################
-apt-get install -y ufw
-ufw allow mdns
-if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
-   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-fi
-ufw status | grep -q "Status: active" || ufw --force enable
 
 ###############################################
 # Apps & Utilities
@@ -147,12 +131,14 @@ apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlit
 apt-get install -y papirus-icon-theme
 
 ###############################################
-# Flatpak
+# Firewall
 ###############################################
-apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
-flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_USE_PORTAL=1
+apt-get install -y ufw
+ufw allow mdns
+if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
+   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+fi
+ufw status | grep -q "Status: active" || ufw --force enable
 
 ###############################################
 # Virtualization
@@ -163,6 +149,14 @@ apt-get install -y virt-manager virt-viewer qemu-kvm
 # Printing & Scanning
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
+
+###############################################
+# Flatpak
+###############################################
+apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
+flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_USE_PORTAL=1
 
 ###############################################
 # Fastgate SMB Mount
@@ -181,6 +175,12 @@ if ! grep -q "loglevel=3" /etc/default/grub; then
 fi
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
 update-grub
+
+###############################################
+# Locale
+###############################################
+sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
 
 ###############################################
 # User Config
