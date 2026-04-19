@@ -1,5 +1,9 @@
+###############################################
+# Initial
+###############################################
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
+apt install -y gnupg ca-certificates wget
 
 ###############################################
 # Variables
