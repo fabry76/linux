@@ -4,7 +4,7 @@
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get install -y gnupg ca-certificates wget
+apt-get install -y gnupg
 
 ###############################################
 # Variables
