@@ -51,16 +51,6 @@ for f in /etc/apt/sources.list.d/*.sources; do
 done
 
 ###############################################
-# DNS setup
-###############################################
-DNS1="8.8.8.8"
-DNS2="8.8.4.4"
-RESOLV="/etc/resolv.conf"
-
-grep -qxF "nameserver $DNS1" "$RESOLV" 2>/dev/null || echo "nameserver $DNS1" >> "$RESOLV"
-grep -qxF "nameserver $DNS2" "$RESOLV" 2>/dev/null || echo "nameserver $DNS2" >> "$RESOLV"
-
-###############################################
 # Extra Repositories
 ###############################################
 # Folder
