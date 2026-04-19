@@ -91,7 +91,7 @@ Architectures: amd64 arm64 armhf
 EOF
 )"
 
-apt update
+apt-get update
 
 ###############################################
 # Locale
@@ -100,14 +100,20 @@ sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 ###############################################
-# KDE Desktop
+# Firmware & Drivers
 ###############################################
-apt-get install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
+apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
-# Firewall & Network
+# KDE Desktop
 ###############################################
-apt-get install -y ufw network-manager-config-connectivity-debian
+apt-get install -y kde-plasma-desktop plasma-browser-integration-
+apt-get install -y ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
+
+###############################################
+# Firewall
+###############################################
+apt-get install -y ufw
 ufw allow mdns
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
@@ -132,11 +138,6 @@ apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlit
 apt-get install -y papirus-icon-theme
 
 ###############################################
-# Firmware & Drivers
-###############################################
-apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
-
-###############################################
 # Flatpak
 ###############################################
 apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
@@ -147,7 +148,7 @@ flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_
 ###############################################
 # Virtualization
 ###############################################
-apt-get install -y virt-manager virt-viewer qemu-kvm bridge-utils
+apt-get install -y virt-manager virt-viewer qemu-kvm
 
 ###############################################
 # Printing & Scanning
