@@ -51,11 +51,6 @@ for f in /etc/apt/sources.list.d/*.sources; do
 done
 
 ###############################################
-# Firmware & Drivers
-###############################################
-apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
-
-###############################################
 # Locale
 ###############################################
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
@@ -79,7 +74,7 @@ ufw status | grep -q "Status: active" || ufw --force enable
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship nvme-cli
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship
 
 ###############################################
 # Multimedia
@@ -136,6 +131,11 @@ EOF
 
 apt-get update
 apt-get install -y google-chrome-stable firefox code
+
+###############################################
+# Firmware & Drivers
+###############################################
+apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # Flatpak
