@@ -114,6 +114,14 @@ apt-get install -y kde-plasma-desktop plasma-browser-integration-
 apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
+# KDE Flatpak
+###############################################
+apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
+flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_USE_PORTAL=1
+
+###############################################
 # Apps & Utilities
 ###############################################
 apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship nvme-cli google-chrome-stable firefox code
@@ -149,14 +157,6 @@ apt-get install -y virt-manager virt-viewer qemu-kvm
 # Printing & Scanning
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
-
-###############################################
-# Flatpak
-###############################################
-apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
-flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_USE_PORTAL=1
 
 ###############################################
 # Fastgate SMB Mount
