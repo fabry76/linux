@@ -51,6 +51,16 @@ for f in /etc/apt/sources.list.d/*.sources; do
 done
 
 ###############################################
+# DNS setup
+###############################################
+DNS1="8.8.8.8"
+DNS2="8.8.4.4"
+RESOLV="/etc/resolv.conf"
+
+grep -qxF "nameserver $DNS1" "$RESOLV" 2>/dev/null || echo "nameserver $DNS1" >> "$RESOLV"
+grep -qxF "nameserver $DNS2" "$RESOLV" 2>/dev/null || echo "nameserver $DNS2" >> "$RESOLV"
+
+###############################################
 # Extra Repositories
 ###############################################
 # Folder
@@ -110,9 +120,21 @@ locale-gen
 apt-get install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
 
 ###############################################
+# Firewall & Network
+###############################################
+apt-get install -y ufw network-manager-config-connectivity-debian
+ufw allow mdns
+if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
+   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+fi
+systemctl restart NetworkManager
+sleep 5
+ufw status | grep -q "Status: active" || ufw --force enable
+
+###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code network-manager-config-connectivity-debian nvme-cli
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship google-chrome-stable firefox code nvme-cli
 
 ###############################################
 # Multimedia
@@ -143,16 +165,6 @@ apt-get install -y virt-manager virt-viewer qemu-kvm bridge-utils
 # Printing & Scanning
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
-
-###############################################
-# Firewall
-###############################################
-apt-get install -y ufw
-ufw allow mdns
-if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
-   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-fi
-ufw status | grep -q "Status: active" || ufw --force enable
 
 ###############################################
 # Fastgate SMB Mount
