@@ -199,9 +199,3 @@ runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environmen
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
 systemctl enable cups
-
-###############################################
-# Remove unwanted components
-###############################################
-#apt-get purge -y konqueror zutty
-apt-get autoremove -y && apt-get clean
