@@ -51,44 +51,6 @@ for f in /etc/apt/sources.list.d/*.sources; do
 done
 
 ###############################################
-# Locale
-###############################################
-sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
-locale-gen
-
-###############################################
-# KDE Desktop
-###############################################
-apt-get install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
-
-###############################################
-# Firewall & Network
-###############################################
-apt-get install -y ufw network-manager-config-connectivity-debian
-ufw allow mdns
-if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
-   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-fi
-ufw status | grep -q "Status: active" || ufw --force enable
-
-###############################################
-# Apps & Utilities
-###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship
-
-###############################################
-# Multimedia
-###############################################
-apt-get install -y mpv ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
-
-###############################################
-# Fonts & Icons
-###############################################
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
-apt-get install -y papirus-icon-theme
-
-###############################################
 # Extra Repositories
 ###############################################
 # Folder
@@ -129,8 +91,45 @@ Architectures: amd64 arm64 armhf
 EOF
 )"
 
-apt-get update
-apt-get install -y google-chrome-stable firefox code
+apt update
+
+###############################################
+# Locale
+###############################################
+sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+
+###############################################
+# KDE Desktop
+###############################################
+apt-get install -y kde-plasma-desktop plasma-browser-integration- ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder
+
+###############################################
+# Firewall & Network
+###############################################
+apt-get install -y ufw network-manager-config-connectivity-debian
+ufw allow mdns
+if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
+   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+fi
+ufw status | grep -q "Status: active" || ufw --force enable
+
+###############################################
+# Apps & Utilities
+###############################################
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship nvme-cli google-chrome-stable firefox code
+
+###############################################
+# Multimedia
+###############################################
+apt-get install -y mpv ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
+
+###############################################
+# Fonts & Icons
+###############################################
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea
+apt-get install -y papirus-icon-theme
 
 ###############################################
 # Firmware & Drivers
