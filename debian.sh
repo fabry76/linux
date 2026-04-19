@@ -108,7 +108,7 @@ apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-med
 # KDE Desktop
 ###############################################
 apt-get install -y kde-plasma-desktop plasma-browser-integration-
-apt-get install -y ark kalk kde-spectacle ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
+apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
 # Firewall
