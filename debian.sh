@@ -3,6 +3,7 @@
 ###############################################
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
+
 apt install -y gnupg ca-certificates wget
 
 ###############################################
@@ -24,6 +25,13 @@ write_if_changed() {
     printf "%s" "$content" > "$file"
   fi
 }
+
+###############################################
+# Full Verbose Logging
+###############################################
+LOG_FILE="$TARGET_HOME/install-full.log"
+runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
+exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
 # Enable contrib + non-free
