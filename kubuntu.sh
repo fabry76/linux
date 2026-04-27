@@ -1,5 +1,5 @@
 # install applications
-apt install ubuntu-restricted-extras intel-media-va-driver-non-free vlc ffmpeg ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim apt-show-versions fwupd transmission-qt kolourpaint kamoso okular kcolorchooser filelight kweather rclone filezilla firefox -y
+apt install ubuntu-restricted-extras intel-media-va-driver-non-free mpv ffmpeg ffmpegthumbnailer timeshift fastfetch curl htop net-tools apt-transport-https vim apt-show-versions fwupd transmission-qt kolourpaint kamoso okular kcolorchooser filelight kweather rclone filezilla firefox -y
 
 # snaps
 snap install onlyoffice-desktopeditors
