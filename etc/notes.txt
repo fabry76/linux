@@ -1,5 +1,4 @@
-# brave
-curl -fsS https://dl.brave.com/install.sh | sh
+apt-get install -y vlc vlc-plugin-pipewire
 
 ###############################################
 # Block Firefox-ESR

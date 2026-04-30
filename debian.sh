@@ -126,7 +126,7 @@ apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-
 ###############################################
 # Multimedia
 ###############################################
-apt-get install -y vlc vlc-plugin-pipewire ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
+apt-get install -y mpv ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
 
 ###############################################
 # Fonts & Icons
@@ -198,6 +198,9 @@ runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"'
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
 # Force KDE portal
 runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environment.d\" && echo \"GTK_USE_PORTAL=1\" > \"$TARGET_HOME/.config/environment.d/portal.conf\""
+# MPV
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
+
 
 ###############################################
 # Misc
@@ -205,4 +208,3 @@ runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environmen
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
 systemctl enable cups
-systemctl disable dhcpcd
