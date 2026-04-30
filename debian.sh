@@ -1,10 +1,5 @@
-###############################################
-# Initial
-###############################################
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
-
-apt-get install -y gnupg
 
 ###############################################
 # Variables
@@ -49,6 +44,11 @@ write_if_changed() {
 LOG_FILE="$TARGET_HOME/install-full.log"
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
+
+###############################################
+# Initial Firmware, Drivers and Utilities
+###############################################
+apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free gnupg
 
 ###############################################
 # Enable contrib + non-free
@@ -98,11 +98,6 @@ EOF
 )"
 
 apt-get update
-
-###############################################
-# Firmware & Drivers
-###############################################
-apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # KDE Desktop
