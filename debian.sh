@@ -14,14 +14,22 @@ if [ -n "${SUDO_USER:-}" ]; then
 else
     TARGET_USER="$(who am i | awk '{print $1}')"
 fi
-
 # fallback 
 if [ -z "$TARGET_USER" ] || [ "$TARGET_USER" = "root" ]; then
     TARGET_USER="$(logname 2>/dev/null || echo root)"
 fi
 
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+
 MOUNT_POINT="$TARGET_HOME/Fastgate"
+
+INTERFACES_FILE="/etc/network/interfaces"
+
+INTERFACES_CONTENT=$(cat << 'EOF'
+auto lo
+iface lo inet loopback
+EOF
+)
 
 ###############################################
 # Functions
@@ -99,8 +107,8 @@ apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-med
 ###############################################
 # KDE Desktop
 ###############################################
-apt-get install -y kde-plasma-desktop konsole+ plasma-browser-integration- konqueror- kdeconnect- evolution-data-server-common-
-apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
+apt-get install -y kde-plasma-desktop konsole+ plasma-browser-integration- konqueror- kdeconnect- evolution-data-server-common- gnome-keyring-
+apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
 # KDE Flatpak
@@ -148,6 +156,17 @@ apt-get install -y virt-manager virt-viewer qemu-kvm
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
 
 ###############################################
+# Networking
+###############################################
+write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
+
+if [ -d /etc/network/interfaces.d ]; then
+  find /etc/network/interfaces.d -type f -exec sed -i '/iface .* inet dhcp/d' {} +
+  find /etc/network/interfaces.d -type f -exec sed -i '/allow-hotplug/d' {} +
+  find /etc/network/interfaces.d -type f -exec sed -i '/auto /d' {} +
+fi
+
+###############################################
 # Fastgate SMB Mount
 ###############################################
 apt-get install -y cifs-utils
@@ -186,3 +205,4 @@ runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environmen
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
 systemctl enable cups
+systemctl disable dhcpcd
