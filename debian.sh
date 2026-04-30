@@ -201,7 +201,6 @@ runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environmen
 # MPV
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
 
-
 ###############################################
 # Misc
 ###############################################
