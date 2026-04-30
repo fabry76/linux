@@ -11,6 +11,18 @@ Pin-Priority: -1
 EOF
 )"
 
+# Firefox repository
+wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
+chmod 644 /etc/apt/keyrings/mozilla.gpg
+write_if_changed /etc/apt/sources.list.d/mozilla.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://packages.mozilla.org/apt
+Suites: mozilla
+Components: main
+Signed-By: /etc/apt/keyrings/mozilla.gpg
+EOF
+)"
+
 ###############################################
 # ONLYOFFICE
 ###############################################

@@ -76,17 +76,6 @@ Architectures: amd64
 Signed-By: /etc/apt/keyrings/google-chrome.gpg
 EOF
 )"
-# Firefox
-wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
-chmod 644 /etc/apt/keyrings/mozilla.gpg
-write_if_changed /etc/apt/sources.list.d/mozilla.sources "$(cat << 'EOF'
-Types: deb
-URIs: https://packages.mozilla.org/apt
-Suites: mozilla
-Components: main
-Signed-By: /etc/apt/keyrings/mozilla.gpg
-EOF
-)"
 # VSCode
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/vscode.gpg
 chmod 644 /etc/apt/keyrings/vscode.gpg
@@ -110,7 +99,7 @@ apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-med
 ###############################################
 # KDE Desktop
 ###############################################
-apt-get install -y kde-plasma-desktop plasma-browser-integration- konqueror-
+apt-get install -y kde-plasma-desktop konsole+ plasma-browser-integration- konqueror-
 apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight kweather plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
@@ -124,7 +113,7 @@ flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship nvme-cli google-chrome-stable firefox code
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship nvme-cli google-chrome-stable code firefox-esr
 
 ###############################################
 # Multimedia
