@@ -153,7 +153,7 @@ apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-
 apt-get install -y cifs-utils
 
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
-CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount   0 0"
+CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,vers=1.0,user=admin,pass=admin,iocharset=utf8,file_mode=0777,dir_mode=0777,x-systemd.automount,cache=loose,actimeo=30,nofail   0 0"
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 
 ###############################################
