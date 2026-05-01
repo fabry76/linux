@@ -64,3 +64,7 @@ EOF
 )"
 apt update
 apt install -y onlyoffice-desktopeditors
+
+FTP
+
+sftp://u00015%40ngoffice@filetransfer.nippongases.com
