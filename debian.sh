@@ -2,29 +2,10 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 ###############################################
-# Variables
+# Target User & Home
 ###############################################
-if [ -n "${SUDO_USER:-}" ]; then
-    TARGET_USER="$SUDO_USER"
-else
-    TARGET_USER="$(who am i | awk '{print $1}')"
-fi
-# fallback 
-if [ -z "$TARGET_USER" ] || [ "$TARGET_USER" = "root" ]; then
-    TARGET_USER="$(logname 2>/dev/null || echo root)"
-fi
-
+TARGET_USER="${SUDO_USER:-$(logname 2>/dev/null || echo root)}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
-
-MOUNT_POINT="$TARGET_HOME/Fastgate"
-
-INTERFACES_FILE="/etc/network/interfaces"
-
-INTERFACES_CONTENT=$(cat << 'EOF'
-auto lo
-iface lo inet loopback
-EOF
-)
 
 ###############################################
 # Functions
@@ -44,11 +25,6 @@ write_if_changed() {
 LOG_FILE="$TARGET_HOME/install-full.log"
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
-
-###############################################
-# Initial Firmware, Drivers and Utilities
-###############################################
-apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free gnupg
 
 ###############################################
 # Enable contrib + non-free
@@ -72,37 +48,51 @@ done
 ###############################################
 # Folder
 install -d -m 0755 /etc/apt/keyrings
+
 # Chrome
-wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google-chrome.gpg
-chmod 644 /etc/apt/keyrings/google-chrome.gpg
+curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
+  -o /etc/apt/keyrings/google-chrome.asc
+chmod 644 /etc/apt/keyrings/google-chrome.asc
+
 write_if_changed /etc/apt/sources.list.d/google-chrome.sources "$(cat << 'EOF'
 Types: deb
 URIs: https://dl.google.com/linux/chrome/deb/
 Suites: stable
 Components: main
 Architectures: amd64
-Signed-By: /etc/apt/keyrings/google-chrome.gpg
+Signed-By: /etc/apt/keyrings/google-chrome.asc
 EOF
 )"
+
 # VSCode
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/vscode.gpg
-chmod 644 /etc/apt/keyrings/vscode.gpg
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+  -o /etc/apt/keyrings/vscode.asc
+chmod 644 /etc/apt/keyrings/vscode.asc
+
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
-Signed-By: /etc/apt/keyrings/vscode.gpg
+Signed-By: /etc/apt/keyrings/vscode.asc
 Architectures: amd64 arm64 armhf
 EOF
 )"
 
+###############################################
+# Update Repositories
+###############################################
 apt-get update
+
+###############################################
+# Initial Firmware, Drivers and Utilities
+###############################################
+apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # KDE Desktop
 ###############################################
-apt-get install -y kde-plasma-desktop konsole+ plasma-browser-integration- konqueror- kdeconnect- evolution-data-server-common- gnome-keyring-
+apt-get install -y kde-plasma-desktop konsole+ plasma-browser-integration- konqueror- kdeconnect- gnome-keyring-
 apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
@@ -138,7 +128,7 @@ ufw allow mdns
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 fi
-ufw status | grep -q "Status: active" || ufw --force enable
+ufw status | grep -q "active" || ufw --force enable
 
 ###############################################
 # Virtualization
@@ -153,6 +143,14 @@ apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-
 ###############################################
 # Networking
 ###############################################
+INTERFACES_FILE="/etc/network/interfaces"
+
+INTERFACES_CONTENT=$(cat << 'EOF'
+auto lo
+iface lo inet loopback
+EOF
+)
+
 write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
 
 if [ -d /etc/network/interfaces.d ]; then
@@ -166,8 +164,12 @@ fi
 ###############################################
 apt-get install -y cifs-utils
 
+MOUNT_POINT="$TARGET_HOME/Fastgate"
+USER_ID=$(id -u "$TARGET_USER")
+GROUP_ID=$(id -g "$TARGET_USER")
+CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,user=admin,pass=admin,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft 0 0"
+
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
-CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,user=admin,pass=admin,iocharset=utf8,uid=1000,gid=1000,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft 0 0"
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 
 ###############################################
@@ -202,3 +204,4 @@ runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mp
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
 systemctl enable cups
+apt-get -y autoremove && apt-get clean
