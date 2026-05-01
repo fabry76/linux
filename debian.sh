@@ -27,11 +27,6 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
-# Curl
-###############################################
-apt-get install -y curl
-
-###############################################
 # Debian Repositories
 ###############################################
 # Disable legacy sources.list
@@ -73,8 +68,8 @@ EOF
 install -d -m 0755 /etc/apt/keyrings
 
 # Chrome
-curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
-  -o /etc/apt/keyrings/google-chrome.asc
+wget -qO /etc/apt/keyrings/google-chrome.asc \
+  https://dl.google.com/linux/linux_signing_key.pub
 chmod 644 /etc/apt/keyrings/google-chrome.asc
 
 write_if_changed /etc/apt/sources.list.d/google-chrome.sources "$(cat << 'EOF'
@@ -88,8 +83,8 @@ EOF
 )"
 
 # VSCode
-curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
-  -o /etc/apt/keyrings/vscode.asc
+wget -qO /etc/apt/keyrings/vscode.asc \
+  https://packages.microsoft.com/keys/microsoft.asc
 chmod 644 /etc/apt/keyrings/vscode.asc
 
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
