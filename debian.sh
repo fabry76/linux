@@ -27,6 +27,11 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
+# Tools
+###############################################
+apt-get install -y curl gnupg
+
+###############################################
 # Debian Repositories
 ###############################################
 # Disable legacy sources.list
