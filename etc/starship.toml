@@ -86,13 +86,12 @@ style_user = "bold blue"
 show_always = true
 
 [nodejs]
-format = "via [🤖 $version](bold green) "
+format = "via [ $version](bold green) "
 
 [os]
-format = "on [$name 🌀]($style) "
+format = "on [$name 🐧]($style) "
 style = "bold bright-red"
 disabled = false
 
 [os.symbols]
-Debian = "🌀"
-
+Debian = "🐧"
