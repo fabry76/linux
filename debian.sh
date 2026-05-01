@@ -27,9 +27,9 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
-# Tools
+# Curl
 ###############################################
-apt-get install -y curl gnupg
+apt-get install -y curl
 
 ###############################################
 # Debian Repositories
