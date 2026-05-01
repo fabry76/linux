@@ -4,7 +4,7 @@ export DEBIAN_FRONTEND=noninteractive
 ###############################################
 # Target User & Home
 ###############################################
-TARGET_USER="${SUDO_USER:-$(logname 2>/dev/null || echo root)}"
+TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 
 ###############################################
@@ -14,34 +14,53 @@ write_if_changed() {
   local file="$1"
   local content="$2"
 
-  if [ ! -f "$file" ] || ! diff -q <(printf "%s" "$content") "$file" >/dev/null 2>&1; then
-    printf "%s" "$content" > "$file"
+  if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
+    printf "%s\n" "$content" > "$file"
   fi
 }
+
 
 ###############################################
 # Full Verbose Logging
 ###############################################
-LOG_FILE="$TARGET_HOME/install-full.log"
+LOG_FILE="$TARGET_HOME/install.log"
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
-# Enable contrib + non-free
+# Debian Repositories
 ###############################################
+# Disable legacy sources.list
 if [ -f /etc/apt/sources.list ]; then
-  sed -i '/^deb / {
-    s/ main\(.*\)$/ main contrib non-free non-free-firmware/
-  }' /etc/apt/sources.list
-  sed -i '/^deb-src / {
-    s/ main\(.*\)$/ main contrib non-free non-free-firmware/
-  }' /etc/apt/sources.list
+  if [ ! -f /etc/apt/sources.list.bak ]; then
+    mv /etc/apt/sources.list /etc/apt/sources.list.bak
+  fi
 fi
-# Support format .sources (if exists)
-for f in /etc/apt/sources.list.d/*.sources; do
-  [ -f "$f" ] || continue
-  sed -i 's/^Components:.*/Components: main contrib non-free non-free-firmware/' "$f"
-done
+
+# Detect Debian codename
+DEBIAN_CODENAME="$(. /etc/os-release && echo "${VERSION_CODENAME}")"
+DEBIAN_SOURCES="/etc/apt/sources.list.d/debian.sources"
+
+write_if_changed "$DEBIAN_SOURCES" "$(cat << EOF
+Types: deb deb-src
+URIs: https://deb.debian.org/debian/
+Suites: $DEBIAN_CODENAME
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb deb-src
+URIs: https://security.debian.org/debian-security/
+Suites: $DEBIAN_CODENAME-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb deb-src
+URIs: https://deb.debian.org/debian/
+Suites: $DEBIAN_CODENAME-updates
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+)"
 
 ###############################################
 # Extra Repositories
@@ -139,6 +158,7 @@ apt-get install -y virt-manager virt-viewer qemu-kvm
 # Printing & Scanning
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
+systemctl enable cups
 
 ###############################################
 # Networking
@@ -152,12 +172,6 @@ EOF
 )
 
 write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
-
-if [ -d /etc/network/interfaces.d ]; then
-  find /etc/network/interfaces.d -type f -exec sed -i '/iface .* inet dhcp/d' {} +
-  find /etc/network/interfaces.d -type f -exec sed -i '/allow-hotplug/d' {} +
-  find /etc/network/interfaces.d -type f -exec sed -i '/auto /d' {} +
-fi
 
 ###############################################
 # Fastgate SMB Mount
@@ -175,11 +189,8 @@ grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 ###############################################
 # GRUB
 ###############################################
-if ! grep -q "loglevel=3" /etc/default/grub; then
-  sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="/&loglevel=3 splash /' /etc/default/grub
-fi
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
-update-grub
+sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="splash quiet loglevel=3"/' /etc/default/grub
 
 ###############################################
 # Locale
@@ -199,9 +210,9 @@ runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environmen
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
 
 ###############################################
-# Misc
+# Finalization
 ###############################################
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
-systemctl enable cups
+update-grub
 apt-get -y autoremove && apt-get clean
