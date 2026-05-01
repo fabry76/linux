@@ -152,6 +152,7 @@ ufw status | grep -q "active" || ufw --force enable
 # Virtualization
 ###############################################
 apt-get install -y virt-manager virt-viewer qemu-kvm
+runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/Virtual\""
 
 ###############################################
 # Printing & Scanning
