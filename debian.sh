@@ -129,7 +129,7 @@ flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums filezilla starship nvme-cli google-chrome-stable code firefox-esr
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code firefox-esr
 
 ###############################################
 # Multimedia
