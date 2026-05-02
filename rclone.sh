@@ -1,10 +1,18 @@
 ###############################################
 # RCLONE AUTO SYNC
 ###############################################
+# Check directory state and bootstrap if empty
+if [ -d "$HOME/Documents" ] && [ -n "$(ls -A "$HOME/Documents" 2>/dev/null)" ]; then
+  echo "❌ ERROR: $HOME/Documents is not empty. Aborting setup to prevent data overwrite."
+  exit 1
+fi
 
-TARGET_USER="$(id -un)"
-TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+if [ ! -d "$HOME/Documents" ] || [ -z "$(ls -A "$HOME/Documents" 2>/dev/null)" ]; then
+  echo "📦 Directory is empty: running bootstrap from GDrive..."
+  rclone copy gdrive: "$HOME/Documents"
+fi
 
+# write_if_changed function
 write_if_changed() {
   local file="$1"
   local content="$2"
@@ -14,50 +22,28 @@ write_if_changed() {
   fi
 }
 
-mkdir -p "$TARGET_HOME/.config/systemd/user"
+# Create systemd user service directory
+mkdir -p "$HOME/.config/systemd/user"
 
-###############################################
-# SYNC IN (login)
-###############################################
-write_if_changed "$TARGET_HOME/.config/systemd/user/rclone-sync-in.service" "$(cat <<EOF
+cat > "$HOME/.config/systemd/user/rclone-sync.service" <<'EOF'
 [Unit]
-Description=Rclone sync GDrive -> Documents (login)
-After=graphical-session.target
-Wants=graphical-session.target
+Description=Rclone download GDrive -> Documents (dated backup)
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c '/usr/bin/rclone sync gdrive: \$HOME/Documents --create-empty-src-dirs -v > \$HOME/rclone-in.log 2>&1'
 
-[Install]
-WantedBy=graphical-session.target
-EOF
-)"
+ExecStart=/bin/sh -c '/usr/bin/rclone sync gdrive: /home/fabri/Documents --backup-dir /home/fabri/Downloads/Documents_backup_$(date +%%F) -v >> /home/fabri/rclone-sync.log 2>&1'
 
-###############################################
-# SYNC OUT (logout/shutdown best effort)
-###############################################
-write_if_changed "$TARGET_HOME/.config/systemd/user/rclone-sync-out.service" "$(cat <<EOF
-[Unit]
-Description=Rclone sync Documents -> GDrive (shutdown best effort)
-DefaultDependencies=no
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash -c '/usr/bin/rclone sync "$HOME/Documents" gdrive: -P >> "$HOME/rclone-out.log" 2>&1'
+RemainAfterExit=yes
 TimeoutStartSec=0
-TimeoutStopSec=10min
+Restart=no
 
 [Install]
 WantedBy=default.target
 EOF
-)"
 
-###############################################
-# ENABLE SERVICES
-###############################################
 systemctl --user daemon-reload
-systemctl --user enable rclone-sync-in.service
-systemctl --user enable rclone-sync-out.service
-
-loginctl enable-linger "$TARGET_USER"
+systemctl --user enable rclone-sync.service
+loginctl enable-linger "$USER"

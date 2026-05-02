@@ -1,6 +1,0 @@
-rclone copy gdrive: /home/fabri/Documents -P
-
-crontab -e
-@reboot sleep 10 && rclone sync gdrive: /home/fabri/Documents > --create-empty-src-dirs -v > /home/fabri/rclone-sync.log 2>&1
-
-rclone sync /home/fabri/Documents gdrive: -P
