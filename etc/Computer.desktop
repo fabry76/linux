@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Computer
-Comment=Dolphin
-Exec=dolphin %u
-Icon=computer
-Terminal=false
