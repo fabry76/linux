@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Computer
+Comment=Sync Documents to Google Drive
+Exec=dolphin %u
+Icon=computer
+Terminal=false
