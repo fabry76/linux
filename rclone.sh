@@ -25,9 +25,9 @@ write_if_changed() {
 # Create systemd user service directory
 mkdir -p "$HOME/.config/systemd/user"
 
-cat > "$HOME/.config/systemd/user/rclone-sync.service" <<'EOF'
+write_if_changed "$HOME/.config/systemd/user/rclone-sync.service" "$(cat <<'EOF'
 [Unit]
-Description=Rclone download GDrive -> Documents (dated backup)
+Description=Rclone sync GDrive -> Documents (dated backup)
 Wants=network-online.target
 After=network-online.target
 
@@ -43,6 +43,7 @@ Restart=no
 [Install]
 WantedBy=default.target
 EOF
+)"
 
 systemctl --user daemon-reload
 systemctl --user enable rclone-sync.service
