@@ -1,0 +1,26 @@
+###############################################
+# Block Firefox-ESR
+###############################################
+write_if_changed /etc/apt/preferences.d/no-firefox-esr "$(cat << 'EOF'
+Package: firefox-esr
+Pin: release *
+Pin-Priority: -1
+EOF
+)"
+
+###############################################
+# Firefox
+###############################################
+wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
+chmod 644 /etc/apt/keyrings/mozilla.gpg
+write_if_changed /etc/apt/sources.list.d/mozilla.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://packages.mozilla.org/apt
+Suites: mozilla
+Components: main
+Signed-By: /etc/apt/keyrings/mozilla.gpg
+EOF
+)"
+
+
+apt-get install -y vlc vlc-plugin-pipewire
