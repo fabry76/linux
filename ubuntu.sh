@@ -22,15 +22,3 @@ END
 # locale
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
-
-# grub
-# sed -i 's/quiet/quiet loglevel=3/g' /etc/default/grub
-# tee -a /etc/default/grub << END
-# GRUB_RECORDFAIL_TIMEOUT=5
-# END
-# update-grub
-
-# varie
-# sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf
-# sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/g' /etc/systemd/logind.conf
-# fc-cache -fv
