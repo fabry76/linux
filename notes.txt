@@ -68,3 +68,7 @@ apt install -y onlyoffice-desktopeditors
 FTP
 
 sftp://u00015%40ngoffice@filetransfer.nippongases.com
+
+
+ --env=GTK_THEME=Breeze-Dark 
+  org.gtk.Gtk3theme.Breeze-Dark
