@@ -16,7 +16,7 @@ write_if_changed() {
 
   if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
     printf "%s\n" "$content" > "$file"
-  fioversample
+  fi
 }
 
 ###############################################
