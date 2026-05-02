@@ -207,53 +207,6 @@ sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="splash quie
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 
 ###############################################
-# RCLONE AUTO SYNC (USER SYSTEMD CLEAN LOGS)
-###############################################
-# Create folder and log files
-runuser -u "$TARGET_USER" -- bash -c "
-mkdir -p \"$TARGET_HOME/.config/systemd/user\"
-"
-
-# Create systemd services for sync on login
-runuser -u "$TARGET_USER" -- bash -c "cat > \"$TARGET_HOME/.config/systemd/user/rclone-sync-in.service\" <<EOF
-[Unit]
-Description=Rclone sync GDrive -> Documents (login)
-After=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash -c '/usr/bin/rclone sync gdrive: $TARGET_HOME/Documents --create-empty-src-dirs -v > $TARGET_HOME/rclone-in.log 2>&1'
-
-[Install]
-WantedBy=default.target
-EOF"
-
-# Create systemd services for sync on shutdown
-runuser -u "$TARGET_USER" -- bash -c "cat > \"$TARGET_HOME/.config/systemd/user/rclone-sync-out.service\" <<EOF
-[Unit]
-Description=Rclone sync Documents -> GDrive (shutdown)
-DefaultDependencies=no
-Before=shutdown.target reboot.target halt.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash -c '/usr/bin/rclone sync $TARGET_HOME/Documents gdrive: -P > $TARGET_HOME/rclone-out.log 2>&1'
-TimeoutStopSec=2min
-
-[Install]
-WantedBy=default.target
-EOF"
-
-# Enable the services
-runuser -u "$TARGET_USER" -- bash -c "
-systemctl --user daemon-reload
-systemctl --user enable rclone-sync-in.service
-systemctl --user enable rclone-sync-out.service
-"
-# Enable linger for the user to allow user services to run without an active session
-runuser -u "$TARGET_USER" -- bash -c "loginctl enable-linger $TARGET_USER"
-
-###############################################
 # User Config
 ###############################################
 # Starship
