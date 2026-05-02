@@ -117,7 +117,6 @@ apt-get install -y \
   plasma-browser-integration- \
   konqueror- \
   kdeconnect- \
-  kwrite- \
   gnome-keyring- \
   evolution-data-server-common-
 
