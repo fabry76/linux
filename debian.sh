@@ -216,6 +216,9 @@ runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/st
 runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environment.d\" && echo \"GTK_USE_PORTAL=1\" > \"$TARGET_HOME/.config/environment.d/portal.conf\""
 # MPV
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
+# Desktop Icons
+runuser -u "$TARGET_USER" -- bash -c "cp \"$TARGET_HOME/Git/linux/etc/Computer.desktop\" \"$TARGET_HOME/Desktop/Computer.desktop\""
+runuser -u "$TARGET_USER" -- bash -c "cp \"$TARGET_HOME/Git/linux/etc/gdrive_sync.desktop\" \"$TARGET_HOME/Desktop/gdrive_sync.desktop\""
 
 ###############################################
 # Finalization
