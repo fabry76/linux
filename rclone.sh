@@ -34,7 +34,7 @@ After=network-online.target
 [Service]
 Type=oneshot
 
-ExecStart=/bin/sh -c '/usr/bin/rclone sync gdrive: /home/fabri/Documents --backup-dir /home/fabri/Downloads/Documents_backup_$(date +%%F) -v >> /home/fabri/rclone-sync.log 2>&1'
+ExecStart=/bin/sh -c '/usr/bin/rclone sync gdrive: /home/fabri/Documents --backup-dir /home/fabri/Downloads/Documents_backup_$(date +%%F) -v > /home/fabri/rclone-sync.log 2>&1'
 
 RemainAfterExit=yes
 TimeoutStartSec=0
