@@ -16,7 +16,7 @@ write_if_changed() {
 
   if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
     printf "%s\n" "$content" > "$file"
-  fi
+  fioversample
 }
 
 ###############################################
@@ -113,6 +113,7 @@ apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-med
 apt-get install -y \
   kde-plasma-desktop \
   konsole \
+  firefox-esr \
   plasma-browser-integration- \
   konqueror- \
   kdeconnect- \
@@ -133,7 +134,7 @@ flatpak override org.onlyoffice.desktopeditors --env=GTK_THEME=Breeze --env=GTK_
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code firefox-esr
+apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code
 
 ###############################################
 # Multimedia
