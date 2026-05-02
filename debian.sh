@@ -127,8 +127,8 @@ apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenv
 ###############################################
 apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors
-flatpak override org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze-Dark
+flatpak override org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze-Dark
 
 ###############################################flatpak
 # Apps & Utilities
