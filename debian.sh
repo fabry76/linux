@@ -133,7 +133,7 @@ runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.des
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y rclone timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code
+apt-get install -y rclone libnotify-bintimeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code
 
 ###############################################
 # Multimedia

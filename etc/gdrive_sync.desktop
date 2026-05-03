@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=GDrive Sync
-Comment=Sync Documents to Google Drive
-Exec=konsole -e /home/fabri/Git/linux/gdrive_sync.sh
-Icon=emblem-insync-syncing
+Comment=Start synchronizing Documents <-> Google Drive
+Exec=sh -c 'notify-send -a "GDrive Sync" "GDrive Sync" "Sync starting..." && systemctl --user start rclone-bisync.service'
+Icon=emblem-synchronizing
 Terminal=false
