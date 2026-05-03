@@ -30,39 +30,38 @@ mkdir -p "$HOME/.config/systemd/user"
 
 write_if_changed "$HOME/.config/systemd/user/rclone-bisync.service" "$(cat <<'EOF'
 [Unit]
-Description=Rclone bisync Documents <-> GDrive
+Description=Rclone bisync Documents <-> Google Drive
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
 
-ExecStart=/bin/sh -c '/usr/bin/flock -n /tmp/rclone-bisync.lock /usr/bin/rclone bisync /home/fabri/Documents gdrive: \
-  --check-first \
-  --drive-skip-gdocs \
-  --backup-dir /home/fabri/Downloads/Documents_backup_$(date +%%F) \
-  --log-file /home/fabri/rclone.log \
-  --log-level INFO'
+ExecStartPre=/usr/bin/truncate -s 0 /home/fabri/rclone.log
 
-TimeoutStartSec=0
+ExecStart=/usr/bin/flock -n /tmp/rclone-bisync.lock /usr/bin/rclone bisync /home/fabri/Documents gdrive: --check-first --drive-skip-gdocs --backup-dir gdrive:Documents_backup --log-file /home/fabri/rclone.log --log-level INFO
+
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
 EOF
 )"
 
-write_if_changed "$HOME/.config/systemd/user/rclone-bisync.timer" "$(cat <<'EOF'
+write_if_changed "$HOME/.config/systemd/user/rclone-bisync.path" "$(cat <<'EOF'
 [Unit]
-Description=Run rclone bisync every 15 minutes
+Description=Watch Documents for changes (rclone bisync trigger)
 
-[Timer]
-OnBootSec=0
-OnUnitActiveSec=15min
-Persistent=true
+[Path]
+PathExistsGlob=/home/fabri/Documents/**/*
+
+Unit=rclone-bisync.service
 
 [Install]
-WantedBy=timers.target
+WantedBy=default.target
 EOF
 )"
 
 systemctl --user daemon-reload
-systemctl --user enable --now rclone-bisync.timer
+systemctl --user enable --now rclone-bisync.path
 
 loginctl enable-linger "$USER"
