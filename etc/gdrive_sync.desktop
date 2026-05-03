@@ -2,6 +2,6 @@
 Type=Application
 Name=GDrive Sync
 Comment=Sync Documents to Google Drive
-Exec=/home/fabri/Git/linux/gdrive_sync.sh
-Icon=folder-black-google-drive
-Terminal=true
+Exec=konsole -e /home/fabri/Git/linux/gdrive_sync.sh
+Icon=emblem-insync-syncing
+Terminal=false
