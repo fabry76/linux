@@ -50,7 +50,7 @@ write_if_changed "$HOME/.config/systemd/user/rclone-bisync.timer" "$(cat <<'EOF'
 Description=Run rclone bisync every 15 minutes
 
 [Timer]
-OnBootSec=5min
+OnBootSec=0
 OnUnitActiveSec=15min
 Persistent=true
 
