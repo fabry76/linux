@@ -120,7 +120,7 @@ apt-get install -y \
   gnome-keyring- \
   evolution-data-server-common-
 
-apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
+apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers bluedevil
 
 ###############################################
 # KDE Flatpak
