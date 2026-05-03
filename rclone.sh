@@ -2,12 +2,17 @@ BISYNC_INIT_MARKER="$HOME/.config/rclone/.bisync_initialized"
 
 if [ ! -f "$BISYNC_INIT_MARKER" ]; then
   echo "📦 First bisync initialization..."
+
   if rclone bisync "$HOME/Documents" gdrive: --resync \
        --drive-skip-gdocs; then
     touch "$BISYNC_INIT_MARKER"
+    echo "✅ Bisync initialization completed"
   else
     echo "❌ Bisync initialization failed"
   fi
+
+else
+  echo "⏭️ Marker found: bisync initialization skipped (already done)"
 fi
 
 # write_if_changed function
