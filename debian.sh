@@ -205,6 +205,7 @@ sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="splash quie
 # Locale
 ###############################################
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
 
 ###############################################
 # User Config
@@ -226,5 +227,4 @@ runuser -u "$TARGET_USER" -- bash -c "cp \"$TARGET_HOME/Git/linux/etc/gdrive_syn
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 plymouth-set-default-theme lines -R
 update-grub
-locale-gen
 apt-get -y autoremove && apt-get clean
