@@ -25,14 +25,14 @@ After=network-online.target
 Type=simple
 
 ExecStartPre=/usr/bin/env bash -c '\
-  : > "$HOME/rclone.log"; \
-  rclone sync gdrive: "$HOME/Documents" \
+  : > /home/fabri/rclone.log; \
+  rclone sync gdrive: /home/fabri/Documents \
     --drive-skip-gdocs \
     --exclude "*.tmp" \
     --exclude "*.swp" \
     --exclude "**/.git/**" \
     --exclude "**node_modules/**" \
-    --log-file "$HOME/rclone.log" \
+    --log-file /home/fabri/rclone.log \
     --log-level INFO'
 
 ExecStart=/home/fabri/Git/linux/rclone_watch.sh
@@ -73,8 +73,7 @@ fi
 # 3) START SERVICE
 # =========================
 systemctl --user daemon-reload
-systemctl --user is-active --quiet rclone-sync.service || \
-systemctl --user start rclone-sync.service
+systemctl --user enable --now rclone-sync.service
 
 loginctl enable-linger "$USER"
 
