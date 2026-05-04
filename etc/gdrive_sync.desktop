@@ -2,6 +2,6 @@
 Type=Application
 Name=GDrive Sync
 Comment=Start synchronizing Documents <-> Google Drive
-Exec=sh -c 'notify-send -a "GDrive Sync" "GDrive Sync" "Sync starting..." && systemctl --user start rclone-bisync.service'
+Exec=sh -c 'notify-send -a "GDrive Sync" "Sync starting..." && rclone sync /home/fabri/Documents gdrive: --drive-skip-gdocs --exclude "*.tmp" --exclude "*.swp" --exclude "**/.git/**" --exclude "**node_modules/**" --log-file /home/fabri/rclone.log --log-level INFO && notify-send -a "GDrive Sync" "Sync completed!" || notify-send -a "GDrive Sync" "Sync failed!"'
 Icon=emblem-synchronizing
 Terminal=false
