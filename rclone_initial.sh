@@ -17,7 +17,7 @@ else
 
   cat > "$HOME/.config/systemd/user/rclone-sync.service" <<'EOF'
 [Unit]
-Description=Rclone live sync (local -> Google Drive)
+Description=Rclone sync
 Wants=network-online.target
 After=network-online.target
 
