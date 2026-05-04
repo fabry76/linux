@@ -1,21 +1,47 @@
 #!/bin/bash
 
 WATCH="/home/fabri/Documents"
-LOCK="/tmp/rclone-bisync.lock"
+LOCK="/tmp/rclone-sync.lock"
+DEBOUNCE=10
 
-while true; do
-  # 👀 aspetta eventi ricorsivi (anche cartelle vuote incluse)
- inotifywait -r -m -e create,modify,delete,move /home/fabri/Documents
+inotifywait -r -m \
+  -e create,modify,delete,move \
+  --format '%e|%f' "$WATCH" |
+while IFS='|' read -r event file; do
 
-  # 🧠 debounce (evita spam di sync)
-  sleep 10
+  case "$file" in
+    *\.swp|*\.tmp|*\.lock|.~* ) continue ;;
+  esac
 
-  # 🔒 evita doppie esecuzioni
-  flock -n "$LOCK" /usr/bin/rclone bisync "$WATCH" gdrive: \
-    --check-first \
-    --drive-skip-gdocs \
-    --backup-dir gdrive:Documents_backup \
-    --log-file /home/fabri/rclone.log \
-    --log-level INFO
+  echo "Change detected: $event $file"
+
+  NOW=$(date +%s)
+  echo "$NOW" > /tmp/rclone-last-event
+
+  (
+    sleep "$DEBOUNCE"
+
+    LAST_EVENT=$(cat /tmp/rclone-last-event 2>/dev/null || echo 0)
+    NOW2=$(date +%s)
+
+    if [ $((NOW2 - LAST_EVENT)) -ge "$DEBOUNCE" ]; then
+
+      flock -n 9 || exit 0
+
+      echo "🔄 Sync started..."
+
+      rclone sync "$WATCH" gdrive: \
+        --drive-skip-gdocs \
+        --exclude "*.tmp" \
+        --exclude "*.swp" \
+        --exclude "**/.git/**" \
+        --exclude "**node_modules/**" \
+        --log-file "$HOME/rclone.log" \
+        --log-level INFO
+
+      echo "✅ Sync done"
+    fi
+
+  ) 9>"$LOCK"
 
 done
