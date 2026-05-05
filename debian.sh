@@ -118,9 +118,8 @@ apt-get install -y \
   konqueror- \
   kdeconnect- \
   gnome-keyring- \
-  evolution-data-server-common-
 
-apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers bluedevil
+apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
 # KDE Flatpak
