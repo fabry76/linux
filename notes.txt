@@ -24,3 +24,7 @@ EOF
 
 
 apt-get install -y vlc vlc-plugin-pipewire
+
+apt-get install thermald
+systemctl enable thermald
+

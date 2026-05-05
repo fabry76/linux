@@ -105,7 +105,7 @@ apt-get update
 ###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-linux firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-linux linux-headers-amd64 firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # KDE Desktop
@@ -132,7 +132,7 @@ runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.des
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin acpi-call-dkms thermald
 
 ###############################################
 # Multimedia
@@ -223,6 +223,7 @@ runuser -u "$TARGET_USER" -- bash -c "cp \"$TARGET_HOME/Git/linux/etc/computer.d
 # Finalization
 ###############################################
 usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
+systemctl enable thermald
 plymouth-set-default-theme lines -R
 update-grub
 apt-get -y autoremove && apt-get clean
