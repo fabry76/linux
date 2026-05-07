@@ -105,10 +105,10 @@ apt-get update
 ###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-linux linux-headers-amd64 firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-misc-nonfree linux-headers-amd64 firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
-# KDE Desktop
+# KDE Plasma
 ###############################################
 apt-get install -y \
   kde-plasma-desktop \
@@ -117,19 +117,21 @@ apt-get install -y \
   plasma-browser-integration- \
   konqueror- \
   kdeconnect- \
-  gnome-keyring- \
+  gnome-keyring-
 
-apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
+apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers libreoffice libreoffice-kf6 libreoffice-qt6
 
+# Force KDE portal 
 runuser -u "$TARGET_USER" -- bash -c "
-grep -qxF 'export SAL_USE_VCLPLUGIN=qt6' '$TARGET_HOME/.profile' || \
-printf '%s\n' 'export SAL_USE_VCLPLUGIN=qt6' >> '$TARGET_HOME/.profile'
+mkdir -p \"$TARGET_HOME/.config/environment.d\" && \
+printf 'GTK_USE_PORTAL=1\n' > \"$TARGET_HOME/.config/environment.d/portal.conf\" && \
+printf 'SAL_USE_VCLPLUGIN=qt6\n' > \"$TARGET_HOME/.config/environment.d/libreoffice.conf\"
 "
 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin acpi-call-dkms thermald libreoffice
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin acpi-call-dkms thermald
 
 ###############################################
 # Multimedia
@@ -204,13 +206,25 @@ sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 ###############################################
-# User Config
+# Custom Configurations
 ###############################################
+# Libreoffice
+for LO_SYS in /usr/share/applications/libreoffice*.desktop; do
+  [ -e "$LO_SYS" ] || continue
+
+  runuser -u "$TARGET_USER" -- bash -c '
+    LO_SYS="$1"
+    LO_USER="$HOME/.local/share/applications/$(basename "$LO_SYS")"
+
+    install -D "$LO_SYS" "$LO_USER"
+
+    grep -q -- " --nologo" "$LO_USER" || \
+    sed -i "s|^Exec=\(libreoffice[^ ]*\)|Exec=\1 --nologo|" "$LO_USER"
+  ' bash "$LO_SYS"
+done
 # Starship
 runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
-# Force KDE portal
-runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/.config/environment.d\" && echo \"GTK_USE_PORTAL=1\" > \"$TARGET_HOME/.config/environment.d/portal.conf\""
 # MPV
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
 # Desktop Icons
