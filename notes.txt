@@ -25,6 +25,12 @@ EOF
 
 apt-get install -y vlc vlc-plugin-pipewire
 
-apt-get install thermald
-systemctl enable thermald
+###############################################
+# KDE Flatpak
+###############################################
+apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
+
 

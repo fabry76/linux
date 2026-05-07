@@ -121,18 +121,15 @@ apt-get install -y \
 
 apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
-###############################################
-# KDE Flatpak
-###############################################
-apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
-runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
+runuser -u "$TARGET_USER" -- bash -c "
+grep -qxF 'export SAL_USE_VCLPLUGIN=qt6' '$TARGET_HOME/.profile' || \
+printf '%s\n' 'export SAL_USE_VCLPLUGIN=qt6' >> '$TARGET_HOME/.profile'
+"
 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin acpi-call-dkms thermald
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin acpi-call-dkms thermald libreoffice
 
 ###############################################
 # Multimedia
