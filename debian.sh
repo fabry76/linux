@@ -67,18 +67,20 @@ EOF
 # Folder
 install -d -m 0755 /etc/apt/keyrings
 
-# Chrome
-wget -qO /etc/apt/keyrings/google-chrome.asc \
-  https://dl.google.com/linux/linux_signing_key.pub
-chmod 644 /etc/apt/keyrings/google-chrome.asc
+###############################################
+# Brave
+###############################################
+wget -qO /etc/apt/keyrings/brave-browser.asc \
+  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+chmod 644 /etc/apt/keyrings/brave-browser.asc
 
-write_if_changed /etc/apt/sources.list.d/google-chrome.sources "$(cat << 'EOF'
+write_if_changed /etc/apt/sources.list.d/brave-browser.sources "$(cat << 'EOF'
 Types: deb
-URIs: https://dl.google.com/linux/chrome/deb/
+URIs: https://brave-browser-apt-release.s3.brave.com/
 Suites: stable
 Components: main
-Architectures: amd64
-Signed-By: /etc/apt/keyrings/google-chrome.asc
+Architectures: amd64 arm64
+Signed-By: /etc/apt/keyrings/brave-browser.asc
 EOF
 )"
 
@@ -131,7 +133,7 @@ printf 'SAL_USE_VCLPLUGIN=qt6\n' > \"$TARGET_HOME/.config/environment.d/libreoff
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli google-chrome-stable code rclone inotify-tools libnotify-bin acpi-call-dkms thermald
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin acpi-call-dkms thermald
 
 ###############################################
 # Multimedia
