@@ -121,7 +121,7 @@ apt-get install -y \
   kdeconnect- \
   gnome-keyring-
 
-apt-get install -y ark kalk ksystemlog isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers libreoffice libreoffice-kf6 libreoffice-qt6
+apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers libreoffice libreoffice-kf6 libreoffice-qt6
 
 # Force KDE portal 
 runuser -u "$TARGET_USER" -- bash -c "
