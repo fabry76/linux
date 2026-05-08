@@ -67,9 +67,7 @@ EOF
 # Folder
 install -d -m 0755 /etc/apt/keyrings
 
-###############################################
 # Brave
-###############################################
 wget -qO /etc/apt/keyrings/brave-browser.asc \
   https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 chmod 644 /etc/apt/keyrings/brave-browser.asc
@@ -81,6 +79,22 @@ Suites: stable
 Components: main
 Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/brave-browser.asc
+EOF
+)"
+
+# OnlyOffice
+wget -qO /etc/apt/keyrings/onlyoffice.asc \
+  https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE
+
+chmod 644 /etc/apt/keyrings/onlyoffice.asc
+
+write_if_changed /etc/apt/sources.list.d/onlyoffice.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://download.onlyoffice.com/repo/debian
+Suites: squeeze
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/onlyoffice.asc
 EOF
 )"
 
@@ -121,19 +135,12 @@ apt-get install -y \
   kdeconnect- \
   gnome-keyring-
 
-apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers libreoffice libreoffice-kf6 libreoffice-qt6
-
-# Force KDE portal 
-runuser -u "$TARGET_USER" -- bash -c "
-mkdir -p \"$TARGET_HOME/.config/environment.d\" && \
-printf 'GTK_USE_PORTAL=1\n' > \"$TARGET_HOME/.config/environment.d/portal.conf\" && \
-printf 'SAL_USE_VCLPLUGIN=qt6\n' > \"$TARGET_HOME/.config/environment.d/libreoffice.conf\"
-"
+apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin acpi-call-dkms thermald
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin acpi-call-dkms thermald onlyoffice-desktopeditors
 
 ###############################################
 # Multimedia

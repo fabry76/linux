@@ -1,0 +1,52 @@
+###############################################
+# Block Firefox-ESR
+###############################################
+write_if_changed /etc/apt/preferences.d/no-firefox-esr "$(cat << 'EOF'
+Package: firefox-esr
+Pin: release *
+Pin-Priority: -1
+EOF
+)"
+
+###############################################
+# Firefox
+###############################################
+wget -qO /etc/apt/keyrings/mozilla.gpg https://packages.mozilla.org/apt/repo-signing-key.gpg
+chmod 644 /etc/apt/keyrings/mozilla.gpg
+write_if_changed /etc/apt/sources.list.d/mozilla.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://packages.mozilla.org/apt
+Suites: mozilla
+Components: main
+Signed-By: /etc/apt/keyrings/mozilla.gpg
+EOF
+)"
+
+# Chrome
+wget -qO /etc/apt/keyrings/google-chrome.asc \
+  https://dl.google.com/linux/linux_signing_key.pub
+chmod 644 /etc/apt/keyrings/google-chrome.asc
+
+write_if_changed /etc/apt/sources.list.d/google-chrome.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://dl.google.com/linux/chrome/deb/
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/google-chrome.asc
+EOF
+)"
+
+
+###############################################
+# KDE Flatpak
+###############################################
+apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
+
+
+
+apt-get install -y vlc vlc-plugin-pipewire
+
