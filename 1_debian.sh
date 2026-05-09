@@ -35,6 +35,11 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
+# Install dependencies for key management
+###############################################
+apt-get install -y gpg curl wget
+
+###############################################
 # Debian Repositories
 ###############################################
 # Disable legacy sources.list
@@ -138,7 +143,7 @@ runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.des
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald
 
 ###############################################
 # Multimedia
