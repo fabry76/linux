@@ -76,9 +76,10 @@ EOF
 install -d -m 0755 /etc/apt/keyrings
 
 # Brave
-wget -qO /etc/apt/keyrings/brave-browser.asc \
+wget -qO /etc/apt/keyrings/brave-browser-archive-keyring.gpg \
   https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-chmod 644 /etc/apt/keyrings/brave-browser.asc
+
+chmod 644 /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 
 write_if_changed /etc/apt/sources.list.d/brave-browser.sources "$(cat << 'EOF'
 Types: deb
@@ -86,21 +87,19 @@ URIs: https://brave-browser-apt-release.s3.brave.com/
 Suites: stable
 Components: main
 Architectures: amd64 arm64
-Signed-By: /etc/apt/keyrings/brave-browser.asc
+Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 EOF
 )"
 
 # VSCode
-wget -qO /etc/apt/keyrings/vscode.asc \
-  https://packages.microsoft.com/keys/microsoft.asc
-chmod 644 /etc/apt/keyrings/vscode.asc
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg
 
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
-Signed-By: /etc/apt/keyrings/vscode.asc
+Signed-By: /etc/apt/keyrings/microsoft.gpg
 Architectures: amd64 arm64 armhf
 EOF
 )"
@@ -196,7 +195,9 @@ sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="splash quie
 ###############################################
 # Locale
 ###############################################
-sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
+grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
+  printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
+
 locale-gen
 
 ###############################################
