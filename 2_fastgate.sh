@@ -10,6 +10,17 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ###############################################
+# Helper: write if changed
+###############################################
+write_if_changed() {
+  local file="$1"
+  local content="$2"
+  if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
+    printf "%s\n" "$content" > "$file"
+  fi
+}
+
+###############################################
 # Config
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
@@ -17,7 +28,6 @@ TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 
 MOUNT_POINT="$TARGET_HOME/Fastgate"
 CRED_FILE="/etc/samba/fastgate.creds"
-
 SERVER="//192.168.1.254/samba/usb1_1"
 
 USER_ID=$(id -u "$TARGET_USER")
@@ -35,10 +45,36 @@ mkdir -p "$MOUNT_POINT"
 chown "$TARGET_USER:$TARGET_USER" "$MOUNT_POINT"
 
 ###############################################
-# Detect credentials state
+# systemd mount unit
+###############################################
+MOUNT_NAME="fastgate"
+MOUNT_UNIT="/etc/systemd/system/${MOUNT_NAME}.mount"
+
+UNIT_CONTENT=$(cat <<EOF
+[Unit]
+Description=Fastgate SMB Mount
+After=network-online.target remote-fs-pre.target
+Wants=network-online.target
+
+[Mount]
+What=${SERVER}
+Where=${MOUNT_POINT}
+Type=cifs
+Options=_netdev,vers=1.0,credentials=${CRED_FILE},iocharset=utf8,uid=${USER_ID},gid=${GROUP_ID},file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino
+
+[Install]
+WantedBy=multi-user.target
+EOF
+)
+
+write_if_changed "$MOUNT_UNIT" "$UNIT_CONTENT"
+systemctl daemon-reload
+systemctl enable "${MOUNT_NAME}.mount"
+
+###############################################
+# Credential handling (at the end)
 ###############################################
 CRED_STATE="missing"
-
 if [ -f "$CRED_FILE" ]; then
   if grep -q "^username=" "$CRED_FILE" && grep -q "^password=" "$CRED_FILE"; then
     CRED_STATE="valid"
@@ -47,9 +83,6 @@ if [ -f "$CRED_FILE" ]; then
   fi
 fi
 
-###############################################
-# Credential handling
-###############################################
 if [ "$CRED_STATE" = "valid" ]; then
   echo "Credentials already present."
   read -rp "Update credentials? (y/N): " CONFIRM
@@ -65,37 +98,15 @@ if [ "$CRED_STATE" = "missing" ] || [ "$CRED_STATE" = "invalid" ] || [ "$CRED_ST
   echo
 
   umask 077
-  cat > "$CRED_FILE" <<EOF
+  CRED_CONTENT=$(cat <<EOF
 username=$NAS_USER
 password=$NAS_PASS
 EOF
-
+)
+  write_if_changed "$CRED_FILE" "$CRED_CONTENT"
   chown root:root "$CRED_FILE"
   chmod 600 "$CRED_FILE"
 fi
-
-###############################################
-# systemd mount unit
-###############################################
-
-MOUNT_NAME=$(echo "$MOUNT_POINT" | sed 's|/|-|g' | sed 's|^-||')
-MOUNT_UNIT="/etc/systemd/system/${MOUNT_NAME}.mount"
-
-cat > "$MOUNT_UNIT" <<EOF
-[Unit]
-Description=Fastgate SMB Mount
-After=network-online.target remote-fs-pre.target
-Wants=network-online.target
-
-[Mount]
-What=${SERVER}
-Where=${MOUNT_POINT}
-Type=cifs
-Options=_netdev,vers=1.0,credentials=${CRED_FILE},iocharset=utf8,uid=${USER_ID},gid=${GROUP_ID},file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino
-
-[Install]
-WantedBy=multi-user.target
-EOF
 
 ###############################################
 # Enable mount at boot
