@@ -19,13 +19,6 @@ mkdir -p \
   "$HOME/Virtual"
 
 ###############################################
-# Flatpak overrides
-###############################################
-flatpak override --user org.onlyoffice.desktopeditors \
-  --env=GTK_USE_PORTAL=1 \
-  --env=GTK_THEME=Breeze:dark
-
-###############################################
 # Starship
 ###############################################
 grep -qF 'eval "$(starship init bash)"' "$HOME/.bashrc" || \
