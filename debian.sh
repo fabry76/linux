@@ -127,7 +127,9 @@ apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kd
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
-runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --env=MOZ_ENABLE_WAYLAND=1"
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox \
+  --filesystem=xdg-config/gtk-3.0 \
+  --filesystem=xdg-config/gtk-4.0"
 
 ###############################################
 # Apps & Utilities
@@ -180,19 +182,6 @@ EOF
 )
 
 write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
-
-###############################################
-# Fastgate SMB Mount
-###############################################
-apt-get install -y cifs-utils
-
-MOUNT_POINT="$TARGET_HOME/Fastgate"
-USER_ID=$(id -u "$TARGET_USER")
-GROUP_ID=$(id -g "$TARGET_USER")
-CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,user=admin,pass=admin,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino 0 0"
-
-runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
-grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
 
 ###############################################
 # GRUB
