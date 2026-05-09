@@ -84,13 +84,23 @@ fi
 ###############################################
 # fstab
 ###############################################
-if ! grep -Fq "$SERVER $MOUNT_POINT" /etc/fstab; then
-  {
-    echo ""
+
+FSTAB_BEGIN="# --- FASTGATE BEGIN ---"
+FSTAB_END="# --- FASTGATE END ---"
+
+# remove any existing Fastgate block
+sed -i "/${FSTAB_BEGIN}/,/${FSTAB_END}/d" /etc/fstab
+
+# ensure the file ends with a newline before appending
+echo >> /etc/fstab
+
+# append a fresh Fastgate mount block
+{
+    echo "$FSTAB_BEGIN"
     echo "$FSTAB_HEADER"
     echo "$FSTAB_LINE"
-  } >> /etc/fstab
-fi
+    echo "$FSTAB_END"
+} >> /etc/fstab
 
 ###############################################
 # Done
