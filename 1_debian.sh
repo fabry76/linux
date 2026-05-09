@@ -198,3 +198,17 @@ systemctl enable thermald
 plymouth-set-default-theme lines -R
 update-grub
 apt-get -y autoremove && apt-get clean
+
+###############################################
+# Optional Fastgate setup
+###############################################
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ -f "$SCRIPT_DIR/2_fastgate.sh" ]; then
+  echo
+  read -rp "Run 2_fastgate.sh now? (y/N): " RUN_FASTGATE
+
+  if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/2_fastgate.sh"
+  fi
+fi

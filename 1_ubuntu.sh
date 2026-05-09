@@ -12,13 +12,6 @@ ufw allow mdns
 # printing and scanning
 apt install printer-driver-all printer-driver-cups-pdf sane simple-scan -y
 
-# fastgate
-apt install cifs-utils smbclient -y
-tee -a /etc/fstab  << END
-# map fastgate usb storage
-//192.168.1.254/samba/usb1_1 /home/fabri/Fastgate cifs user=admin,vers=1.0,dir_mode=0777,file_mode=0777,pass=admin
-END
-
 # locale
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen

@@ -80,7 +80,7 @@ EOF
 fi
 
 ###############################################
-# fstab (idempotente vera)
+# fstab
 ###############################################
 if ! grep -Fq "$SERVER $MOUNT_POINT" /etc/fstab; then
   echo "$FSTAB_LINE" >> /etc/fstab
