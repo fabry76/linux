@@ -140,7 +140,7 @@ apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl plymouth-themes fwupd apt-show-versions debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin acpi-call-dkms thermald onlyoffice-desktopeditors
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald onlyoffice-desktopeditors
 
 ###############################################
 # Multimedia
@@ -197,7 +197,7 @@ apt-get install -y cifs-utils
 MOUNT_POINT="$TARGET_HOME/Fastgate"
 USER_ID=$(id -u "$TARGET_USER")
 GROUP_ID=$(id -g "$TARGET_USER")
-CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,user=admin,pass=admin,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft 0 0"
+CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,user=admin,pass=admin,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino 0 0"
 
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
