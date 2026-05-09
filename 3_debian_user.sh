@@ -10,14 +10,27 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 ###############################################
+# Write if changed
+###############################################
+write_if_changed() {
+  local file="$1"
+  local content="$2"
+
+  if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
+    printf "%s\n" "$content" > "$file"
+  fi
+}
+
+###############################################
 # Required paths
 ###############################################
 mkdir -p \
   "$HOME/.config" \
   "$HOME/.config/mpv" \
   "$HOME/Desktop" \
-  "$HOME/Virtual"
-
+  "$HOME/Virtual" \
+  "$HOME/.local/share/konsole"
+  
 ###############################################
 # Starship
 ###############################################
@@ -44,6 +57,31 @@ install -D \
 install -D \
   "$HOME/Git/linux/etc/computer.desktop" \
   "$HOME/Desktop/computer.desktop"
+
+###############################################
+# Konsole
+###############################################
+KONSOLERC="$HOME/.config/konsolerc"
+KONSOLERC_CONTENT=$(cat <<EOF
+[Desktop Entry]
+DefaultProfile=FF.profile
+Version=1.0
+
+[General]
+ConfigVersion=1
+DefaultProfile=FF.profile
+
+[UiSettings]
+ColorScheme=
+EOF
+)
+
+write_if_changed "$KONSOLERC" "$KONSOLERC_CONTENT"
+
+[ -f "$HOME/Git/linux/etc/FF.profile" ] && \
+install -D \
+  "$HOME/Git/linux/etc/FF.profile" \
+  "$HOME/.local/share/konsole/FF.profile"
 
 ###############################################
 # Done
