@@ -61,7 +61,7 @@ install -D \
   "$HOME/.config/kwriterc"
 
 ###############################################
-# KKTORRENT
+# KTORRENT
 ###############################################
 [ -f "$HOME/Git/linux/etc/ktorrentrc" ] && \
 install -D \
