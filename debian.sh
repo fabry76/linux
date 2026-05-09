@@ -126,7 +126,6 @@ apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular 
 apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze
-runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
 
 ###############################################
 # Apps & Utilities
@@ -159,7 +158,6 @@ ufw status | grep -q "active" || ufw --force enable
 # Virtualization
 ###############################################
 apt-get install -y virt-manager virt-viewer qemu-kvm
-runuser -u "$TARGET_USER" -- bash -c "mkdir -p \"$TARGET_HOME/Virtual\""
 
 ###############################################
 # Printing & Scanning
@@ -191,17 +189,6 @@ sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="splash quie
 ###############################################
 sed -i 's/# it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
-
-###############################################
-# Custom Configurations
-###############################################
-# Starship
-runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
-runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
-# MPV
-runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
-# Desktop Icons
-runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/computer.desktop\" \"$TARGET_HOME/Desktop/computer.desktop\""
 
 ###############################################
 # Finalization

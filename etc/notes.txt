@@ -102,3 +102,15 @@ CIFS_LINE="//192.168.1.254/samba/usb1_1 $MOUNT_POINT cifs _netdev,x-systemd.auto
 
 runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
 grep -qxF "$CIFS_LINE" /etc/fstab || echo "$CIFS_LINE" >> /etc/fstab
+
+
+###############################################
+# Custom Configurations
+###############################################
+# Starship
+runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
+# MPV
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/mpv.conf\" \"$TARGET_HOME/.config/mpv/mpv.conf\""
+# Desktop Icons
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/computer.desktop\" \"$TARGET_HOME/Desktop/computer.desktop\""

@@ -1,6 +1,13 @@
 #!/bin/bash
+set -euo pipefail
 
-set -e
+###############################################
+# User validation
+###############################################
+if [ "$EUID" -eq 0 ]; then
+  echo "Do not run as root"
+  exit 1
+fi
 
 INSTALL_MARKER="$HOME/.config/rclone/.install_done"
 BOOTSTRAP_MARKER="$HOME/.config/rclone/.bootstrap_done"
