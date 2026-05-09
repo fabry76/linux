@@ -200,14 +200,6 @@ plymouth-set-default-theme lines -R
 update-grub
 
 ###############################################
-# Finalization
-###############################################
-usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
-systemctl enable thermald
-plymouth-set-default-theme lines -R
-update-grub
-
-###############################################
 # Optional Fastgate setup
 ###############################################
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
