@@ -2,6 +2,14 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 ###############################################
+# Root check
+###############################################
+if [ "$EUID" -ne 0 ]; then
+  echo "Run as root (sudo)"
+  exit 1
+fi
+
+###############################################
 # Target User & Home
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
