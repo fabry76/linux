@@ -2,6 +2,14 @@
 set -euo pipefail
 
 ###############################################
+# Root check
+###############################################
+if [ "$EUID" -ne 0 ]; then
+  echo "Run as root (sudo)"
+  exit 1
+fi
+
+###############################################
 # Config
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
@@ -18,14 +26,6 @@ GROUP_ID=$(id -g "$TARGET_USER")
 FSTAB_HEADER="# --- Fastgate SMB Mount ---"
 
 FSTAB_LINE="$SERVER $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,credentials=$CRED_FILE,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino 0 0"
-
-###############################################
-# Root check
-###############################################
-if [ "$EUID" -ne 0 ]; then
-  echo "Run as root (sudo)"
-  exit 1
-fi
 
 ###############################################
 # Dependency
