@@ -1,4 +1,10 @@
 ###############################################
+# Apt-file
+###############################################
+sudo apt install apt-file
+sudo apt-file update
+
+###############################################
 # Block Firefox-ESR
 ###############################################
 write_if_changed /etc/apt/preferences.d/no-firefox-esr "$(cat << 'EOF'
@@ -22,7 +28,9 @@ Signed-By: /etc/apt/keyrings/mozilla.gpg
 EOF
 )"
 
+###############################################
 # Chrome
+###############################################
 wget -qO /etc/apt/keyrings/google-chrome.asc \
   https://dl.google.com/linux/linux_signing_key.pub
 chmod 644 /etc/apt/keyrings/google-chrome.asc
@@ -37,7 +45,6 @@ Signed-By: /etc/apt/keyrings/google-chrome.asc
 EOF
 )"
 
-
 ###############################################
 # KDE Flatpak
 ###############################################
@@ -46,7 +53,24 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.gtk.Gtk3theme.Breeze
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
 
+###############################################
+# Libreoffice in KDE
+###############################################
 
 
-apt-get install -y vlc vlc-plugin-pipewire
+
+# remove splash logo
+for LO_SYS in /usr/share/applications/libreoffice*.desktop; do
+  [ -e "$LO_SYS" ] || continue
+
+  runuser -u "$TARGET_USER" -- bash -c '
+    LO_SYS="$1"
+    LO_USER="$HOME/.local/share/applications/$(basename "$LO_SYS")"
+
+    install -D "$LO_SYS" "$LO_USER"
+
+    grep -q -- " --nologo" "$LO_USER" || \
+    sed -i "s|^Exec=\(libreoffice[^ ]*\)|Exec=\1 --nologo|" "$LO_USER"
+  ' bash "$LO_SYS"
+done
 

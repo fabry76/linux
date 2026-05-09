@@ -83,10 +83,10 @@ EOF
 )"
 
 # OnlyOffice
-wget -qO /etc/apt/keyrings/onlyoffice.asc \
+wget -qO /etc/apt/keyrings/onlyoffice.gpg \
   https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE
 
-chmod 644 /etc/apt/keyrings/onlyoffice.asc
+chmod 644 /etc/apt/keyrings/onlyoffice.gpg
 
 write_if_changed /etc/apt/sources.list.d/onlyoffice.sources "$(cat << 'EOF'
 Types: deb
@@ -94,7 +94,7 @@ URIs: https://download.onlyoffice.com/repo/debian
 Suites: squeeze
 Components: main
 Architectures: amd64
-Signed-By: /etc/apt/keyrings/onlyoffice.asc
+Signed-By: /etc/apt/keyrings/onlyoffice.gpg
 EOF
 )"
 
@@ -140,7 +140,7 @@ apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl apt-file plymouth-themes fwupd apt-show-versions debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin acpi-call-dkms thermald onlyoffice-desktopeditors
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl plymouth-themes fwupd apt-show-versions debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin acpi-call-dkms thermald onlyoffice-desktopeditors
 
 ###############################################
 # Multimedia
@@ -217,20 +217,6 @@ locale-gen
 ###############################################
 # Custom Configurations
 ###############################################
-# Libreoffice
-for LO_SYS in /usr/share/applications/libreoffice*.desktop; do
-  [ -e "$LO_SYS" ] || continue
-
-  runuser -u "$TARGET_USER" -- bash -c '
-    LO_SYS="$1"
-    LO_USER="$HOME/.local/share/applications/$(basename "$LO_SYS")"
-
-    install -D "$LO_SYS" "$LO_USER"
-
-    grep -q -- " --nologo" "$LO_USER" || \
-    sed -i "s|^Exec=\(libreoffice[^ ]*\)|Exec=\1 --nologo|" "$LO_USER"
-  ' bash "$LO_SYS"
-done
 # Starship
 runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
