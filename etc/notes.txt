@@ -57,9 +57,16 @@ runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.des
 # Libreoffice in KDE
 ###############################################
 
+apt-get install -y libreoffice libreoffice-kf6 libreoffice-qt6
 
+# Force KDE portal 
+runuser -u "$TARGET_USER" -- bash -c "
+mkdir -p \"$TARGET_HOME/.config/environment.d\" && \
+printf 'GTK_USE_PORTAL=1\n' > \"$TARGET_HOME/.config/environment.d/portal.conf\" && \
+printf 'SAL_USE_VCLPLUGIN=qt6\n' > \"$TARGET_HOME/.config/environment.d/libreoffice.conf\"
+"
 
-# remove splash logo
+# Remove splash logo
 for LO_SYS in /usr/share/applications/libreoffice*.desktop; do
   [ -e "$LO_SYS" ] || continue
 
