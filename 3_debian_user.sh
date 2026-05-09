@@ -53,6 +53,22 @@ install -D \
   "$HOME/.config/mpv/mpv.conf"
 
 ###############################################
+# KWRITE
+###############################################
+[ -f "$HOME/Git/linux/etc/kwriterc" ] && \
+install -D \
+  "$HOME/Git/linux/etc/kwriterc" \
+  "$HOME/.config/kwriterc"
+
+###############################################
+# KKTORRENT
+###############################################
+[ -f "$HOME/Git/linux/etc/ktorrentrc" ] && \
+install -D \
+  "$HOME/Git/linux/etc/ktorrentrc" \
+  "$HOME/.config/ktorrentrc"
+
+###############################################
 # Desktop icon
 ###############################################
 [ -f "$HOME/Git/linux/etc/computer.desktop" ] && \
