@@ -47,7 +47,7 @@ chown "$TARGET_USER:$TARGET_USER" "$MOUNT_POINT"
 ###############################################
 # systemd mount unit
 ###############################################
-MOUNT_NAME="fastgate"
+MOUNT_NAME=$(systemd-escape -p "$MOUNT_POINT")
 MOUNT_UNIT="/etc/systemd/system/${MOUNT_NAME}.mount"
 
 UNIT_CONTENT=$(cat <<EOF
@@ -72,7 +72,7 @@ systemctl daemon-reload
 systemctl enable "${MOUNT_NAME}.mount"
 
 ###############################################
-# Credential handling (at the end)
+# Credential handling
 ###############################################
 CRED_STATE="missing"
 if [ -f "$CRED_FILE" ]; then
@@ -107,11 +107,6 @@ EOF
   chown root:root "$CRED_FILE"
   chmod 600 "$CRED_FILE"
 fi
-
-###############################################
-# Enable mount at boot
-###############################################
-systemctl enable "${MOUNT_NAME}.mount"
 
 ###############################################
 # Done
