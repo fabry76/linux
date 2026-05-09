@@ -82,22 +82,6 @@ Signed-By: /etc/apt/keyrings/brave-browser.asc
 EOF
 )"
 
-# OnlyOffice
-wget -qO /etc/apt/keyrings/onlyoffice.gpg \
-  https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE
-
-chmod 644 /etc/apt/keyrings/onlyoffice.gpg
-
-write_if_changed /etc/apt/sources.list.d/onlyoffice.sources "$(cat << 'EOF'
-Types: deb
-URIs: https://download.onlyoffice.com/repo/debian
-Suites: squeeze
-Components: main
-Architectures: amd64
-Signed-By: /etc/apt/keyrings/onlyoffice.gpg
-EOF
-)"
-
 # VSCode
 wget -qO /etc/apt/keyrings/vscode.asc \
   https://packages.microsoft.com/keys/microsoft.asc
@@ -129,7 +113,6 @@ apt-get install -y firmware-misc-nonfree linux-headers-amd64 firmware-sof-signed
 apt-get install -y \
   kde-plasma-desktop \
   konsole \
-  firefox-esr \
   plasma-browser-integration- \
   konqueror- \
   kdeconnect- \
@@ -138,9 +121,18 @@ apt-get install -y \
 apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
+# KDE Flatpak
+###############################################
+apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --env=MOZ_ENABLE_WAYLAND=1"
+
+###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar net-tools curl plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald onlyoffice-desktopeditors
+apt-get install -y timeshift vim htop fastfetch unrar net-tools curl plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald
 
 ###############################################
 # Multimedia
