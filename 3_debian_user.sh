@@ -24,10 +24,12 @@ write_if_changed() {
 ###############################################
 # Required paths
 ###############################################
+DESKTOP_DIR=$(xdg-user-dir DESKTOP 2>/dev/null || echo "$HOME/Desktop")
+
 mkdir -p \
   "$HOME/.config" \
   "$HOME/.config/mpv" \
-  "$HOME/Desktop" \
+  "$DESKTOP_DIR" \
   "$HOME/Virtual" \
   "$HOME/.local/share/konsole"
   
