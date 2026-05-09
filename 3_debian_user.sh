@@ -88,4 +88,4 @@ install -D \
 ###############################################
 # Done
 ###############################################
-echo "User customization completed."
+echo "🚀 User customization completed."
