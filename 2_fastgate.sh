@@ -23,10 +23,6 @@ SERVER="//192.168.1.254/samba/usb1_1"
 USER_ID=$(id -u "$TARGET_USER")
 GROUP_ID=$(id -g "$TARGET_USER")
 
-FSTAB_HEADER="# --- Fastgate SMB Mount ---"
-
-FSTAB_LINE="$SERVER $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,credentials=$CRED_FILE,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino 0 0"
-
 ###############################################
 # Dependency
 ###############################################
@@ -56,11 +52,8 @@ fi
 ###############################################
 if [ "$CRED_STATE" = "valid" ]; then
   echo "Credentials already present."
-
   read -rp "Update credentials? (y/N): " CONFIRM
-  if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
-    echo "Keeping existing credentials."
-  else
+  if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
     CRED_STATE="update"
   fi
 fi
@@ -82,25 +75,32 @@ EOF
 fi
 
 ###############################################
-# fstab
+# systemd mount unit
 ###############################################
 
-FSTAB_BEGIN="# --- FASTGATE BEGIN ---"
-FSTAB_END="# --- FASTGATE END ---"
+MOUNT_NAME=$(echo "$MOUNT_POINT" | sed 's|/|-|g' | sed 's|^-||')
+MOUNT_UNIT="/etc/systemd/system/${MOUNT_NAME}.mount"
 
-# remove any existing Fastgate block
-sed -i "/${FSTAB_BEGIN}/,/${FSTAB_END}/d" /etc/fstab
+cat > "$MOUNT_UNIT" <<EOF
+[Unit]
+Description=Fastgate SMB Mount
+After=network-online.target remote-fs-pre.target
+Wants=network-online.target
 
-# ensure the file ends with a newline before appending
-echo >> /etc/fstab
+[Mount]
+What=${SERVER}
+Where=${MOUNT_POINT}
+Type=cifs
+Options=_netdev,vers=1.0,credentials=${CRED_FILE},iocharset=utf8,uid=${USER_ID},gid=${GROUP_ID},file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino
 
-# append a fresh Fastgate mount block
-{
-    echo "$FSTAB_BEGIN"
-    echo "$FSTAB_HEADER"
-    echo "$FSTAB_LINE"
-    echo "$FSTAB_END"
-} >> /etc/fstab
+[Install]
+WantedBy=multi-user.target
+EOF
+
+###############################################
+# Enable mount at boot
+###############################################
+systemctl enable "${MOUNT_NAME}.mount"
 
 ###############################################
 # Done
@@ -108,3 +108,4 @@ echo >> /etc/fstab
 echo "Done."
 echo "Mount point: $MOUNT_POINT"
 echo "Credentials: $CRED_FILE"
+echo "Systemd unit: $MOUNT_UNIT"
