@@ -197,7 +197,14 @@ usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 systemctl enable thermald
 plymouth-set-default-theme lines -R
 update-grub
-apt-get -y autoremove && apt-get clean
+
+###############################################
+# Finalization
+###############################################
+usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
+systemctl enable thermald
+plymouth-set-default-theme lines -R
+update-grub
 
 ###############################################
 # Optional Fastgate setup
@@ -206,9 +213,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -f "$SCRIPT_DIR/2_fastgate.sh" ]; then
   echo
-  read -rp "Run 2_fastgate.sh now? (y/N): " RUN_FASTGATE
+  read -rp "Mount Fastgate now? (y/N): " RUN_FASTGATE
 
   if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     bash "$SCRIPT_DIR/2_fastgate.sh"
   fi
 fi
+
+###############################################
+# Cleanup
+###############################################
+apt-get -y autoremove
+apt-get clean
