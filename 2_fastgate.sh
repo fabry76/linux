@@ -15,6 +15,8 @@ SERVER="//192.168.1.254/samba/usb1_1"
 USER_ID=$(id -u "$TARGET_USER")
 GROUP_ID=$(id -g "$TARGET_USER")
 
+FSTAB_HEADER="# --- Fastgate SMB Mount ---"
+
 FSTAB_LINE="$SERVER $MOUNT_POINT cifs _netdev,x-systemd.automount,vers=1.0,credentials=$CRED_FILE,iocharset=utf8,uid=$USER_ID,gid=$GROUP_ID,file_mode=0755,dir_mode=0755,cache=loose,actimeo=30,nofail,soft,noserverino 0 0"
 
 ###############################################
@@ -83,7 +85,11 @@ fi
 # fstab
 ###############################################
 if ! grep -Fq "$SERVER $MOUNT_POINT" /etc/fstab; then
-  echo "$FSTAB_LINE" >> /etc/fstab
+  {
+    echo ""
+    echo "$FSTAB_HEADER"
+    echo "$FSTAB_LINE"
+  } >> /etc/fstab
 fi
 
 ###############################################
