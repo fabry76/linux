@@ -33,7 +33,7 @@ apt-get install -y cifs-utils
 ###############################################
 # Mount point setup (idempotente vera)
 ###############################################
-runuser -u "$TARGET_USER" -- mkdir -p "$MOUNT_POINT"
+runuser -u "$TARGET_USER" -- bash -c "mkdir -p "$MOUNT_POINT""
 
 ###############################################
 # Detect credentials state (VERA logica idempotente)
