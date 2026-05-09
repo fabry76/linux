@@ -63,6 +63,7 @@ if [ ! -f "$BOOTSTRAP_MARKER" ]; then
 
   if rclone sync gdrive: "$HOME/Documents" \
     --drive-skip-gdocs \
+    --progress \
     --log-file "$HOME/rclone_bootstrap.log" \
     --log-level INFO; then
 
