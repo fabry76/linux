@@ -33,6 +33,15 @@ chown "$TARGET_USER":"$TARGET_USER" "$MOUNT_POINT"
 ###############################################
 # Ask credentials
 ###############################################
+if [ -f "$CRED_FILE" ]; then
+  echo "Credentials already exist."
+  read -rp "Do you want to update them? (y/N): " CONFIRM
+  if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+    echo "Keeping existing credentials."
+    exit 0
+  fi
+fi
+
 echo "=== NAS credentials setup ==="
 read -rp "Username: " NAS_USER
 read -rsp "Password: " NAS_PASS
