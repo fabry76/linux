@@ -161,11 +161,11 @@ apt-get install -y papirus-icon-theme
 # Firewall
 ###############################################
 apt-get install -y ufw
-ufw allow mdns
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 fi
-ufw status | grep -q "active" || ufw --force enable
+ufw enable
+ufw allow mdns
 
 ###############################################
 # Virtualization
