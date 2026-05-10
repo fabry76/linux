@@ -35,6 +35,7 @@ while IFS='|' read -r event file; do
         --exclude "*.tmp" \
         --exclude "*.swp" \
         --exclude "**/.git/**" \
+        --exclude ".~lock.*" \
         --exclude "**node_modules/**" \
         --log-file "$HOME/rclone.log" \
         --log-level INFO
