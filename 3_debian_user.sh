@@ -26,6 +26,8 @@ write_if_changed() {
 ###############################################
 xdg-user-dirs-update
 
+DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
+
 mkdir -p \
   "$HOME/.config" \
   "$HOME/.config/mpv" \
@@ -73,7 +75,7 @@ install -D \
 [ -f "$HOME/Git/linux/etc/computer.desktop" ] && \
 install -D \
   "$HOME/Git/linux/etc/computer.desktop" \
-  "$HOME/Desktop/computer.desktop"
+  "$DESKTOP_DIR/computer.desktop"
 
 ###############################################
 # Konsole
