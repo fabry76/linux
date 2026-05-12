@@ -28,8 +28,6 @@ while IFS='|' read -r event file; do
 
       flock -n 9 || exit 0
 
-      echo "🔄 Sync started..."
-
       rclone sync "$WATCH" gdrive: \
         --drive-skip-gdocs \
         --exclude "*.tmp" \
@@ -40,7 +38,6 @@ while IFS='|' read -r event file; do
         --log-file "$HOME/rclone.log" \
         --log-level INFO
 
-      echo "✅ Sync done"
     fi
 
   ) 9>"$LOCK"
