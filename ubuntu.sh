@@ -1,3 +1,5 @@
+set -e
+
 ###############################################
 # Root check
 ###############################################
@@ -11,6 +13,13 @@ fi
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+
+###############################################
+# Full Verbose Logging
+###############################################
+LOG_FILE="$TARGET_HOME/install.log"
+runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
+exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
 # Functions
@@ -28,7 +37,6 @@ write_if_changed() {
 # Base system & firmware
 ###############################################
 apt-get install -y \
-  ubuntu-restricted-extras \
   linux-firmware \
   intel-media-va-driver-non-free \
   firmware-sof-signed \
@@ -57,9 +65,8 @@ Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 EOF
 )"
 
-###############################################
-# VS Code repository
-###############################################
+# VSCode
+
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
   gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
 
@@ -104,7 +111,6 @@ apt-get install -y \
   htop \
   fastfetch \
   curl \
-  wget \
   timeshift \
   apt-show-versions \
   rclone \
@@ -170,6 +176,8 @@ locale-gen
 # Finalization
 ###############################################
 systemctl enable thermald
+runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
+runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
 
 ###############################################
 # Optional Fastgate setup
