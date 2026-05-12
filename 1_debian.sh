@@ -232,3 +232,6 @@ fi
 ###############################################
 apt-get -y autoremove
 apt-get clean
+
+echo
+echo "Installation completed."

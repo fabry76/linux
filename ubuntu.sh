@@ -25,13 +25,24 @@ write_if_changed() {
 }
 
 ###############################################
-# Extra Repositories
+# Base system & firmware
 ###############################################
-# Folder
+apt-get install -y \
+  ubuntu-restricted-extras \
+  linux-firmware \
+  intel-media-va-driver-non-free \
+  firmware-sof-signed \
+  thermald \
+  fwupd \
+  nvme-cli
+
+###############################################
+# Extra repositories
+###############################################
 install -d -m 0755 /etc/apt/keyrings
 
 # Brave
-wget -qO /etc/apt/keyrings/brave-browser-archive-keyring.gpg \
+curl -fsSLo /etc/apt/keyrings/brave-browser-archive-keyring.gpg \
   https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 
 chmod 644 /etc/apt/keyrings/brave-browser-archive-keyring.gpg
@@ -41,26 +52,111 @@ Types: deb
 URIs: https://brave-browser-apt-release.s3.brave.com/
 Suites: stable
 Components: main
-Architectures: amd64 arm64
+Architectures: amd64
 Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 EOF
 )"
 
-apt-get update && apt-get install -y brave-browser
+###############################################
+# VS Code repository
+###############################################
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
+  gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
 
-# install applications
-apt-get install -y ubuntu-restricted-extras intel-media-va-driver-non-free showtime ffmpeg gnome-shell-extension-manager gnome-weather gnome-calendar gnome-tweaks gnome-snapshot gnome-sound-recorder gnome-boxes ffmpegthumbnailer timeshift fastfetch curl htop apt-transport-https vim apt-show-versions fwupd rclone -y
+chmod 644 /etc/apt/keyrings/packages.microsoft.gpg
 
-# snaps
+write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/packages.microsoft.gpg
+EOF
+)"
+
+###############################################
+# Update repositories
+###############################################
+apt-get update
+
+###############################################
+# Desktop & GNOME utilities
+###############################################
+apt-get install -y \
+  gnome-shell-extension-manager \
+  gnome-weather \
+  gnome-calendar \
+  gnome-tweaks \
+  gnome-snapshot \
+  gnome-sound-recorder \
+  gnome-boxes \
+  seahorse \
+  showtime
+
+###############################################
+# Applications & Utilities
+###############################################
+apt-get install -y \
+  brave-browser \
+  code \
+  vim \
+  htop \
+  fastfetch \
+  curl \
+  wget \
+  timeshift \
+  apt-show-versions \
+  rclone \
+  unrar \
+  starship \
+  debsums
+
+###############################################
+# Multimedia and Extra
+###############################################
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+
+apt-get install -y \
+  ffmpeg \
+  ffmpegthumbnailer \
+  ubuntu-restricted-extras
+  
+###############################################
+# Snaps
+###############################################
 snap install pinta onlyoffice-desktopeditors transmission
-snap install --classic code
 
-# firewall
-ufw enable
+###############################################
+# Firewall
+###############################################
+apt-get install -y ufw
+
+ufw --force enable
 ufw allow mdns
 
-# printing and scanning
-apt-get install -y printer-driver-all printer-driver-cups-pdf sane simple-scan
+###############################################
+# Printing & Scanning
+###############################################
+apt-get install -y \
+  cups \
+  printer-driver-all \
+  printer-driver-cups-pdf \
+  sane \
+  simple-scan
+
+usermod -aG lpadmin "$TARGET_USER"
+systemctl enable cups
+
+###############################################
+# GRUB
+###############################################
+sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
+
+sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"/' \
+  /etc/default/grub
+
+update-grub
 
 ###############################################
 # Locale
@@ -69,6 +165,11 @@ grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
   printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
 
 locale-gen
+
+###############################################
+# Finalization
+###############################################
+systemctl enable thermald
 
 ###############################################
 # Optional Fastgate setup
@@ -89,3 +190,6 @@ fi
 ###############################################
 apt-get -y autoremove
 apt-get clean
+
+echo
+echo "Installation completed."
