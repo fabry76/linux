@@ -95,3 +95,4 @@ disabled = false
 
 [os.symbols]
 Debian = "🐧"
+Ubuntu = "🐧"
