@@ -74,7 +74,7 @@ systemctl enable "${MOUNT_NAME}.mount"
 ###############################################
 # Credential handling
 ###############################################
-mkdir -p /etc/samba
+install -d /etc/samba
 
 CRED_STATE="missing"
 if [ -f "$CRED_FILE" ]; then
