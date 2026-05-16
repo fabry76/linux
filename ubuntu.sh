@@ -37,7 +37,6 @@ write_if_changed() {
 # Base system & firmware
 ###############################################
 apt-get install -y \
-  linux-firmware \
   intel-media-va-driver-non-free \
   firmware-sof-signed \
   thermald \
