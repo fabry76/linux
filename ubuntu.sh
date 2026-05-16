@@ -65,7 +65,6 @@ EOF
 )"
 
 # VSCode
-
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
   gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
 
