@@ -38,10 +38,8 @@ write_if_changed() {
 ###############################################
 apt-get install -y \
   intel-media-va-driver-non-free \
-  firmware-sof-signed \
-  thermald \
-  fwupd \
-  nvme-cli
+  nvme-cli \
+  curl
 
 ###############################################
 # Extra repositories
