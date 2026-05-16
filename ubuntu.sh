@@ -124,7 +124,8 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
 apt-get install -y \
   ffmpeg \
   ffmpegthumbnailer \
-  ubuntu-restricted-extras
+  ubuntu-restricted-extras \
+  fonts-firacode
   
 ###############################################
 # Snaps
