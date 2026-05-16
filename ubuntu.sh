@@ -38,8 +38,7 @@ write_if_changed() {
 ###############################################
 apt-get install -y \
   intel-media-va-driver-non-free \
-  nvme-cli \
-  curl
+  nvme-cli
 
 ###############################################
 # Extra repositories
@@ -47,7 +46,7 @@ apt-get install -y \
 install -d -m 0755 /etc/apt/keyrings
 
 # Brave
-curl -fsSLo /etc/apt/keyrings/brave-browser-archive-keyring.gpg \
+wget -qO /etc/apt/keyrings/brave-browser-archive-keyring.gpg \
   https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 
 chmod 644 /etc/apt/keyrings/brave-browser-archive-keyring.gpg
@@ -57,7 +56,7 @@ Types: deb
 URIs: https://brave-browser-apt-release.s3.brave.com/
 Suites: stable
 Components: main
-Architectures: amd64
+Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 EOF
 )"

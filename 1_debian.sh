@@ -97,15 +97,18 @@ EOF
 )"
 
 # VSCode
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
+  gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
+
+chmod 644 /etc/apt/keyrings/packages.microsoft.gpg
 
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
-Signed-By: /etc/apt/keyrings/microsoft.gpg
-Architectures: amd64 arm64 armhf
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/packages.microsoft.gpg
 EOF
 )"
 
