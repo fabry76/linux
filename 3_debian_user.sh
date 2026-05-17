@@ -62,14 +62,6 @@ install -D \
   "$HOME/.config/kwriterc"
 
 ###############################################
-# KTORRENT
-###############################################
-[ -f "$HOME/Git/linux/etc/ktorrentrc" ] && \
-install -D \
-  "$HOME/Git/linux/etc/ktorrentrc" \
-  "$HOME/.config/ktorrentrc"
-
-###############################################
 # Desktop icon
 ###############################################
 [ -f "$HOME/Git/linux/etc/computer.desktop" ] && \

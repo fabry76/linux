@@ -134,16 +134,17 @@ apt-get install -y \
   konqueror- \
   kdeconnect-
 
-apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
+apt-get install -y ark kalk isoimagewriter kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
 # KDE Flatpak
 ###############################################
 apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze org.kde.ktorrent
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all"
+runuser -u "$TARGET_USER" -- bash -c 'flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download'
 
 ###############################################
 # Apps & Utilities
@@ -209,6 +210,21 @@ grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
   printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
 
 locale-gen
+
+update-locale \
+LANG=en_US.UTF-8 \
+LANGUAGE=en_US:en \
+LC_CTYPE="en_US.UTF-8" \
+LC_NUMERIC=it_IT.UTF-8 \
+LC_TIME=it_IT.UTF-8 \
+LC_COLLATE="en_US.UTF-8" \
+LC_MONETARY=it_IT.UTF-8 \
+LC_MESSAGES="en_US.UTF-8" \
+LC_PAPER=it_IT.UTF-8 \
+LC_NAME=it_IT.UTF-8 \
+LC_ADDRESS=it_IT.UTF-8 \
+LC_TELEPHONE=it_IT.UTF-8 \
+LC_MEASUREMENT=it_IT.UTF-8
 
 ###############################################
 # Finalization
