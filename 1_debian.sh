@@ -83,8 +83,8 @@ EOF
 install -d -m 0755 /etc/apt/keyrings
 
 # Brave
-wget -qO /etc/apt/keyrings/brave-browser-archive-keyring.gpg \
-  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
+  -o /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 
 chmod 644 /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 
@@ -99,10 +99,10 @@ EOF
 )"
 
 # VSCode
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
-  gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
+gpg --dearmor -o /etc/apt/keyrings/microsoft-vscode.gpg
 
-chmod 644 /etc/apt/keyrings/packages.microsoft.gpg
+chmod 644 /etc/apt/keyrings/microsoft-vscode.gpg
 
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
@@ -110,7 +110,7 @@ URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
 Architectures: amd64
-Signed-By: /etc/apt/keyrings/packages.microsoft.gpg
+Signed-By: /etc/apt/keyrings/microsoft-vscode.gpg
 EOF
 )"
 
