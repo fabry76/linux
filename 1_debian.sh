@@ -185,7 +185,7 @@ apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-
 systemctl enable cups
 
 ###############################################
-# Networking
+# Network Manager only
 ###############################################
 INTERFACES_FILE="/etc/network/interfaces"
 
