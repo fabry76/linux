@@ -132,8 +132,7 @@ apt-get install -y \
   konsole \
   plasma-browser-integration- \
   konqueror- \
-  kdeconnect- \
-  gnome-keyring-
+  kdeconnect-
 
 apt-get install -y ark kalk isoimagewriter ktorrent kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
@@ -144,6 +143,7 @@ apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kd
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all"
 
 ###############################################
 # Apps & Utilities
