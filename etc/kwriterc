@@ -41,7 +41,7 @@ Color Theme=Breeze Dark
 Line Height Multiplier=1
 Show Indentation Lines=false
 Show Whole Bracket Expression=false
-Text Font=Hack,14,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+Text Font=Ubuntu,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 Text Font Features=
 Word Wrap Marker=false
 
@@ -109,3 +109,5 @@ Word Completion Remove Tail=true
 
 [MainWindow]
 1920x1200 screen: Window-Maximized=true
+2 screens: Window-Maximized=true
+ToolBarsMovable=Enabled
