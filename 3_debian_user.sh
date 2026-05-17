@@ -97,6 +97,14 @@ install -D \
   "$HOME/.local/share/konsole/FF.profile"
 
 ###############################################
+# Locale
+###############################################
+[ -f "$HOME/Git/linux/etc/plasma-localerc" ] && \
+install -D \
+  "$HOME/Git/linux/etc/plasma-localerc" \
+  "$HOME/.config/plasma-localerc"
+
+###############################################
 # Done
 ###############################################
 echo "User customization completed."
