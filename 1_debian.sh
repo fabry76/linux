@@ -224,18 +224,21 @@ update-grub
 write_if_changed /etc/sysctl.d/99-hardening.conf "$(cat << 'EOF'
 kernel.kptr_restrict = 2
 kernel.sysrq = 0
-kernel.unprivileged_bpf_disabled = 1
-kernel.yama.ptrace_scope = 1
 kernel.dmesg_restrict = 1
 kernel.kexec_load_disabled = 1
-kernel.unprivileged_userns_clone = 1
+kernel.yama.ptrace_scope = 1
+kernel.unprivileged_bpf_disabled = 1
 
 net.core.bpf_jit_harden = 2
-net.ipv4.conf.all.log_martians = 1
-net.ipv4.conf.default.log_martians = 1
-net.ipv4.conf.all.rp_filter = 1
+
+net.ipv4.conf.all.rp_filter = 2
+net.ipv4.conf.default.rp_filter = 2
+
 net.ipv4.conf.all.send_redirects = 0
 net.ipv4.conf.default.send_redirects = 0
+
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
 
 fs.protected_fifos = 2
 fs.protected_regular = 2
@@ -248,7 +251,7 @@ EOF
 sysctl --system
 
 ###############################################
-# Disable network protocols
+# Disable legacy network protocols
 ###############################################
 write_if_changed /etc/modprobe.d/disable-protocols.conf "$(cat << 'EOF'
 install dccp /bin/false
