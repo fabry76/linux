@@ -22,9 +22,11 @@ write_if_changed() {
   local file="$1"
   local content="$2"
 
-  if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
-    printf "%s\n" "$content" > "$file"
+  if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+    return 0
   fi
+
+  printf "%s" "$content" > "$file"
 }
 
 ###############################################
@@ -225,14 +227,13 @@ kernel.sysrq = 0
 kernel.unprivileged_bpf_disabled = 1
 kernel.yama.ptrace_scope = 1
 kernel.dmesg_restrict = 1
+kernel.kexec_load_disabled = 1
+kernel.unprivileged_userns_clone = 1
 
 net.core.bpf_jit_harden = 2
-
 net.ipv4.conf.all.log_martians = 1
 net.ipv4.conf.default.log_martians = 1
-
 net.ipv4.conf.all.rp_filter = 1
-
 net.ipv4.conf.all.send_redirects = 0
 net.ipv4.conf.default.send_redirects = 0
 
@@ -240,11 +241,7 @@ fs.protected_fifos = 2
 fs.protected_regular = 2
 fs.protected_symlinks = 1
 fs.protected_hardlinks = 1
-
 fs.suid_dumpable = 0
-
-kernel.kexec_load_disabled = 1
-kernel.unprivileged_userns_clone = 1
 EOF
 )"
 
