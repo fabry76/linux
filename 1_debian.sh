@@ -146,7 +146,7 @@ runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.des
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald unattended-upgrades
 
 ###############################################
 # Multimedia
@@ -215,6 +215,56 @@ usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
 systemctl enable thermald
 plymouth-set-default-theme lines -R
 update-grub
+
+###############################################
+# Kernel Hardening (sysctl)
+###############################################
+write_if_changed /etc/sysctl.d/99-hardening.conf "$(cat << 'EOF'
+kernel.kptr_restrict = 2
+kernel.sysrq = 0
+kernel.unprivileged_bpf_disabled = 1
+kernel.yama.ptrace_scope = 1
+kernel.dmesg_restrict = 1
+
+net.core.bpf_jit_harden = 2
+
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.default.log_martians = 1
+
+net.ipv4.conf.all.rp_filter = 1
+
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+
+fs.protected_fifos = 2
+fs.protected_regular = 2
+fs.protected_symlinks = 1
+fs.protected_hardlinks = 1
+
+fs.suid_dumpable = 0
+
+kernel.kexec_load_disabled = 1
+kernel.unprivileged_userns_clone = 1
+EOF
+)"
+
+sysctl --system
+
+###############################################
+# Disable network protocols
+###############################################
+write_if_changed /etc/modprobe.d/disable-protocols.conf "$(cat << 'EOF'
+install dccp /bin/false
+install sctp /bin/false
+install rds /bin/false
+install tipc /bin/false
+
+blacklist dccp
+blacklist sctp
+blacklist rds
+blacklist tipc
+EOF
+)"
 
 ###############################################
 # Optional Fastgate setup
