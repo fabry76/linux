@@ -128,7 +128,7 @@ apt-get install -y \
 ###############################################
 # Snaps
 ###############################################
-snap install -y pinta onlyoffice-desktopeditors transmission
+snap install pinta onlyoffice-desktopeditors transmission
 
 ###############################################
 # Firewall
