@@ -36,6 +36,11 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
+# Install dependencies for key management
+###############################################
+apt-get install -y gpg curl wget
+
+###############################################
 # Extra Repositories
 ###############################################
 # Folder
