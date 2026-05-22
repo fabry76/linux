@@ -15,30 +15,25 @@ TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 
 ###############################################
-# Full Verbose Logging
-###############################################
-LOG_FILE="$TARGET_HOME/install.log"
-runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
-exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
-
-###############################################
 # Functions
 ###############################################
 write_if_changed() {
   local file="$1"
   local content="$2"
 
-  if [ ! -f "$file" ] || [ "$(cat "$file")" != "$content" ]; then
-    printf "%s\n" "$content" > "$file"
+  if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+    return 0
   fi
+
+  printf "%s" "$content" > "$file"
 }
 
 ###############################################
-# Base system & firmware
+# Full Verbose Logging
 ###############################################
-apt-get install -y \
-  intel-media-va-driver-non-free \
-  nvme-cli
+LOG_FILE="$TARGET_HOME/install.log"
+runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
+exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
 # Extra Repositories
@@ -82,6 +77,11 @@ EOF
 # Update repositories
 ###############################################
 apt-get update
+
+###############################################
+# Base system & firmware
+###############################################
+apt-get install -y intel-media-va-driver-non-free nvme-cli
 
 ###############################################
 # Desktop & GNOME utilities
