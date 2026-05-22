@@ -1,4 +1,4 @@
-set -e
+set -euo pipefail
 
 ###############################################
 # Root check
@@ -187,7 +187,6 @@ LC_MEASUREMENT=it_IT.UTF-8
 ###############################################
 # Finalization
 ###############################################
-systemctl enable thermald
 runuser -u "$TARGET_USER" -- bash -c "grep -qF 'eval \"\$(starship init bash)\"' \"$TARGET_HOME/.bashrc\" || echo 'eval \"\$(starship init bash)\"' >> \"$TARGET_HOME/.bashrc\""
 runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/starship.toml\" \"$TARGET_HOME/.config/starship.toml\""
 
