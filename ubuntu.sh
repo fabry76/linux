@@ -38,7 +38,7 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 ###############################################
 # Install dependencies for key management
 ###############################################
-apt-get install -y gpg curl wget
+apt-get install -y curl
 
 ###############################################
 # Extra Repositories
@@ -99,7 +99,6 @@ apt-get install -y \
   gnome-snapshot \
   gnome-sound-recorder \
   gnome-boxes \
-  seahorse \
   showtime
 
 ###############################################
