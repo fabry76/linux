@@ -47,10 +47,18 @@ apt-get install -y curl
 install -d -m 0755 /etc/apt/keyrings
 
 # Brave
-curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
-  -o /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+TMP_BRAVE_KEY="$(mktemp)"
 
-chmod 644 /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+curl -fsSL \
+  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
+  -o "$TMP_BRAVE_KEY"
+
+if [ ! -f /etc/apt/keyrings/brave-browser-archive-keyring.gpg ] || \
+   ! cmp -s "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg; then
+  install -m 0644 "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+fi
+
+rm -f "$TMP_BRAVE_KEY"
 
 write_if_changed /etc/apt/sources.list.d/brave-browser.sources "$(cat << 'EOF'
 Types: deb
@@ -63,10 +71,17 @@ EOF
 )"
 
 # VSCode
-curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-gpg --dearmor -o /etc/apt/keyrings/microsoft-vscode.gpg
+TMP_VSCODE_KEY="$(mktemp)"
 
-chmod 644 /etc/apt/keyrings/microsoft-vscode.gpg
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
+gpg --batch --yes --dearmor --output "$TMP_VSCODE_KEY"
+
+if [ ! -f /etc/apt/keyrings/microsoft-vscode.gpg ] || \
+   ! cmp -s "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg; then
+  install -m 0644 "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg
+fi
+
+rm -f "$TMP_VSCODE_KEY"
 
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
@@ -139,8 +154,8 @@ snap install pinta onlyoffice-desktopeditors transmission
 ###############################################
 apt-get install -y ufw
 
-ufw --force enable
 ufw allow mdns
+ufw --force enable
 
 ###############################################
 # Printing & Scanning

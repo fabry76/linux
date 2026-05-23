@@ -110,7 +110,7 @@ EOF
 TMP_VSCODE_KEY="$(mktemp)"
 
 curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-gpg --batch --yes --dearmor > "$TMP_VSCODE_KEY"
+gpg --batch --yes --dearmor --output "$TMP_VSCODE_KEY"
 
 if [ ! -f /etc/apt/keyrings/microsoft-vscode.gpg ] || \
    ! cmp -s "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg; then
