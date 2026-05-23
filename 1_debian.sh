@@ -39,7 +39,7 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 ###############################################
 # Install dependencies for key management
 ###############################################
-apt-get install -y gpg curl wget
+apt-get install -y gpg curl
 
 ###############################################
 # Debian Repositories
@@ -83,10 +83,18 @@ EOF
 install -d -m 0755 /etc/apt/keyrings
 
 # Brave
-curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
-  -o /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+TMP_BRAVE_KEY="$(mktemp)"
 
-chmod 644 /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+curl -fsSL \
+  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
+  -o "$TMP_BRAVE_KEY"
+
+if [ ! -f /etc/apt/keyrings/brave-browser-archive-keyring.gpg ] || \
+   ! cmp -s "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg; then
+  install -m 0644 "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+fi
+
+rm -f "$TMP_BRAVE_KEY"
 
 write_if_changed /etc/apt/sources.list.d/brave-browser.sources "$(cat << 'EOF'
 Types: deb
@@ -99,10 +107,17 @@ EOF
 )"
 
 # VSCode
-curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-gpg --dearmor -o /etc/apt/keyrings/microsoft-vscode.gpg
+TMP_VSCODE_KEY="$(mktemp)"
 
-chmod 644 /etc/apt/keyrings/microsoft-vscode.gpg
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
+gpg --batch --yes --dearmor > "$TMP_VSCODE_KEY"
+
+if [ ! -f /etc/apt/keyrings/microsoft-vscode.gpg ] || \
+   ! cmp -s "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg; then
+  install -m 0644 "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg
+fi
+
+rm -f "$TMP_VSCODE_KEY"
 
 write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
 Types: deb
@@ -143,7 +158,7 @@ apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kd
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze org.kde.ktorrent
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
-runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all"
+runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
 runuser -u "$TARGET_USER" -- bash -c 'flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download'
 
 ###############################################
@@ -170,8 +185,8 @@ apt-get install -y ufw
 if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 fi
-ufw enable
 ufw allow mdns
+ufw --force enable
 
 ###############################################
 # Virtualization
@@ -235,8 +250,9 @@ plymouth-set-default-theme lines -R
 update-grub
 
 ###############################################
-# Kernel Hardening (sysctl)
+# Hardening
 ###############################################
+# Kernel
 write_if_changed /etc/sysctl.d/99-hardening.conf "$(cat << 'EOF'
 kernel.kptr_restrict = 2
 kernel.sysrq = 0
@@ -264,11 +280,10 @@ fs.suid_dumpable = 0
 EOF
 )"
 
+# sysctl
 sysctl --system
 
-###############################################
 # Disable legacy network protocols
-###############################################
 write_if_changed /etc/modprobe.d/disable-protocols.conf "$(cat << 'EOF'
 install dccp /bin/false
 install sctp /bin/false
