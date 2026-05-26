@@ -77,20 +77,6 @@ EOF
 )"
 
 ###############################################
-# Backports repository
-###############################################
-BACKPORTS_FILE="/etc/apt/sources.list.d/backports.sources"
-
-write_if_changed "$BACKPORTS_FILE" "$(cat << EOF
-Types: deb
-URIs: https://deb.debian.org/debian/
-Suites: ${DEBIAN_CODENAME}-backports
-Components: main contrib non-free non-free-firmware
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-)"
-
-###############################################
 # Extra Repositories
 ###############################################
 # Folder
@@ -149,26 +135,14 @@ EOF
 apt-get update
 
 ###############################################
-# Backports kernel (newer kernel)
-###############################################
-apt-get install -y -t ${DEBIAN_CODENAME}-backports linux-image-amd64 linux-headers-amd64
-
-###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-misc-nonfree linux-headers-amd64 firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # KDE Plasma
 ###############################################
-apt-get install -y \
-  kde-plasma-desktop \
-  konsole \
-  plasma-browser-integration- \
-  konqueror- \
-  kdeconnect-
-
-apt-get install -y ark kalk isoimagewriter kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
+apt-get install -y kde-plasma-desktop konsole ark kalk isoimagewriter kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
 ###############################################
 # KDE Flatpak
@@ -235,7 +209,7 @@ write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
 # GRUB
 ###############################################
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
-sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="splash quiet loglevel=3"/' /etc/default/grub
+sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' /etc/default/grub
 
 ###############################################
 # Locale
