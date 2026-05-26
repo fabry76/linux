@@ -77,6 +77,20 @@ EOF
 )"
 
 ###############################################
+# Backports repository
+###############################################
+BACKPORTS_FILE="/etc/apt/sources.list.d/backports.sources"
+
+write_if_changed "$BACKPORTS_FILE" "$(cat << EOF
+Types: deb
+URIs: https://deb.debian.org/debian/
+Suites: ${DEBIAN_CODENAME}-backports
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+)"
+
+###############################################
 # Extra Repositories
 ###############################################
 # Folder
@@ -135,9 +149,14 @@ EOF
 apt-get update
 
 ###############################################
+# Backports kernel (newer kernel)
+###############################################
+apt-get install -y -t ${DEBIAN_CODENAME}-backports linux-image-amd64 linux-headers-amd64
+
+###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-misc-nonfree linux-headers-amd64 firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # KDE Plasma
