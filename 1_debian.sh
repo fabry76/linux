@@ -142,7 +142,7 @@ apt-get install -y firmware-misc-nonfree linux-headers-amd64 firmware-sof-signed
 ###############################################
 # KDE Plasma
 ###############################################
-apt-mark hold plasma-browser-integration
+apt-mark hold plasma-browser-integration konqueror
 
 apt-get install -y kde-plasma-desktop konsole ark kalk isoimagewriter kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight plasma-widgets-addons krecorder plasma-workspace-wallpapers
 
