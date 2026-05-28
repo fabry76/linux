@@ -137,7 +137,7 @@ apt-get update
 ###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free firmware-iwlwifi
 
 ###############################################
 # KDE Plasma
@@ -146,9 +146,7 @@ apt-mark hold plasma-browser-integration konqueror
 
 apt-get install -y kde-plasma-desktop konsole ark kalk isoimagewriter kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight krecorder plasma-workspace-wallpapers
 
-###############################################
 # KDE Flatpak
-###############################################
 apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze org.kde.ktorrent
