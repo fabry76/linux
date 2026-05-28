@@ -137,7 +137,7 @@ apt-get update
 ###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-misc-nonfree linux-headers-amd64 firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
+apt-get install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free
 
 ###############################################
 # KDE Plasma
