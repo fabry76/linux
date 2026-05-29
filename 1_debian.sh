@@ -149,7 +149,7 @@ apt-get install -y kde-plasma-desktop konsole ark kalk isoimagewriter kolourpain
 # KDE Flatpak
 apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze org.kde.ktorrent
+flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze org.kde.ktorrent com.github.wwmm.easyeffects
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
 runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
 runuser -u "$TARGET_USER" -- bash -c 'flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download'
