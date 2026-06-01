@@ -10,6 +10,92 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ###############################################
+# Optional components selection
+###############################################
+
+while :; do
+    echo "Which desktop environment do you want to install?"
+    echo "1) KDE"
+    echo "2) GNOME"
+    read -rp "Choice [1-2]: " DESKTOP_CHOICE
+
+    [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
+
+    echo "Please enter 1 for KDE or 2 for GNOME."
+    echo
+done
+
+echo
+
+while :; do
+    echo "Which browsers do you want to install?"
+    echo "1) Brave"
+    echo "2) Chrome"
+    echo "3) Firefox"
+    echo
+    echo "Examples:"
+    echo "  1"
+    echo "  1,3"
+    echo "  1,2,3"
+    read -rp "Selection: " BROWSER_SELECTION
+
+    VALID=true
+
+    IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
+
+    [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
+
+    for browser in "${BROWSERS[@]}"; do
+        browser="${browser// /}"
+
+        case "$browser" in
+            1|2|3) ;;
+            *)
+                VALID=false
+                break
+                ;;
+        esac
+    done
+
+    if [ "$VALID" = true ]; then
+        break
+    fi
+
+    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
+    echo
+done
+
+echo
+
+while :; do
+    read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
+
+    [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
+
+    echo "Please answer y or n."
+done
+
+echo
+
+while :; do
+    read -rp "Mount Fastgate at the end of installation? (y/N): " RUN_FASTGATE
+
+    [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
+
+    echo "Please answer y or n."
+done
+
+echo
+
+while :; do
+    read -rp "Apply system hardening at the end of installation? (y/N): " RUN_HARDENING
+
+    [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
+
+    echo "Please answer y or n."
+done
+
+###############################################
 # Target User & Home
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
@@ -79,55 +165,29 @@ EOF
 ###############################################
 # Extra Repositories
 ###############################################
-# Folder
 install -d -m 0755 /etc/apt/keyrings
 
-# Brave
-TMP_BRAVE_KEY="$(mktemp)"
+# Browsers
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-curl -fsSL \
-  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
-  -o "$TMP_BRAVE_KEY"
+for browser in $BROWSER_SELECTION; do
+    case "$browser" in
+        1)
+            bash "$SCRIPT_DIR/repos/brave.sh"
+            ;;
+        2)
+            bash "$SCRIPT_DIR/repos/chrome.sh"
+            ;;
+        3)
+            bash "$SCRIPT_DIR/repos/firefox.sh"
+            ;;
+    esac
+done
 
-if [ ! -f /etc/apt/keyrings/brave-browser-archive-keyring.gpg ] || \
-   ! cmp -s "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg; then
-  install -m 0644 "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg
+# Visual Studio Code
+if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/repos/vscode.sh"
 fi
-
-rm -f "$TMP_BRAVE_KEY"
-
-write_if_changed /etc/apt/sources.list.d/brave-browser.sources "$(cat << 'EOF'
-Types: deb
-URIs: https://brave-browser-apt-release.s3.brave.com/
-Suites: stable
-Components: main
-Architectures: amd64 arm64
-Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
-EOF
-)"
-
-# VSCode
-TMP_VSCODE_KEY="$(mktemp)"
-
-curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-gpg --batch --yes --dearmor --output "$TMP_VSCODE_KEY"
-
-if [ ! -f /etc/apt/keyrings/microsoft-vscode.gpg ] || \
-   ! cmp -s "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg; then
-  install -m 0644 "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg
-fi
-
-rm -f "$TMP_VSCODE_KEY"
-
-write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
-Types: deb
-URIs: https://packages.microsoft.com/repos/code
-Suites: stable
-Components: main
-Architectures: amd64
-Signed-By: /etc/apt/keyrings/microsoft-vscode.gpg
-EOF
-)"
 
 ###############################################
 # Update Repositories
@@ -140,29 +200,62 @@ apt-get update
 apt-get install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free firmware-iwlwifi
 
 ###############################################
-# KDE Plasma
+# Desktop Environment
 ###############################################
-apt-mark hold plasma-browser-integration konqueror
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-apt-get install -y kde-plasma-desktop konsole ark kalk isoimagewriter kolourpaint gwenview okular okular-extra-backends kcharselect kcolorchooser filelight krecorder plasma-workspace-wallpapers
-
-# KDE Flatpak
-apt-get install -y flatpak plasma-discover-backend-flatpak xdg-desktop-portal-kde kde-config-flatpak
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub org.onlyoffice.desktopeditors org.mozilla.firefox org.gtk.Gtk3theme.Breeze org.kde.ktorrent
-runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
-runuser -u "$TARGET_USER" -- bash -c "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
-runuser -u "$TARGET_USER" -- bash -c 'flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download'
+case "$DESKTOP_CHOICE" in
+    1)
+        echo
+        echo "Installing KDE Plasma..."
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER"
+        ;;
+    2)
+        echo
+        echo "Installing GNOME..."
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER"
+        ;;
+esac
 
 ###############################################
 # Apps & Utilities
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli brave-browser code rclone inotify-tools libnotify-bin thermald unattended-upgrades
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades
+
+###############################################
+# Browsers
+###############################################
+BROWSERS_TO_INSTALL=()
+
+for browser in $BROWSER_SELECTION; do
+    case "$browser" in
+        1)
+            BROWSERS_TO_INSTALL+=(brave-browser)
+            ;;
+        2)
+            BROWSERS_TO_INSTALL+=(google-chrome-stable)
+            ;;
+        3)
+            BROWSERS_TO_INSTALL+=(firefox)
+            ;;
+    esac
+done
+
+if [ ${#BROWSERS_TO_INSTALL[@]} -gt 0 ]; then
+    apt-get install -y "${BROWSERS_TO_INSTALL[@]}"
+fi
+
+###############################################
+# Visual Studio Code
+###############################################
+if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
+    apt-get install -y code
+fi
 
 ###############################################
 # Multimedia
 ###############################################
-apt-get install -y mpv ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
+apt-get install -y ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
 
 ###############################################
 # Fonts & Icons
@@ -172,24 +265,9 @@ apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlit
 apt-get install -y papirus-icon-theme
 
 ###############################################
-# Firewall
-###############################################
-apt-get install -y ufw
-if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
-   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-fi
-ufw allow mdns
-ufw --force enable
-
-###############################################
-# Virtualization
-###############################################
-apt-get install -y virt-manager virt-viewer qemu-kvm
-
-###############################################
 # Printing & Scanning
 ###############################################
-apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf print-manager skanpage
+apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf
 systemctl enable cups
 
 ###############################################
@@ -247,12 +325,9 @@ update-grub
 ###############################################
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -f "$SCRIPT_DIR/2_fastgate.sh" ]; then
-  echo
-  read -rp "Mount Fastgate now? (y/N): " RUN_FASTGATE
-
+if [ -f "$SCRIPT_DIR/fastgate.sh" ]; then
   if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/2_fastgate.sh"
+    bash "$SCRIPT_DIR/fastgate.sh"
   fi
 fi
 
@@ -261,12 +336,9 @@ fi
 ###############################################
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -f "$SCRIPT_DIR/3_hardening.sh" ]; then
-  echo
-  read -rp "Apply system hardening now? (y/N): " RUN_HARDENING
-
+if [ -f "$SCRIPT_DIR/hardening.sh" ]; then
   if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/3_hardening.sh"
+    bash "$SCRIPT_DIR/hardening.sh"
   fi
 fi
 
