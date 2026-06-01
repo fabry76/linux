@@ -73,6 +73,7 @@ EOF
 write_if_changed "$MOUNT_UNIT" "$UNIT_CONTENT"
 systemctl daemon-reload
 systemctl enable "${MOUNT_NAME}.mount"
+systemctl start "${MOUNT_NAME}.mount"
 
 ###############################################
 # Credential handling
