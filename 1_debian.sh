@@ -12,7 +12,6 @@ fi
 ###############################################
 # Optional components selection
 ###############################################
-
 while :; do
     echo "Which desktop environment do you want to install?"
     echo "1) KDE"
@@ -26,7 +25,6 @@ while :; do
 done
 
 echo
-
 while :; do
     echo "Which browsers do you want to install?"
     echo "1) Brave"
@@ -66,40 +64,32 @@ while :; do
 done
 
 echo
-
 while :; do
     read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
-
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
-
     echo "Please answer y or n."
 done
 
 echo
-
 while :; do
     read -rp "Mount Fastgate at the end of installation? (y/N): " RUN_FASTGATE
-
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
-
     echo "Please answer y or n."
 done
 
 echo
-
 while :; do
     read -rp "Apply system hardening at the end of installation? (y/N): " RUN_HARDENING
-
     [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
-
     echo "Please answer y or n."
 done
 
 ###############################################
-# Target User & Home
+# Variables
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ###############################################
 # Functions
@@ -168,8 +158,6 @@ EOF
 install -d -m 0755 /etc/apt/keyrings
 
 # Browsers
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 for browser in $BROWSER_SELECTION; do
     case "$browser" in
         1)
@@ -202,8 +190,6 @@ apt-get install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree f
 ###############################################
 # Desktop Environment
 ###############################################
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 case "$DESKTOP_CHOICE" in
     1)
         echo
@@ -323,8 +309,6 @@ update-grub
 ###############################################
 # Optional Fastgate setup
 ###############################################
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 if [ -f "$SCRIPT_DIR/fastgate.sh" ]; then
   if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     bash "$SCRIPT_DIR/fastgate.sh"
@@ -334,8 +318,6 @@ fi
 ###############################################
 # Optional Hardening setup
 ###############################################
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 if [ -f "$SCRIPT_DIR/hardening.sh" ]; then
   if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
     bash "$SCRIPT_DIR/hardening.sh"
