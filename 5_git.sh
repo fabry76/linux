@@ -23,6 +23,18 @@ DEST_KEY="$HOME/.ssh/id_ed25519"
 REMOTE_URL="git@github.com:fabry76/linux.git"
 
 ###############################################
+# Fastgate check
+###############################################
+if [ ! -f "$SOURCE_KEY" ]; then
+  echo
+  echo "SSH key not found:"
+  echo "$SOURCE_KEY"
+  echo
+  echo "Fastgate share is probably not mounted."
+  exit 1
+fi
+
+###############################################
 # Repository
 ###############################################
 cd "$REPO_PATH" || {

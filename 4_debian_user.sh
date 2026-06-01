@@ -105,6 +105,20 @@ install -D \
   "$HOME/.config/plasma-localerc"
 
 ###############################################
+# Optional Git setup
+###############################################
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ -f "$SCRIPT_DIR/5_git.sh" ]; then
+  echo
+  read -rp "Configure Git now? (y/N): " RUN_GIT
+
+  if [[ "$RUN_GIT" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/5_git.sh"
+  fi
+fi
+
+###############################################
 # Done
 ###############################################
 echo "User customization completed."
