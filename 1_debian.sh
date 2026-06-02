@@ -10,77 +10,6 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ###############################################
-# Optional components selection
-###############################################
-while :; do
-    echo "Which desktop environment do you want to install?"
-    echo "1) KDE"
-    echo "2) GNOME"
-    read -rp "Choice [1-2]: " DESKTOP_CHOICE
-
-    [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
-
-    echo "Please enter 1 for KDE or 2 for GNOME."
-    echo
-done
-
-echo
-while :; do
-    echo "Which browsers do you want to install?"
-    echo "1) Brave"
-    echo "2) Chrome"
-    echo "3) Firefox"
-    echo
-    echo "Examples:"
-    echo "  1"
-    echo "  1,3"
-    echo "  1,2,3"
-    read -rp "Selection: " BROWSER_SELECTION
-
-    VALID=true
-
-    IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
-
-    [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
-
-    for browser in "${BROWSERS[@]}"; do
-    case "$browser" in
-        1) bash "$SCRIPT_DIR/brave.sh" ;;
-        2) bash "$SCRIPT_DIR/chrome.sh" ;;
-        3) bash "$SCRIPT_DIR/firefox.sh" ;;
-    esac
-done
-
-    if [ "$VALID" = true ]; then
-        break
-    fi
-
-    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
-    echo
-done
-
-echo
-while :; do
-    read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
-    [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
-    echo "Please answer y or n."
-done
-
-echo
-while :; do
-    read -rp "Mount Fastgate SMB share? (y/N): " RUN_FASTGATE
-    [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
-    echo "Please answer y or n."
-done
-
-echo
-while :; do
-    read -rp "Apply system hardening at the end of installation? (y/N): " RUN_HARDENING
-    [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
-    echo "Please answer y or n."
-done
-
-###############################################
 # Variables
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
@@ -107,6 +36,81 @@ write_if_changed() {
 LOG_FILE="$TARGET_HOME/install.log"
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
+
+###############################################
+# Optional components selection
+###############################################
+while :; do
+    echo "Which desktop environment do you want to install?"
+    echo "1) KDE"
+    echo "2) GNOME"
+    read -rp "Choice [1-2]: " DESKTOP_CHOICE
+
+    [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
+
+    echo "Please enter 1 for KDE or 2 for GNOME."
+    echo
+done
+
+echo
+while :; do
+    echo "Which browsers do you want to install?"
+    echo "1) Brave"
+    echo "2) Chrome"
+    echo "3) Firefox"
+    echo
+    echo "Examples:"
+    echo "  1"
+    echo "  1,3"
+    echo "  1,2,3"
+
+    read -rp "Selection: " BROWSER_SELECTION
+
+    VALID=true
+    IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
+
+    [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
+
+    for browser in "${BROWSERS[@]}"; do
+        browser="${browser// /}"
+
+        case "$browser" in
+            1|2|3)
+                ;;
+            *)
+                VALID=false
+                break
+                ;;
+        esac
+    done
+
+    [ "$VALID" = true ] && break
+
+    echo
+    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
+    echo
+done
+
+echo
+while :; do
+    read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
+    [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
+done
+
+echo
+while :; do
+    read -rp "Mount Fastgate SMB share? (y/N): " RUN_FASTGATE
+    [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
+done
+
+echo
+while :; do
+    read -rp "Apply system hardening at the end of installation? (y/N): " RUN_HARDENING
+    [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
+done
 
 ###############################################
 # Install dependencies for key management
@@ -156,6 +160,9 @@ install -d -m 0755 /etc/apt/keyrings
 # Browsers
 BROWSERS_TO_INSTALL=()
 for browser in "${BROWSERS[@]}"; do
+    browser="${browser// /}"
+
+    case "$browser" in
         1)
             bash "$SCRIPT_DIR/brave.sh"
             ;;
@@ -166,6 +173,7 @@ for browser in "${BROWSERS[@]}"; do
             bash "$SCRIPT_DIR/firefox.sh"
             ;;
     esac
+donec
 done
 
 # Visual Studio Code
