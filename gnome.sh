@@ -53,7 +53,7 @@ esac
 flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 
 runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download"
+    "flatpak override --user com.transmissionbt.Transmission --nofilesystem=host --filesystem=xdg-download"
 
 case "$FLATPAK_BROWSER" in
     1)
