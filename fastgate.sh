@@ -24,6 +24,19 @@ write_if_changed() {
 }
 
 ###############################################
+# Variables
+###############################################
+TARGET_USER="${SUDO_USER:-${USER:-root}}"
+TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+
+MOUNT_POINT="$TARGET_HOME/Fastgate"
+CRED_FILE="/etc/samba/fastgate.creds"
+SERVER="//192.168.1.254/samba/usb1_1"
+
+USER_ID=$(id -u "$TARGET_USER")
+GROUP_ID=$(id -g "$TARGET_USER")
+
+###############################################
 # Credential handling
 ###############################################
 install -d /etc/samba
@@ -61,19 +74,6 @@ EOF
   chown root:root "$CRED_FILE"
   chmod 600 "$CRED_FILE"
 fi
-
-###############################################
-# Config
-###############################################
-TARGET_USER="${SUDO_USER:-${USER:-root}}"
-TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
-
-MOUNT_POINT="$TARGET_HOME/Fastgate"
-CRED_FILE="/etc/samba/fastgate.creds"
-SERVER="//192.168.1.254/samba/usb1_1"
-
-USER_ID=$(id -u "$TARGET_USER")
-GROUP_ID=$(id -g "$TARGET_USER")
 
 ###############################################
 # Dependency
