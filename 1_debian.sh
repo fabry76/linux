@@ -161,13 +161,13 @@ install -d -m 0755 /etc/apt/keyrings
 for browser in $BROWSER_SELECTION; do
     case "$browser" in
         1)
-            bash "$SCRIPT_DIR/repos/brave.sh"
+            bash "$SCRIPT_DIR/brave.sh"
             ;;
         2)
-            bash "$SCRIPT_DIR/repos/chrome.sh"
+            bash "$SCRIPT_DIR/chrome.sh"
             ;;
         3)
-            bash "$SCRIPT_DIR/repos/firefox.sh"
+            bash "$SCRIPT_DIR/firefox.sh"
             ;;
     esac
 done
