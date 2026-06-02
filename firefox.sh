@@ -34,3 +34,6 @@ Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/mozilla.gpg
 EOF
 )"
+
+apt-get update
+apt-get install -y firefox-esr

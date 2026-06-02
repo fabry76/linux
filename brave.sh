@@ -34,3 +34,6 @@ Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
 EOF
 )"
+
+apt-get update
+apt-get install -y brave-browser

@@ -181,9 +181,10 @@ while :; do
 done
 
 ###############################################
-# Install dependencies for key management
+# Dependencies for key management & repos
 ###############################################
 apt-get install -y gpg curl
+install -d -m 0755 /etc/apt/keyrings
 
 ###############################################
 # Debian Repositories
@@ -221,34 +222,6 @@ EOF
 )"
 
 ###############################################
-# Extra Repositories
-###############################################
-install -d -m 0755 /etc/apt/keyrings
-
-# Browsers
-BROWSERS_TO_INSTALL=()
-for browser in "${BROWSERS[@]}"; do
-    browser="${browser// /}"
-
-    case "$browser" in
-        1)
-            bash "$SCRIPT_DIR/brave.sh"
-            ;;
-        2)
-            bash "$SCRIPT_DIR/chrome.sh"
-            ;;
-        3)
-            bash "$SCRIPT_DIR/firefox.sh"
-            ;;
-    esac
-done
-
-# Visual Studio Code
-if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/vscode.sh"
-fi
-
-###############################################
 # Update Repositories
 ###############################################
 apt-get update
@@ -275,41 +248,36 @@ case "$DESKTOP_CHOICE" in
 esac
 
 ###############################################
-# Apps & Utilities
-###############################################
-apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades
-
-###############################################
 # Browsers
 ###############################################
 BROWSERS_TO_INSTALL=()
-
 for browser in "${BROWSERS[@]}"; do
     browser="${browser// /}"
 
     case "$browser" in
         1)
-            BROWSERS_TO_INSTALL+=(brave-browser)
+            bash "$SCRIPT_DIR/brave.sh"
             ;;
         2)
-            BROWSERS_TO_INSTALL+=(google-chrome-stable)
+            bash "$SCRIPT_DIR/chrome.sh"
             ;;
         3)
-            BROWSERS_TO_INSTALL+=(firefox)
+            bash "$SCRIPT_DIR/firefox.sh"
             ;;
     esac
 done
-
-if [ ${#BROWSERS_TO_INSTALL[@]} -gt 0 ]; then
-    apt-get install -y "${BROWSERS_TO_INSTALL[@]}"
-fi
 
 ###############################################
 # Visual Studio Code
 ###############################################
 if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
-    apt-get install -y code
+    bash "$SCRIPT_DIR/vscode.sh"
 fi
+
+###############################################
+# Common Apps & Utilities
+###############################################
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades
 
 ###############################################
 # Multimedia
@@ -395,20 +363,19 @@ LC_MEASUREMENT=it_IT.UTF-8
 ###############################################
 # Finalization
 ###############################################
-
 systemctl enable thermald
 plymouth-set-default-theme lines -R
 update-grub
 
 ###############################################
-# Optional Fastgate setup
+# Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     bash "$SCRIPT_DIR/fastgate.sh" "$TARGET_USER"
 fi
 
 ###############################################
-# Optional Hardening setup
+# Hardening
 ###############################################
 if [ -f "$SCRIPT_DIR/hardening.sh" ]; then
   if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then

@@ -34,3 +34,6 @@ Architectures: amd64
 Signed-By: /etc/apt/keyrings/google-chrome.asc
 EOF
 )"
+
+apt-get update
+apt-get install -y google-chrome-stable

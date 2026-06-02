@@ -33,3 +33,6 @@ Architectures: amd64
 Signed-By: /etc/apt/keyrings/microsoft-vscode.gpg
 EOF
 )"
+
+apt-get update
+apt-get install -y code
