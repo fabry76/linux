@@ -44,16 +44,12 @@ while :; do
     [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
 
     for browser in "${BROWSERS[@]}"; do
-        browser="${browser// /}"
-
-        case "$browser" in
-            1|2|3) ;;
-            *)
-                VALID=false
-                break
-                ;;
-        esac
-    done
+    case "$browser" in
+        1) bash "$SCRIPT_DIR/brave.sh" ;;
+        2) bash "$SCRIPT_DIR/chrome.sh" ;;
+        3) bash "$SCRIPT_DIR/firefox.sh" ;;
+    esac
+done
 
     if [ "$VALID" = true ]; then
         break
@@ -158,8 +154,8 @@ EOF
 install -d -m 0755 /etc/apt/keyrings
 
 # Browsers
-for browser in $BROWSER_SELECTION; do
-    case "$browser" in
+BROWSERS_TO_INSTALL=()
+for browser in "${BROWSERS[@]}"; do
         1)
             bash "$SCRIPT_DIR/brave.sh"
             ;;

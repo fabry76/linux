@@ -1,3 +1,17 @@
+###############################################
+# Functions
+###############################################
+write_if_changed() {
+local file="$1"
+local content="$2"
+
+if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+return 0
+fi
+
+printf "%s" "$content" > "$file"
+}
+
 TMP_MOZILLA_KEY="$(mktemp)"
 
 curl -fsSL \
