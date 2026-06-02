@@ -24,6 +24,45 @@ write_if_changed() {
 }
 
 ###############################################
+# Credential handling
+###############################################
+install -d /etc/samba
+
+CRED_STATE="missing"
+if [ -f "$CRED_FILE" ]; then
+  if grep -q "^username=" "$CRED_FILE" && grep -q "^password=" "$CRED_FILE"; then
+    CRED_STATE="valid"
+  else
+    CRED_STATE="invalid"
+  fi
+fi
+
+if [ "$CRED_STATE" = "valid" ]; then
+  echo "Credentials already present."
+  read -rp "Update credentials? (y/N): " CONFIRM
+  if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
+    CRED_STATE="update"
+  fi
+fi
+
+if [ "$CRED_STATE" = "missing" ] || [ "$CRED_STATE" = "invalid" ] || [ "$CRED_STATE" = "update" ]; then
+  echo "=== NAS credentials setup ==="
+  read -rp "Username: " NAS_USER
+  read -rsp "Password: " NAS_PASS
+  echo
+
+  umask 077
+  CRED_CONTENT=$(cat <<EOF
+username=$NAS_USER
+password=$NAS_PASS
+EOF
+)
+  write_if_changed "$CRED_FILE" "$CRED_CONTENT"
+  chown root:root "$CRED_FILE"
+  chmod 600 "$CRED_FILE"
+fi
+
+###############################################
 # Config
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
@@ -74,45 +113,6 @@ write_if_changed "$MOUNT_UNIT" "$UNIT_CONTENT"
 systemctl daemon-reload
 systemctl enable "${MOUNT_NAME}.mount"
 systemctl start "${MOUNT_NAME}.mount"
-
-###############################################
-# Credential handling
-###############################################
-install -d /etc/samba
-
-CRED_STATE="missing"
-if [ -f "$CRED_FILE" ]; then
-  if grep -q "^username=" "$CRED_FILE" && grep -q "^password=" "$CRED_FILE"; then
-    CRED_STATE="valid"
-  else
-    CRED_STATE="invalid"
-  fi
-fi
-
-if [ "$CRED_STATE" = "valid" ]; then
-  echo "Credentials already present."
-  read -rp "Update credentials? (y/N): " CONFIRM
-  if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
-    CRED_STATE="update"
-  fi
-fi
-
-if [ "$CRED_STATE" = "missing" ] || [ "$CRED_STATE" = "invalid" ] || [ "$CRED_STATE" = "update" ]; then
-  echo "=== NAS credentials setup ==="
-  read -rp "Username: " NAS_USER
-  read -rsp "Password: " NAS_PASS
-  echo
-
-  umask 077
-  CRED_CONTENT=$(cat <<EOF
-username=$NAS_USER
-password=$NAS_PASS
-EOF
-)
-  write_if_changed "$CRED_FILE" "$CRED_CONTENT"
-  chown root:root "$CRED_FILE"
-  chmod 600 "$CRED_FILE"
-fi
 
 ###############################################
 # Done
