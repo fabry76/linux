@@ -109,6 +109,22 @@ done
 
 echo
 while :; do
+    echo "Which Office suite do you want to install?"
+    echo "0) None"
+    echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
+    echo "2) LibreOffice (org.libreoffice.LibreOffice)"
+    echo "3) Collabora Office (com.collaboraoffice.Office)"
+    echo
+
+    read -rp "Choice [0-3]: " OFFICE_CHOICE
+
+    [[ "$OFFICE_CHOICE" =~ ^[0-3]$ ]] && break
+
+    echo "Please enter a number between 0 and 3."
+done
+
+echo
+while :; do
     read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
@@ -120,7 +136,7 @@ while :; do
     echo "0) None"
     echo "1) Virt-Manager"
     echo "2) Cockpit"
-    echo "3) GNOME Boxes"
+    echo "3) Gnome Boxes"
     echo
 
     read -rp "Choice [0-3]: " VIRT_CHOICE
@@ -254,12 +270,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
 esac
 

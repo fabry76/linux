@@ -3,45 +3,10 @@ set -euo pipefail
 
 TARGET_USER="$1"
 FLATPAK_BROWSER="${2:-0}"
+OFFICE_CHOICE="${3:-0}"
 
 ###############################################
-# KDE Plasma
-###############################################
-apt-mark hold plasma-browser-integration konqueror
-
-apt-get install -y \
-    kde-plasma-desktop \
-    konsole \
-    ark \
-    kalk \
-    isoimagewriter \
-    kolourpaint \
-    gwenview \
-    okular \
-    okular-extra-backends \
-    kcharselect \
-    kcolorchooser \
-    filelight \
-    krecorder \
-    plasma-workspace-wallpapers \
-    inotify-tools \
-    libnotify-bin \
-    mpv \
-    print-manager \
-    skanpage
-
-###############################################
-# Firewall
-###############################################
-apt-get install -y ufw
-if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
-   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-fi
-ufw allow mdns
-ufw --force enable
-
-###############################################
-# KDE Flatpak
+# Flatpak base setup
 ###############################################
 apt-get install -y \
     flatpak \
@@ -53,47 +18,91 @@ flatpak remote-add --if-not-exists \
     flathub \
     https://dl.flathub.org/repo/flathub.flatpakrepo
 
+###############################################
+# Variables
+###############################################
+BROWSER_APP=""
+OFFICE_APP=""
+
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
-    org.onlyoffice.desktopeditors
     org.kde.ktorrent
 )
 
+###############################################
+# Browser selection
+###############################################
 case "$FLATPAK_BROWSER" in
     1)
+        BROWSER_APP="org.mozilla.firefox"
         FLATPAK_APPS+=(org.mozilla.firefox)
         ;;
     2)
+        BROWSER_APP="com.brave.Browser"
         FLATPAK_APPS+=(com.brave.Browser)
         ;;
     3)
+        BROWSER_APP="io.gitlab.librewolf-community"
         FLATPAK_APPS+=(io.gitlab.librewolf-community)
         ;;
     0)
         ;;
 esac
 
-flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
-
-runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
-
-runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download"
-
-case "$FLATPAK_BROWSER" in
+###############################################
+# Office selection
+###############################################
+case "$OFFICE_CHOICE" in
     1)
-        runuser -u "$TARGET_USER" -- bash -c \
-            "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        OFFICE_APP="org.onlyoffice.desktopeditors"
+        FLATPAK_APPS+=(org.onlyoffice.desktopeditors)
         ;;
     2)
-        runuser -u "$TARGET_USER" -- bash -c \
-            "flatpak override --user com.brave.Browser --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        OFFICE_APP="org.libreoffice.LibreOffice"
+        FLATPAK_APPS+=(org.libreoffice.LibreOffice)
         ;;
     3)
-        runuser -u "$TARGET_USER" -- bash -c \
-            "flatpak override --user io.gitlab.librewolf-community --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        OFFICE_APP="com.collaboraoffice.Office"
+        FLATPAK_APPS+=(com.collaboraoffice.Office)
         ;;
     0)
         ;;
 esac
+
+###############################################
+# Install Flatpaks
+###############################################
+flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
+
+###############################################
+# KDE apps override
+###############################################
+runuser -u "$TARGET_USER" -- bash -c "
+    flatpak override --user org.kde.ktorrent \
+    --nofilesystem=host \
+    --filesystem=xdg-download
+"
+
+###############################################
+# Browser override (dynamic)
+###############################################
+if [ -n "$BROWSER_APP" ]; then
+    runuser -u "$TARGET_USER" -- bash -c "
+        flatpak override --user $BROWSER_APP \
+        --nofilesystem=host \
+        --filesystem=xdg-download \
+        --nodevice=all \
+        --nosocket=x11
+    "
+fi
+
+###############################################
+# Office override (dynamic)
+###############################################
+if [ -n "$OFFICE_APP" ]; then
+    runuser -u "$TARGET_USER" -- bash -c "
+        flatpak override --user $OFFICE_APP \
+        --env=GTK_USE_PORTAL=1 \
+        --env=GTK_THEME=Breeze:dark
+    "
+fi
