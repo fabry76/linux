@@ -6,7 +6,7 @@ FLATPAK_BROWSER="${2:-0}"
 OFFICE_CHOICE="${3:-0}"
 
 ###############################################
-# Flatpak base setup
+# KDE Flatpak base setup
 ###############################################
 apt-get install -y \
     flatpak \

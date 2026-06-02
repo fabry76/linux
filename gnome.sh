@@ -3,6 +3,7 @@ set -euo pipefail
 
 TARGET_USER="$1"
 FLATPAK_BROWSER="${2:-0}"
+OFFICE_CHOICE="${3:-0}"
 
 apt-get install -y \
     gnome-core \
@@ -19,7 +20,7 @@ ufw allow mdns
 ufw --force enable
 
 ###############################################
-# Gnome Flatpak
+# Gnome Flatpak base setup
 ###############################################
 
 apt-get install -y \
@@ -31,43 +32,76 @@ flatpak remote-add --if-not-exists \
     flathub \
     https://dl.flathub.org/repo/flathub.flatpakrepo
 
+###############################################
+# Variables
+###############################################
+BROWSER_APP=""
+OFFICE_APP=""
+
 FLATPAK_APPS=(
-    org.onlyoffice.desktopeditors
     com.transmissionbt.Transmission
 )
 
+###############################################
+# Browser selection
+###############################################
 case "$FLATPAK_BROWSER" in
     1)
+        BROWSER_APP="org.mozilla.firefox"
         FLATPAK_APPS+=(org.mozilla.firefox)
         ;;
     2)
+        BROWSER_APP="com.brave.Browser"
         FLATPAK_APPS+=(com.brave.Browser)
         ;;
     3)
+        BROWSER_APP="io.gitlab.librewolf-community"
         FLATPAK_APPS+=(io.gitlab.librewolf-community)
         ;;
     0)
         ;;
 esac
 
-flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
-
-runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user com.transmissionbt.Transmission --nofilesystem=host --filesystem=xdg-download"
-
-case "$FLATPAK_BROWSER" in
+###############################################
+# Office selection
+###############################################
+case "$OFFICE_CHOICE" in
     1)
-        runuser -u "$TARGET_USER" -- bash -c \
-            "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        OFFICE_APP="org.onlyoffice.desktopeditors"
+        FLATPAK_APPS+=(org.onlyoffice.desktopeditors)
         ;;
     2)
-        runuser -u "$TARGET_USER" -- bash -c \
-            "flatpak override --user com.brave.Browser --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        OFFICE_APP="org.libreoffice.LibreOffice"
+        FLATPAK_APPS+=(org.libreoffice.LibreOffice)
         ;;
     3)
-        runuser -u "$TARGET_USER" -- bash -c \
-            "flatpak override --user io.gitlab.librewolf-community --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        OFFICE_APP="com.collaboraoffice.Office"
+        FLATPAK_APPS+=(com.collaboraoffice.Office)
         ;;
     0)
         ;;
 esac
+
+###############################################
+# Install Flatpaks
+###############################################
+flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
+
+###############################################
+# Gnome apps override
+###############################################
+runuser -u "$TARGET_USER" -- bash -c \
+    "flatpak override --user com.transmissionbt.Transmission --nofilesystem=host --filesystem=xdg-download"
+
+###############################################
+# Browser override (dynamic)
+###############################################
+if [ -n "$BROWSER_APP" ]; then
+    runuser -u "$TARGET_USER" -- bash -c "
+        flatpak override --user $BROWSER_APP \
+        --nofilesystem=host \
+        --filesystem=xdg-download \
+        --nodevice=all \
+        --nosocket=x11
+    "
+fi
