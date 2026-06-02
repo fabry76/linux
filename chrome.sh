@@ -12,6 +12,10 @@ fi
 printf "%s" "$content" > "$file"
 }
 
+###############################################
+# Repository
+###############################################
+
 TMP_CHROME_KEY="$(mktemp)"
 
 curl -fsSL \
@@ -34,6 +38,10 @@ Architectures: amd64
 Signed-By: /etc/apt/keyrings/google-chrome.asc
 EOF
 )"
+
+###############################################
+# Installation
+###############################################
 
 apt-get update
 apt-get install -y google-chrome-stable

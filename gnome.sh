@@ -6,9 +6,8 @@ FLATPAK_BROWSER="${2:-0}"
 
 apt-get install -y \
     gnome-core \
-    gnome-software \
-    gnome-software-plugin-flatpak
-
+    gnome-software
+    
 ###############################################
 # Firewall
 ###############################################
@@ -25,7 +24,8 @@ ufw --force enable
 
 apt-get install -y \
     flatpak \
-    xdg-desktop-portal-gnome
+    xdg-desktop-portal-gnome \
+    gnome-software-plugin-flatpak
 
 flatpak remote-add --if-not-exists \
     flathub \

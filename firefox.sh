@@ -12,6 +12,10 @@ fi
 printf "%s" "$content" > "$file"
 }
 
+###############################################
+# Repository
+###############################################
+
 TMP_MOZILLA_KEY="$(mktemp)"
 
 curl -fsSL \
@@ -34,6 +38,10 @@ Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/mozilla.gpg
 EOF
 )"
+
+###############################################
+# Installation
+###############################################
 
 apt-get update
 apt-get install -y firefox-esr

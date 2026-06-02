@@ -12,6 +12,10 @@ fi
 printf "%s" "$content" > "$file"
 }
 
+###############################################
+# Repository
+###############################################
+
 TMP_VSCODE_KEY="$(mktemp)"
 
 curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
@@ -33,6 +37,10 @@ Architectures: amd64
 Signed-By: /etc/apt/keyrings/microsoft-vscode.gpg
 EOF
 )"
+
+###############################################
+# Installation
+###############################################
 
 apt-get update
 apt-get install -y code
