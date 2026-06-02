@@ -421,6 +421,9 @@ apt-get clean
 
 echo "System installation completed."
 
+###############################################
+# User session script
+###############################################
 USER_SCRIPT=""
 
 case "$DESKTOP_CHOICE" in
