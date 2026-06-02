@@ -307,9 +307,12 @@ if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
 fi
 
 ###############################################
-# Common Apps & Utilities
+# Common Utilities and Configurations
 ###############################################
 apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades
+
+systemctl enable thermald
+plymouth-set-default-theme lines -R
 
 ###############################################
 # Multimedia
@@ -369,6 +372,8 @@ esac
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
 sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' /etc/default/grub
 
+update-grub
+
 ###############################################
 # Locale
 ###############################################
@@ -391,13 +396,6 @@ LC_NAME=it_IT.UTF-8 \
 LC_ADDRESS=it_IT.UTF-8 \
 LC_TELEPHONE=it_IT.UTF-8 \
 LC_MEASUREMENT=it_IT.UTF-8
-
-###############################################
-# Finalization
-###############################################
-systemctl enable thermald
-plymouth-set-default-theme lines -R
-update-grub
 
 ###############################################
 # Fastgate
