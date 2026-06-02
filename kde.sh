@@ -2,6 +2,7 @@
 set -euo pipefail
 
 TARGET_USER="$1"
+FLATPAK_BROWSER="${2:-0}"
 
 ###############################################
 # KDE Plasma
@@ -30,11 +31,6 @@ apt-get install -y \
     skanpage
 
 ###############################################
-# Virtualization
-###############################################
-
-
-###############################################
 # Firewall
 ###############################################
 apt-get install -y ufw
@@ -57,17 +53,47 @@ flatpak remote-add --if-not-exists \
     flathub \
     https://dl.flathub.org/repo/flathub.flatpakrepo
 
-flatpak install -y --system flathub \
-    org.gtk.Gtk3theme.Breeze \
-    org.onlyoffice.desktopeditors \
-    org.mozilla.firefox \
+FLATPAK_APPS=(
+    org.gtk.Gtk3theme.Breeze
+    org.onlyoffice.desktopeditors
     org.kde.ktorrent
+)
+
+case "$FLATPAK_BROWSER" in
+    1)
+        FLATPAK_APPS+=(org.mozilla.firefox)
+        ;;
+    2)
+        FLATPAK_APPS+=(com.brave.Browser)
+        ;;
+    3)
+        FLATPAK_APPS+=(io.gitlab.librewolf-community)
+        ;;
+    0)
+        ;;
+esac
+
+flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 
 runuser -u "$TARGET_USER" -- bash -c \
     "flatpak override --user org.onlyoffice.desktopeditors --env=GTK_USE_PORTAL=1 --env=GTK_THEME=Breeze:dark"
 
 runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
-
-runuser -u "$TARGET_USER" -- bash -c \
     "flatpak override --user org.kde.ktorrent --nofilesystem=host --filesystem=xdg-download"
+
+case "$FLATPAK_BROWSER" in
+    1)
+        runuser -u "$TARGET_USER" -- bash -c \
+            "flatpak override --user org.mozilla.firefox --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        ;;
+    2)
+        runuser -u "$TARGET_USER" -- bash -c \
+            "flatpak override --user com.brave.Browser --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        ;;
+    3)
+        runuser -u "$TARGET_USER" -- bash -c \
+            "flatpak override --user io.gitlab.librewolf-community --nofilesystem=host --filesystem=xdg-download --nodevice=all --nosocket=x11"
+        ;;
+    0)
+        ;;
+esac

@@ -93,6 +93,22 @@ done
 
 echo
 while :; do
+    echo "Which Flatpak browser do you want to install?"
+    echo "0) None"
+    echo "1) Firefox (org.mozilla.firefox)"
+    echo "2) Brave (com.brave.Browser)"
+    echo "3) LibreWolf (io.gitlab.librewolf-community)"
+    echo
+
+    read -rp "Choice [0-3]: " FLATPAK_BROWSER
+
+    [[ "$FLATPAK_BROWSER" =~ ^[0-3]$ ]] && break
+
+    echo "Please enter a number between 0 and 3."
+done
+
+echo
+while :; do
     read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
@@ -181,7 +197,7 @@ while :; do
 done
 
 ###############################################
-# Dependencies for key management & repos
+# Dependencies for key management & repositories
 ###############################################
 apt-get install -y gpg curl
 install -d -m 0755 /etc/apt/keyrings
@@ -238,12 +254,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
         ;;
 esac
 
