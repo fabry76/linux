@@ -173,7 +173,6 @@ for browser in "${BROWSERS[@]}"; do
             bash "$SCRIPT_DIR/firefox.sh"
             ;;
     esac
-donec
 done
 
 # Visual Studio Code
