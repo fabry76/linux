@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+###############################################
+# Args
+###############################################
 TARGET_USER="$1"
 FLATPAK_BROWSER="${2:-0}"
 OFFICE_CHOICE="${3:-0}"
 
+###############################################
+# Gnome base
+###############################################
 apt-get install -y \
     gnome-core \
     gnome-software

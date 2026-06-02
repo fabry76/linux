@@ -1,9 +1,50 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+###############################################
+# Args
+###############################################
 TARGET_USER="$1"
 FLATPAK_BROWSER="${2:-0}"
 OFFICE_CHOICE="${3:-0}"
+
+###############################################
+# KDE Plasma base
+###############################################
+apt-mark hold plasma-browser-integration konqueror
+
+apt-get install -y \
+    kde-plasma-desktop \
+    konsole \
+    ark \
+    kalk \
+    isoimagewriter \
+    kolourpaint \
+    gwenview \
+    okular \
+    okular-extra-backends \
+    kcharselect \
+    kcolorchooser \
+    filelight \
+    krecorder \
+    plasma-workspace-wallpapers \
+    inotify-tools \
+    libnotify-bin \
+    mpv \
+    print-manager \
+    skanpage
+
+###############################################
+# Firewall
+###############################################
+apt-get install -y ufw
+
+if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
+    sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+fi
+
+ufw allow mdns
+ufw --force enable
 
 ###############################################
 # KDE Flatpak base setup
