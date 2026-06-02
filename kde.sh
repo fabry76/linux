@@ -32,7 +32,7 @@ apt-get install -y \
 ###############################################
 # Virtualization
 ###############################################
-apt-get install -y virt-manager virt-viewer qemu-kvm
+
 
 ###############################################
 # Firewall

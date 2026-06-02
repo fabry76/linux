@@ -98,6 +98,24 @@ while :; do
     echo "Please answer y or n."
 done
 
+echo
+while :; do
+    echo "Which virtualization tool do you want to install?"
+    echo "0) None"
+    echo "1) Virt-Manager"
+    echo "2) Cockpit"
+    echo "3) GNOME Boxes"
+    echo
+
+    read -rp "Choice [0-3]: " VIRT_CHOICE
+
+    [[ "$VIRT_CHOICE" =~ ^[0-3]$ ]] && break
+
+    echo
+    echo "Please enter a number between 0 and 3."
+    echo
+done
+
 while :; do
     read -rp "Mount Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
@@ -266,7 +284,9 @@ apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debs
 ###############################################
 BROWSERS_TO_INSTALL=()
 
-for browser in $BROWSER_SELECTION; do
+for browser in "${BROWSERS[@]}"; do
+    browser="${browser// /}"
+
     case "$browser" in
         1)
             BROWSERS_TO_INSTALL+=(brave-browser)
@@ -308,6 +328,7 @@ apt-get install -y papirus-icon-theme
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf
 systemctl enable cups
+usermod -aG lpadmin "$TARGET_USER"
 
 ###############################################
 # Network Manager only
@@ -324,6 +345,23 @@ write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
 
 systemctl enable NetworkManager
 systemctl restart NetworkManager
+
+###############################################
+# Virtualization
+###############################################
+case "$VIRT_CHOICE" in
+    0)
+        ;;
+    1)
+        bash "$SCRIPT_DIR/virt-manager.sh" "$TARGET_USER"
+        ;;
+    2)
+        bash "$SCRIPT_DIR/cockpit.sh" "$TARGET_USER"
+        ;;
+    3)
+        bash "$SCRIPT_DIR/gnome-boxes.sh"
+        ;;
+esac
 
 ###############################################
 # GRUB
@@ -357,7 +395,7 @@ LC_MEASUREMENT=it_IT.UTF-8
 ###############################################
 # Finalization
 ###############################################
-usermod -aG libvirt,kvm,lpadmin "$TARGET_USER"
+
 systemctl enable thermald
 plymouth-set-default-theme lines -R
 update-grub
