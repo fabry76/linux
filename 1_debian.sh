@@ -38,7 +38,7 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
-# Optional components selection
+# Initial selection
 ###############################################
 while :; do
     echo "Which desktop environment do you want to install?"
@@ -98,12 +98,62 @@ while :; do
     echo "Please answer y or n."
 done
 
-echo
 while :; do
     read -rp "Mount Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
+
+if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+
+    CRED_FILE="/etc/samba/fastgate.creds"
+    SERVER="//192.168.1.254/samba/usb1_1"
+
+    install -d -m 700 /etc/samba
+
+    CRED_STATE="missing"
+
+    if [ -f "$CRED_FILE" ]; then
+        if grep -q "^username=" "$CRED_FILE" &&
+           grep -q "^password=" "$CRED_FILE"; then
+            CRED_STATE="valid"
+        else
+            CRED_STATE="invalid"
+        fi
+    fi
+
+    if [ "$CRED_STATE" = "valid" ]; then
+        echo
+        echo "Fastgate credentials already exist."
+        read -rp "Update credentials? (y/N): " CONFIRM
+
+        if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
+            CRED_STATE="update"
+        fi
+    fi
+
+    if [ "$CRED_STATE" = "missing" ] ||
+       [ "$CRED_STATE" = "invalid" ] ||
+       [ "$CRED_STATE" = "update" ]; then
+
+        echo
+        echo "=== Fastgate credentials ==="
+
+        read -rp "Username: " NAS_USER
+        read -rsp "Password: " NAS_PASS
+        echo
+
+        umask 077
+
+        cat > "$CRED_FILE" <<EOF
+username=$NAS_USER
+password=$NAS_PASS
+EOF
+
+        chown root:root "$CRED_FILE"
+        chmod 600 "$CRED_FILE"
+    fi
+fi
 
 echo
 while :; do
@@ -272,6 +322,9 @@ EOF
 
 write_if_changed "$INTERFACES_FILE" "$INTERFACES_CONTENT"
 
+systemctl enable NetworkManager
+systemctl restart NetworkManager
+
 ###############################################
 # GRUB
 ###############################################
@@ -312,10 +365,8 @@ update-grub
 ###############################################
 # Optional Fastgate setup
 ###############################################
-if [ -f "$SCRIPT_DIR/fastgate.sh" ]; then
-  if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/fastgate.sh"
-  fi
+if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/fastgate.sh" "$TARGET_USER"
 fi
 
 ###############################################

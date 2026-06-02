@@ -5,28 +5,29 @@ set -euo pipefail
 # Root check
 ###############################################
 if [ "$EUID" -ne 0 ]; then
-  echo "Run as root (sudo)"
-  exit 1
+    echo "Run as root (sudo)"
+    exit 1
 fi
 
 ###############################################
 # Helper: write if changed
 ###############################################
 write_if_changed() {
-  local file="$1"
-  local content="$2"
+    local file="$1"
+    local content="$2"
 
-  if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
-    return 0
-  fi
+    if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+        return 0
+    fi
 
-  printf "%s" "$content" > "$file"
+    printf "%s" "$content" > "$file"
 }
 
 ###############################################
 # Variables
 ###############################################
-TARGET_USER="${SUDO_USER:-${USER:-root}}"
+TARGET_USER="${1:-${SUDO_USER:-${USER:-root}}}"
+
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 
 MOUNT_POINT="$TARGET_HOME/Fastgate"
@@ -37,42 +38,22 @@ USER_ID=$(id -u "$TARGET_USER")
 GROUP_ID=$(id -g "$TARGET_USER")
 
 ###############################################
-# Credential handling
+# Credentials check
 ###############################################
-install -d /etc/samba
-
-CRED_STATE="missing"
-if [ -f "$CRED_FILE" ]; then
-  if grep -q "^username=" "$CRED_FILE" && grep -q "^password=" "$CRED_FILE"; then
-    CRED_STATE="valid"
-  else
-    CRED_STATE="invalid"
-  fi
+if [ ! -f "$CRED_FILE" ]; then
+    echo "Missing credentials file:"
+    echo "  $CRED_FILE"
+    exit 1
 fi
 
-if [ "$CRED_STATE" = "valid" ]; then
-  echo "Credentials already present."
-  read -rp "Update credentials? (y/N): " CONFIRM
-  if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
-    CRED_STATE="update"
-  fi
+if ! grep -q "^username=" "$CRED_FILE"; then
+    echo "Invalid credentials file (username missing)"
+    exit 1
 fi
 
-if [ "$CRED_STATE" = "missing" ] || [ "$CRED_STATE" = "invalid" ] || [ "$CRED_STATE" = "update" ]; then
-  echo "=== NAS credentials setup ==="
-  read -rp "Username: " NAS_USER
-  read -rsp "Password: " NAS_PASS
-  echo
-
-  umask 077
-  CRED_CONTENT=$(cat <<EOF
-username=$NAS_USER
-password=$NAS_PASS
-EOF
-)
-  write_if_changed "$CRED_FILE" "$CRED_CONTENT"
-  chown root:root "$CRED_FILE"
-  chmod 600 "$CRED_FILE"
+if ! grep -q "^password=" "$CRED_FILE"; then
+    echo "Invalid credentials file (password missing)"
+    exit 1
 fi
 
 ###############################################
@@ -81,8 +62,10 @@ fi
 apt-get install -y cifs-utils
 
 ###############################################
-# Mount point setup
+# Mount point
 ###############################################
+systemctl is-active --quiet NetworkManager || systemctl start NetworkManager
+
 mkdir -p "$MOUNT_POINT"
 chown "$TARGET_USER:$TARGET_USER" "$MOUNT_POINT"
 
@@ -110,14 +93,26 @@ EOF
 )
 
 write_if_changed "$MOUNT_UNIT" "$UNIT_CONTENT"
+
+###############################################
+# Enable mount
+###############################################
 systemctl daemon-reload
 systemctl enable "${MOUNT_NAME}.mount"
-systemctl start "${MOUNT_NAME}.mount"
+
+###############################################
+# Mount now
+###############################################
+if ! mountpoint -q "$MOUNT_POINT"; then
+    systemctl restart "${MOUNT_NAME}.mount" || true
+fi
 
 ###############################################
 # Done
 ###############################################
-echo "Done."
-echo "Mount point: $MOUNT_POINT"
-echo "Credentials: $CRED_FILE"
+echo
+echo "Fastgate SMB configured."
+echo "Share:        $SERVER"
+echo "Mount point:  $MOUNT_POINT"
+echo "Credentials:  $CRED_FILE"
 echo "Systemd unit: $MOUNT_UNIT"
