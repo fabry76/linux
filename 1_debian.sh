@@ -72,7 +72,7 @@ done
 
 echo
 while :; do
-    read -rp "Mount Fastgate at the end of installation? (y/N): " RUN_FASTGATE
+    read -rp "Mount Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
@@ -174,7 +174,7 @@ done
 
 # Visual Studio Code
 if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/repos/vscode.sh"
+    bash "$SCRIPT_DIR/vscode.sh"
 fi
 
 ###############################################
