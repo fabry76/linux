@@ -44,4 +44,4 @@ EOF
 ###############################################
 
 apt-get update
-apt-get install -y firefox-esr
+apt-get install -y firefox
