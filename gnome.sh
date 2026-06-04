@@ -26,7 +26,6 @@ ufw --force enable
 ###############################################
 # Gnome Flatpak base setup
 ###############################################
-
 apt-get install -y \
     flatpak \
     xdg-desktop-portal-gnome \
