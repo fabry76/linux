@@ -11,9 +11,14 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # Gnome base
 ###############################################
+apt-mark hold firefox-esr
+
 apt-get install -y \
     gnome-core \
-    gnome-software
+    showtime+ \
+    gnome-tweaks \
+    gnome-shell-extensions-dash-to-dock \
+    gnome-shell-extensions-dash-to-panel
     
 ###############################################
 # Firewall
