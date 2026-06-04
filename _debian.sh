@@ -41,7 +41,7 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 # Initial selection
 ###############################################
 while :; do
-    echo "Which desktop environment do you want to install?"
+    echo "Which desktop environment would you like to install?"
     echo "1) KDE"
     echo "2) GNOME"
     read -rp "Choice [1-2]: " DESKTOP_CHOICE
@@ -54,7 +54,7 @@ done
 
 echo
 while :; do
-    echo "Which browsers do you want to install?"
+    echo "Which main browser would you like to install?"
     echo "1) Brave"
     echo "2) Chrome"
     echo "3) Firefox"
@@ -93,7 +93,7 @@ done
 
 echo
 while :; do
-    echo "Which Flatpak browser do you want to install?"
+    echo "Which Flatpak browser would you like to install?"
     echo "0) None"
     echo "1) Firefox (org.mozilla.firefox)"
     echo "2) Brave (com.brave.Browser)"
@@ -109,7 +109,7 @@ done
 
 echo
 while :; do
-    echo "Which Office suite do you want to install?"
+    echo "Which Office suite would you like to install?"
     echo "0) None"
     echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
     echo "2) LibreOffice (org.libreoffice.LibreOffice)"
@@ -125,14 +125,14 @@ done
 
 echo
 while :; do
-    read -rp "Install Visual Studio Code? (y/N): " INSTALL_VSCODE
+    read -rp "Do you want to install Visual Studio Code? (y/N): " INSTALL_VSCODE
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
 
 echo
 while :; do
-    echo "Which virtualization tool do you want to install?"
+    echo "Which virtualization tool would you like to install?"
     echo "0) None"
     echo "1) Virt-Manager"
     echo "2) Cockpit"
@@ -149,7 +149,7 @@ while :; do
 done
 
 while :; do
-    read -rp "Mount Fastgate SMB share? (y/N): " RUN_FASTGATE
+    read -rp "Do you want to mount the Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
@@ -207,7 +207,7 @@ fi
 
 echo
 while :; do
-    read -rp "Apply system hardening at the end of installation? (y/N): " RUN_HARDENING
+    read -rp "Do you want to apply system hardening at the end of installation? (y/N): " RUN_HARDENING
     [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
@@ -230,6 +230,8 @@ fi
 
 # Detect Debian codename
 DEBIAN_CODENAME="$(. /etc/os-release && echo "${VERSION_CODENAME}")"
+
+# Create new debian.sources
 DEBIAN_SOURCES="/etc/apt/sources.list.d/debian.sources"
 
 write_if_changed "$DEBIAN_SOURCES" "$(cat << EOF

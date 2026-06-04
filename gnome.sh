@@ -20,10 +20,6 @@ apt-get install -y \
 ###############################################
 apt-get install -y gufw
 
-if grep -q "managed=false" /etc/NetworkManager/NetworkManager.conf; then
-   sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-fi
-
 ufw allow mdns
 ufw --force enable
 
