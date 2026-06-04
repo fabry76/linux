@@ -11,7 +11,7 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # Gnome base
 ###############################################
-apt-mark hold firefox-esr gnome-maps
+apt-mark hold firefox-esr
 
 apt-get install -y \
     gnome-core \
