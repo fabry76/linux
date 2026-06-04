@@ -50,6 +50,7 @@ OFFICE_APP=""
 
 FLATPAK_APPS=(
     com.transmissionbt.Transmission
+    com.github.tchx84.Flatseal
 )
 
 ###############################################

@@ -41,7 +41,6 @@ EOF
 ###############################################
 # Installation
 ###############################################
-
 echo "code code/add-microsoft-repo boolean false" | debconf-set-selections
 
 apt-get update

@@ -42,6 +42,5 @@ EOF
 ###############################################
 # Installation
 ###############################################
-
 apt-get update
 apt-get install -y brave-browser
