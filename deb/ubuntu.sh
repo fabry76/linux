@@ -106,6 +106,7 @@ install -d -m 0755 /etc/apt/keyrings
 # Update repositories
 ###############################################
 apt-get update
+apt-get -y upgrade
 
 ###############################################
 # Base system & firmware
