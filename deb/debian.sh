@@ -15,6 +15,7 @@ fi
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GIT_DIR="$(dirname "$SCRIPT_DIR")"
 
 ###############################################
 # Functions
@@ -272,12 +273,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/deb/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/deb/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
 esac
 
@@ -290,13 +291,13 @@ for browser in "${BROWSERS[@]}"; do
 
     case "$browser" in
         1)
-            bash "$SCRIPT_DIR/deb/brave.sh"
+            bash "$SCRIPT_DIR/brave.sh"
             ;;
         2)
-            bash "$SCRIPT_DIR/deb/chrome.sh"
+            bash "$SCRIPT_DIR/chrome.sh"
             ;;
         3)
-            bash "$SCRIPT_DIR/deb/firefox.sh"
+            bash "$SCRIPT_DIR/firefox.sh"
             ;;
     esac
 done
@@ -305,7 +306,7 @@ done
 # Visual Studio Code
 ###############################################
 if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/deb/vscode.sh"
+    bash "$SCRIPT_DIR/vscode.sh"
 fi
 
 ###############################################
@@ -358,13 +359,13 @@ case "$VIRT_CHOICE" in
     0)
         ;;
     1)
-        bash "$SCRIPT_DIR/deb/virt-manager.sh" "$TARGET_USER"
+        bash "$SCRIPT_DIR/virt-manager.sh" "$TARGET_USER"
         ;;
     2)
-        bash "$SCRIPT_DIR/deb/cockpit.sh" "$TARGET_USER"
+        bash "$SCRIPT_DIR/cockpit.sh" "$TARGET_USER"
         ;;
     3)
-        bash "$SCRIPT_DIR/deb/gnome-boxes.sh"
+        bash "$SCRIPT_DIR/gnome-boxes.sh"
         ;;
 esac
 
@@ -403,15 +404,15 @@ LC_MEASUREMENT=it_IT.UTF-8
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/fastgate.sh" "$TARGET_USER"
+    bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
 fi
 
 ###############################################
 # Hardening
 ###############################################
-if [ -f "$SCRIPT_DIR/hardening.sh" ]; then
+if [ -f "$GIT_DIR/hardening.sh" ]; then
   if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/hardening.sh"
+    bash "$GIT_DIR/hardening.sh"
   fi
 fi
 
@@ -440,8 +441,8 @@ case "$DESKTOP_CHOICE" in
         ;;
 esac
 
-if [ -n "$USER_SCRIPT" ] && [ -f "$SCRIPT_DIR/$USER_SCRIPT" ]; then
+if [ -n "$USER_SCRIPT" ] && [ -f "$GIT_DIR/$USER_SCRIPT" ]; then
     echo "Switching to user session script: $USER_SCRIPT"
 
-    runuser -u "$TARGET_USER" -- bash "$SCRIPT_DIR/$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- bash "$GIT_DIR/$USER_SCRIPT"
 fi
