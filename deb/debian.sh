@@ -412,7 +412,7 @@ fi
 ###############################################
 if [ -f "$GIT_DIR/hardening.sh" ]; then
   if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
-    bash "$GIT_DIR/hardening.sh"
+    bash "$SCRIPT_DIR/hardening.sh"
   fi
 fi
 
