@@ -272,12 +272,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/deb/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/deb/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
 esac
 
@@ -290,13 +290,13 @@ for browser in "${BROWSERS[@]}"; do
 
     case "$browser" in
         1)
-            bash "$SCRIPT_DIR/brave.sh"
+            bash "$SCRIPT_DIR/deb/brave.sh"
             ;;
         2)
-            bash "$SCRIPT_DIR/chrome.sh"
+            bash "$SCRIPT_DIR/deb/chrome.sh"
             ;;
         3)
-            bash "$SCRIPT_DIR/firefox.sh"
+            bash "$SCRIPT_DIR/deb/firefox.sh"
             ;;
     esac
 done
@@ -305,7 +305,7 @@ done
 # Visual Studio Code
 ###############################################
 if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/vscode.sh"
+    bash "$SCRIPT_DIR/deb/vscode.sh"
 fi
 
 ###############################################
@@ -358,13 +358,13 @@ case "$VIRT_CHOICE" in
     0)
         ;;
     1)
-        bash "$SCRIPT_DIR/virt-manager.sh" "$TARGET_USER"
+        bash "$SCRIPT_DIR/deb/virt-manager.sh" "$TARGET_USER"
         ;;
     2)
-        bash "$SCRIPT_DIR/cockpit.sh" "$TARGET_USER"
+        bash "$SCRIPT_DIR/deb/cockpit.sh" "$TARGET_USER"
         ;;
     3)
-        bash "$SCRIPT_DIR/gnome-boxes.sh"
+        bash "$SCRIPT_DIR/deb/gnome-boxes.sh"
         ;;
 esac
 
