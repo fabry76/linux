@@ -57,11 +57,6 @@ if ! grep -q "^password=" "$CRED_FILE"; then
 fi
 
 ###############################################
-# Dependency
-###############################################
-apt-get install -y cifs-utils
-
-###############################################
 # Mount point
 ###############################################
 systemctl is-active --quiet NetworkManager || systemctl start NetworkManager

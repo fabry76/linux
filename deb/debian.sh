@@ -404,6 +404,7 @@ LC_MEASUREMENT=it_IT.UTF-8
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+    apt-get install -y cifs-utils
     bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
 fi
 
