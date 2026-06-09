@@ -13,6 +13,8 @@ fi
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GIT_DIR="$(dirname "$SCRIPT_DIR")"
 
 ###############################################
 # Functions
@@ -99,59 +101,7 @@ fi
 # Install dependencies for key management
 ###############################################
 apt-get install -y curl
-
-###############################################
-# Extra Repositories
-###############################################
-# Folder
 install -d -m 0755 /etc/apt/keyrings
-
-# Brave
-TMP_BRAVE_KEY="$(mktemp)"
-
-curl -fsSL \
-  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
-  -o "$TMP_BRAVE_KEY"
-
-if [ ! -f /etc/apt/keyrings/brave-browser-archive-keyring.gpg ] || \
-   ! cmp -s "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg; then
-  install -m 0644 "$TMP_BRAVE_KEY" /etc/apt/keyrings/brave-browser-archive-keyring.gpg
-fi
-
-rm -f "$TMP_BRAVE_KEY"
-
-write_if_changed /etc/apt/sources.list.d/brave-browser.sources "$(cat << 'EOF'
-Types: deb
-URIs: https://brave-browser-apt-release.s3.brave.com/
-Suites: stable
-Components: main
-Architectures: amd64 arm64
-Signed-By: /etc/apt/keyrings/brave-browser-archive-keyring.gpg
-EOF
-)"
-
-# VSCode
-TMP_VSCODE_KEY="$(mktemp)"
-
-curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-gpg --batch --yes --dearmor --output "$TMP_VSCODE_KEY"
-
-if [ ! -f /etc/apt/keyrings/microsoft-vscode.gpg ] || \
-   ! cmp -s "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg; then
-  install -m 0644 "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg
-fi
-
-rm -f "$TMP_VSCODE_KEY"
-
-write_if_changed /etc/apt/sources.list.d/vscode.sources "$(cat << 'EOF'
-Types: deb
-URIs: https://packages.microsoft.com/repos/code
-Suites: stable
-Components: main
-Architectures: amd64
-Signed-By: /etc/apt/keyrings/microsoft-vscode.gpg
-EOF
-)"
 
 ###############################################
 # Update repositories
@@ -180,8 +130,6 @@ apt-get install -y \
 # Applications & Utilities
 ###############################################
 apt-get install -y \
-  brave-browser \
-  code \
   vim \
   htop \
   fastfetch \
@@ -192,6 +140,12 @@ apt-get install -y \
   unrar \
   starship \
   debsums
+
+###############################################
+# Other apps
+###############################################
+bash "$SCRIPT_DIR/vscode.sh"
+bash "$SCRIPT_DIR/brave.sh"
 
 ###############################################
 # Multimedia and Extra
@@ -258,7 +212,8 @@ runuser -u "$TARGET_USER" -- bash -c "install -D \"$TARGET_HOME/Git/linux/etc/st
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/fastgate.sh" "$TARGET_USER"
+    apt-get install -y cifs-utils
+    bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
 fi
 
 ###############################################
@@ -269,3 +224,8 @@ apt-get clean
 
 echo
 echo "Installation completed."
+
+###############################################
+# User session script
+###############################################
+runuser -u "$TARGET_USER" -- bash "$GIT_DIR/gnome_user.sh"

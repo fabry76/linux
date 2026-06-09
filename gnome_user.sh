@@ -46,14 +46,6 @@ install -D \
   "$HOME/.config/starship.toml"
 
 ###############################################
-# Locale
-###############################################
-[ -f "$HOME/Git/linux/etc/plasma-localerc" ] && \
-install -D \
-  "$HOME/Git/linux/etc/plasma-localerc" \
-  "$HOME/.config/plasma-localerc"
-
-###############################################
 # Git setup
 ###############################################
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
