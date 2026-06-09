@@ -158,8 +158,7 @@ done
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
 
     CRED_FILE="/etc/samba/fastgate.creds"
-    SERVER="//192.168.1.254/samba/usb1_1"
-
+    
     install -d -m 700 /etc/samba
 
     CRED_STATE="missing"
