@@ -145,7 +145,6 @@ dnf install -y \
   fira-code-fonts \
   liberation-fonts \
   fira-code-fonts \
-  ubuntu-fonts \
   papirus-icon-theme
 
 ###############################################
