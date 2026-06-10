@@ -145,6 +145,7 @@ dnf install -y \
   fira-code-fonts \
   liberation-fonts \
   fira-code-fonts \
+  ubuntu-fonts \
   papirus-icon-theme
 
 ###############################################
@@ -155,11 +156,11 @@ dnf install -y \
   htop \
   fastfetch \
   curl \
-  timeshift \
-  apt-show-versions \
   rclone \
   unrar \
   starship
+
+curl -sS https://starship.rs/install.sh | sh
 
 ###############################################
 # Fastgate
