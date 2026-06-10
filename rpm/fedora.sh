@@ -173,7 +173,7 @@ if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
 fi
 
-################################################
-# User Script
-################################################
-bash "$GIT_DIR/gnome_user.sh"
+###############################################
+# User session script
+###############################################
+runuser -u "$TARGET_USER" -- bash "$GIT_DIR/gnome_user.sh"
