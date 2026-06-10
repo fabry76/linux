@@ -156,8 +156,7 @@ dnf install -y \
   fastfetch \
   curl \
   rclone \
-  unrar \
-  starship
+  unrar
 
 curl -sS https://starship.rs/install.sh | sh
 
