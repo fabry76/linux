@@ -128,11 +128,13 @@ dnf install -y \
 ###############################################
 # Multimedia
 ###############################################
-dnf install -y \
-  ffmpeg \
-  ffmpegthumbnailer \
-  gstreamer1-libav \
-  gstreamer1-plugin-openh264
+dnf swap -y ffmpeg-free ffmpeg --allowerasing
+
+dnf update -y @multimedia \
+  --setopt=install_weak_deps=False \
+  --exclude=PackageKit-gstreamer-plugin
+
+dnf install -y ffmpegthumbnailer
 
 ###############################################
 # Fonts & Icons
