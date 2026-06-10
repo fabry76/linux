@@ -140,11 +140,12 @@ dnf install -y ffmpegthumbnailer
 # Fonts & Icons
 ###############################################
 dnf install -y \
-    mscorefonts \
-    google-crosextra-carlito-fonts \
-    google-crosextra-caladea-fonts \
-    fira-code-fonts \
-    papirus-icon-theme
+  google-noto-sans-fonts \
+  google-noto-serif-fonts \
+  fira-code-fonts \
+  liberation-fonts \
+  fira-code-fonts \
+  papirus-icon-theme
 
 ###############################################
 # Applications & Utilities
