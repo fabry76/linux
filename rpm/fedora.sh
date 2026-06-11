@@ -146,7 +146,8 @@ dnf install -y \
   fira-code-fonts \
   liberation-fonts \
   fira-code-fonts \
-  papirus-icon-theme
+  papirus-icon-theme \
+  google-noto-color-emoji-fonts
 
 ###############################################
 # Applications & Utilities
