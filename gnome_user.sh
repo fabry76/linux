@@ -48,17 +48,6 @@ mkdir -p "$(dirname "$DST_BRV")"
 cp "$SRC_BRV" "$DST_BRV"
 sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_BRV"
 
-# VSCode
-SRC_CODE="/usr/share/applications/code.desktop"
-DST_CODE="$HOME/.local/share/applications/code.desktop"
-
-[[ -f "$SRC_CODE" ]] || exit 0
-[[ -f "$DST_CODE" ]] && exit 0
-
-mkdir -p "$(dirname "$DST_CODE")"
-cp "$SRC_CODE" "$DST_CODE"
-sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_CODE"
-
 ###############################################
 # Starship
 ###############################################
