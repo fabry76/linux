@@ -38,26 +38,26 @@ mkdir -p \
 # Desktop shortcuts
 ###############################################
 # Brave
-SRC="/usr/share/applications/brave-origin.desktop"
-DST="$HOME/.local/share/applications/brave-origin.desktop"
+SRC_BRV="/usr/share/applications/brave-origin.desktop"
+DST_BRV="$HOME/.local/share/applications/brave-origin.desktop"
 
-[[ -f "$SRC" ]] || exit 0
-[[ -f "$DST" ]] && exit 0
+[[ -f "$SRC_BRV" ]] || exit 0
+[[ -f "$DST_BRV" ]] && exit 0
 
-mkdir -p "$(dirname "$DST")"
-cp "$SRC" "$DST"
-sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST"
+mkdir -p "$(dirname "$DST_BRV")"
+cp "$SRC_BRV" "$DST_BRV"
+sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_BRV"
 
 # VSCode
-SRC="/usr/share/applications/code.desktop"
-DST="$HOME/.local/share/applications/code.desktop"
+SRC_CODE="/usr/share/applications/code.desktop"
+DST_CODE="$HOME/.local/share/applications/code.desktop"
 
-[[ -f "$SRC" ]] || exit 0
-[[ -f "$DST" ]] && exit 0
+[[ -f "$SRC_CODE" ]] || exit 0
+[[ -f "$DST_CODE" ]] && exit 0
 
-mkdir -p "$(dirname "$DST")"
-cp "$SRC" "$DST"
-sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST"
+mkdir -p "$(dirname "$DST_CODE")"
+cp "$SRC_CODE" "$DST_CODE"
+sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_CODE"
 
 ###############################################
 # Starship
