@@ -43,4 +43,4 @@ EOF
 # Installation
 ###############################################
 apt-get update
-apt-get install -y brave-browser
+apt-get install -y brave-origin
