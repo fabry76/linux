@@ -33,6 +33,17 @@ DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 mkdir -p \
   "$HOME/.config" \
     "$HOME/Virtual"
+
+
+###############################################
+# Desktop shortcuts
+###############################################
+# Brave
+cp /usr/share/applications/brave-origin.desktop \
+   ~/.local/share/applications/
+sed -i 's/^StartupNotify=true$/StartupNotify=false/' \
+  ~/.local/share/applications/brave-browser.desktop
+
   
 ###############################################
 # Starship

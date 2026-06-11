@@ -118,13 +118,13 @@ systemctl set-default graphical.target
 dnf install -y \
     gnome-tweaks \
     gnome-extensions-app \
-    gnome-shell-extension-dash-to-dock
+    gnome-shell-extension-dash-to-panel 
 
 ###############################################
 # Other apps
 ###############################################
 #bash "$SCRIPT_DIR/vscode.sh"
-#bash "$SCRIPT_DIR/brave.sh"
+bash "$SCRIPT_DIR/brave.sh"
 
 ###############################################
 # Multimedia
@@ -164,6 +164,7 @@ dnf install -y \
   util-linux \
   coreutils
 
+# Starship
 curl -sS https://starship.rs/install.sh | sh
 
 ###############################################
