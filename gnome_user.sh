@@ -34,17 +34,31 @@ mkdir -p \
   "$HOME/.config" \
     "$HOME/Virtual"
 
-
 ###############################################
 # Desktop shortcuts
 ###############################################
 # Brave
-cp /usr/share/applications/brave-origin.desktop \
-   ~/.local/share/applications/
-sed -i 's/^StartupNotify=true$/StartupNotify=false/' \
-  ~/.local/share/applications/brave-origin.desktop
+SRC="/usr/share/applications/brave-origin.desktop"
+DST="$HOME/.local/share/applications/brave-origin.desktop"
 
-  
+[[ -f "$SRC" ]] || exit 0
+[[ -f "$DST" ]] && exit 0
+
+mkdir -p "$(dirname "$DST")"
+cp "$SRC" "$DST"
+sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST"
+
+# VSCode
+SRC="/usr/share/applications/code.desktop"
+DST="$HOME/.local/share/applications/code.desktop"
+
+[[ -f "$SRC" ]] || exit 0
+[[ -f "$DST" ]] && exit 0
+
+mkdir -p "$(dirname "$DST")"
+cp "$SRC" "$DST"
+sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST"
+
 ###############################################
 # Starship
 ###############################################

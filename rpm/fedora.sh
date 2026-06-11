@@ -123,7 +123,7 @@ dnf install -y \
 ###############################################
 # Other apps
 ###############################################
-#bash "$SCRIPT_DIR/vscode.sh"
+bash "$SCRIPT_DIR/vscode.sh"
 bash "$SCRIPT_DIR/brave.sh"
 
 ###############################################
