@@ -42,7 +42,7 @@ mkdir -p \
 cp /usr/share/applications/brave-origin.desktop \
    ~/.local/share/applications/
 sed -i 's/^StartupNotify=true$/StartupNotify=false/' \
-  ~/.local/share/applications/brave-browser.desktop
+  ~/.local/share/applications/brave-origin.desktop
 
   
 ###############################################
