@@ -26,6 +26,8 @@ dnf install -y \
     mpv \
     skanpage
 
+systemctl set-default graphical.target
+
 ###############################################
 # KDE Flatpak base setup
 ###############################################

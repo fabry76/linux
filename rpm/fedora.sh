@@ -355,4 +355,21 @@ echo "System installation completed."
 ###############################################
 # User session script
 ###############################################
-runuser -u "$TARGET_USER" -- bash "$GIT_DIR/gnome_user.sh"
+USER_SCRIPT=""
+
+case "$DESKTOP_CHOICE" in
+    1)
+        USER_SCRIPT="kde_user.sh"
+        ;;
+    2)
+        USER_SCRIPT="gnome_user.sh"
+        ;;
+    *)
+        USER_SCRIPT=""
+        ;;
+esac
+
+if [ -n "$USER_SCRIPT" ] && [ -f "$GIT_DIR/$USER_SCRIPT" ]; then
+    echo "Switching to user session script: $USER_SCRIPT"
+
+    runuser -u "$TARGET_USER" -- bash "$GIT_DIR/$USER_SCRIPT"
