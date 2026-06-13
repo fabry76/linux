@@ -318,15 +318,11 @@ firewall-cmd --reload
 ###############################################
 # Locale
 ###############################################
-sudo localectl set-locale \
+localectl set-locale \
 LANG=en_US.UTF-8 \
-LANGUAGE=en_US:en \
-LC_CTYPE=en_US.UTF-8 \
 LC_NUMERIC=it_IT.UTF-8 \
 LC_TIME=it_IT.UTF-8 \
-LC_COLLATE=en_US.UTF-8 \
 LC_MONETARY=it_IT.UTF-8 \
-LC_MESSAGES=en_US.UTF-8 \
 LC_PAPER=it_IT.UTF-8 \
 LC_NAME=it_IT.UTF-8 \
 LC_ADDRESS=it_IT.UTF-8 \
