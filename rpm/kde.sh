@@ -24,7 +24,6 @@ dnf install -y \
     krecorder \
     inotify-tools \
     mpv \
-    plasma-firewall \
     skanpage
 
 systemctl set-default graphical.target
