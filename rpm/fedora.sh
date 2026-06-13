@@ -239,7 +239,8 @@ dnf install -y \
   gzip \
   xz \
   util-linux \
-  coreutils
+  coreutils \
+  dnf-automatic
 
   # Starship
 if ! command -v starship >/dev/null 2>&1; then
