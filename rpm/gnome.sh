@@ -22,7 +22,8 @@ systemctl set-default graphical.target
 dnf install -y \
     gnome-tweaks \
     gnome-extensions-app \
-    gnome-shell-extension-dash-to-panel
+    gnome-shell-extension-dash-to-panel \
+    gnome-shell-extension-system-monitor
 
 ###############################################
 # Flatpak

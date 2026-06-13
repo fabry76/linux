@@ -232,7 +232,6 @@ dnf install -y \
   vim \
   htop \
   fastfetch \
-  timeshift \
   curl \
   rclone \
   unrar \
@@ -281,7 +280,7 @@ usermod -aG sys "$TARGET_USER"
 ###############################################
 # Cockpit + Virtual Machines
 ###############################################
-dnf install -y cockpit cockpit-machines qemu-kvm libvirt virt-install
+dnf install -y cockpit cockpit-machines qemu-kvm libvirt virt-install virt-viewer
 systemctl enable cockpit.socket
 systemctl enable libvirtd
 
