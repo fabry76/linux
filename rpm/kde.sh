@@ -11,7 +11,8 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # KDE Plasma base
 ###############################################
-dnf install -y @kde-desktop
+dnf install -y @kde-desktop \
+    --exclude=krfb
 
 dnf install -y \
     sddm \
