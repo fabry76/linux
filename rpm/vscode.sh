@@ -1,5 +1,24 @@
-rpm --import https://packages.microsoft.com/keys/microsoft.asc &&
-echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
+#!/usr/bin/env bash
+set -euo pipefail
 
-dnf install -y code
+# Microsoft VS Code repo + package
+KEY_URL="https://packages.microsoft.com/keys/microsoft.asc"
+REPO_URL="https://packages.microsoft.com/yumrepos/vscode/config.repo"
+PKG="code"
+
+# 1) Import GPG key (RPM is inherently idempotent)
+curl -fsSL "$KEY_URL" | sudo rpm --import -
+echo "GPG key ensured"
+
+# 2) Install repository (DNF handles idempotence)
+sudo dnf install -y "$REPO_URL"
+echo "VS Code repository ensured"
+
+# 3) Install package (RPM check)
+if ! rpm -q "$PKG" &>/dev/null; then
+  sudo dnf install -y "$PKG"
+  echo "VS Code installed"
+else
+  echo "VS Code already installed"
+fi
 

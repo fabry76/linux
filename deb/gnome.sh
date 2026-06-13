@@ -19,7 +19,6 @@ apt-get install -y \
     papers+ \
     gnome-tweaks \
     gnome-shell-extension-manager \
-    gnome-shell-extension-dash-to-dock \
     gnome-shell-extension-dash-to-panel
     
 ###############################################
