@@ -50,6 +50,19 @@ else
     echo "Brave shortcut already exists, skipping"
 fi
 
+SRC_CHR="/usr/share/applications/google-chrome.desktop"
+DST_CHR="$HOME/.local/share/applications/google-chrome.desktop" 
+
+if [[ -f "$SRC_CHR" && ! -f "$DST_CHR" ]]; then
+    mkdir -p "$(dirname "$DST_CHR")"
+    cp "$SRC_CHR" "$DST_CHR"
+    sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_CHR"
+elif [[ ! -f "$SRC_CHR" ]]; then
+    echo "Chrome not installed, skipping shortcut"
+else
+    echo "Chrome shortcut already exists, skipping"
+fi
+
 ###############################################
 # Starship
 ###############################################
