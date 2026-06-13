@@ -242,7 +242,7 @@ dnf install -y \
   coreutils \
   dnf-automatic
 
-  # Starship
+# Starship
 if ! command -v starship >/dev/null 2>&1; then
     curl -sS https://starship.rs/install.sh | sh -s -- -y
 fi
