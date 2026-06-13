@@ -175,6 +175,13 @@ EOF
     fi
 fi
 
+echo
+while :; do
+    read -rp "Do you want to apply system hardening at the end of installation? (y/N): " RUN_HARDENING
+    [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
+done
+
 ################################################
 # Repositories, plugins and mirrors
 ################################################
@@ -290,6 +297,15 @@ firewall-cmd --reload
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     dnf install -y cifs-utils
     bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
+fi
+
+###############################################
+# Hardening
+###############################################
+if [ -f "$SCRIPT_DIR/hardening.sh" ]; then
+  if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/hardening.sh"
+  fi
 fi
 
 ###############################################
