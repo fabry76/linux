@@ -176,12 +176,14 @@ EOF
 fi
 
 ################################################
-# Repositories and plugins
+# Repositories, plugins and mirrors
 ################################################
 dnf install -y \
 dnf-plugins-core \
 https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+echo "fastestmirror=True" | sudo tee -a /etc/dnf/dnf.conf
 
 ################################################
 # Desktop Environment
@@ -280,6 +282,13 @@ dnf install -y firewalld firewall-config
 systemctl enable firewalld
 firewall-cmd --permanent --add-service=mdns
 firewall-cmd --reload
+
+###############################################
+# Timeshift & Grub-Btrfs
+###############################################
+dnf install -y timeshift grub-btrfs
+systemctl enable --now grub-btrfsd
+grub2-mkconfig -o /boot/grub2/grub.cfg
 
 ###############################################
 # Fastgate
