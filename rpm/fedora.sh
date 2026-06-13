@@ -313,6 +313,7 @@ systemctl enable libvirtd
 dnf install -y firewalld firewall-config
 systemctl enable firewalld
 firewall-cmd --permanent --add-service=mdns
+firewall-cmd --permanent --remove-service={ssh,dhcpv6-client}
 firewall-cmd --reload
 
 ###############################################
