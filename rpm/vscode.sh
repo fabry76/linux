@@ -18,10 +18,13 @@ else
   echo "VS Code repository already present"
 fi
 
+# 3) Refresh metadata after adding the repo
+  dnf makecache --refresh
+
 # 4) Install VS Code if missing
 if ! rpm -q "$PKG" &>/dev/null; then
   echo "Installing VS Code..."
-  sudo dnf install -y "$PKG"
+  dnf install -y "$PKG"
 else
   echo "VS Code already installed"
 fi

@@ -14,10 +14,10 @@ PKG="brave-origin"
 # Check whether the repository is already enabled in DNF
 if ! dnf repolist --enabled | awk '{print $1}' | grep -qx "$REPO_ID"; then
   # Add repository only if it does not exist
-  sudo dnf config-manager addrepo --from-repofile="$REPO_URL"
+  dnf config-manager addrepo --from-repofile="$REPO_URL"
 
   # Refresh metadata after adding the repo
-  sudo dnf makecache --refresh
+  dnf makecache --refresh
 
   echo "Repository added"
 else
@@ -28,7 +28,7 @@ fi
 # Check whether the package is already installed
 if ! rpm -q "$PKG" &>/dev/null; then
   # Install package only if missing
-  sudo dnf install -y "$PKG"
+  dnf install -y "$PKG"
 else
   echo "Package already installed: $PKG"
 fi
