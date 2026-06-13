@@ -304,9 +304,9 @@ fi
 ###############################################
 # Hardening
 ###############################################
-if [ -f "$SCRIPT_DIR/hardening.sh" ]; then
+if [ -f "$SCRIPT_DIR/hard_fed.sh" ]; then
   if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/hardening.sh"
+    bash "$SCRIPT_DIR/hard_fed.sh"
   fi
 fi
 
