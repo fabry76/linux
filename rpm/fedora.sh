@@ -37,9 +37,88 @@ LOG_FILE="$TARGET_HOME/install.log"
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
-################################################
+###############################################
 # Initial selection
-################################################
+###############################################
+while :; do
+    echo "Which main browser would you like to install?"
+    echo "1) Brave"
+    echo "2) Chrome"
+    echo "3) Firefox"
+    echo
+    echo "Examples:"
+    echo "  1"
+    echo "  1,3"
+    echo "  1,2,3"
+
+    read -rp "Selection: " BROWSER_SELECTION
+
+    VALID=true
+    IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
+
+    [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
+
+    for browser in "${BROWSERS[@]}"; do
+        browser="${browser// /}"
+
+        case "$browser" in
+            1|2|3)
+                ;;
+            *)
+                VALID=false
+                break
+                ;;
+        esac
+    done
+
+    [ "$VALID" = true ] && break
+
+    echo
+    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
+    echo
+done
+
+echo
+while :; do
+    echo "Which Flatpak browser would you like to install?"
+    echo "0) None"
+    echo "1) Firefox (org.mozilla.firefox)"
+    echo "2) Brave (com.brave.Browser)"
+    echo "3) LibreWolf (io.gitlab.librewolf-community)"
+    echo
+
+    read -rp "Choice [0-3]: " FLATPAK_BROWSER
+
+    [[ "$FLATPAK_BROWSER" =~ ^[0-3]$ ]] && break
+
+    echo "Please enter a number between 0 and 3."
+done
+
+echo
+while :; do
+    echo "Which Office suite would you like to install?"
+    echo "0) None"
+    echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
+    echo "2) LibreOffice (org.libreoffice.LibreOffice)"
+    echo "3) Collabora Office (com.collaboraoffice.Office)"
+    echo
+
+    read -rp "Choice [0-3]: " OFFICE_CHOICE
+
+    [[ "$OFFICE_CHOICE" =~ ^[0-3]$ ]] && break
+
+    echo "Please enter a number between 0 and 3."
+done
+
+echo
+while :; do
+    read -rp "Do you want to install Visual Studio Code? (y/N): " INSTALL_VSCODE
+    [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
+done
+
+echo
+
 while :; do
     read -rp "Do you want to mount the Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
@@ -118,13 +197,137 @@ systemctl set-default graphical.target
 dnf install -y \
     gnome-tweaks \
     gnome-extensions-app \
-    gnome-shell-extension-dash-to-panel 
+    gnome-shell-extension-dash-to-panel
 
 ###############################################
-# Other apps
+# Flatpak
 ###############################################
-bash "$SCRIPT_DIR/vscode.sh"
-bash "$SCRIPT_DIR/brave.sh"
+flatpak remote-add --if-not-exists \
+    flathub \
+    https://dl.flathub.org/repo/flathub.flatpakrepo
+
+###############################################
+# Variables
+###############################################
+BROWSER_APP=""
+OFFICE_APP=""
+
+FLATPAK_APPS=(
+    com.transmissionbt.Transmission
+    com.github.tchx84.Flatseal
+)
+
+###############################################
+# Browser selection
+###############################################
+case "$FLATPAK_BROWSER" in
+    1)
+        BROWSER_APP="org.mozilla.firefox"
+        FLATPAK_APPS+=(org.mozilla.firefox)
+        ;;
+    2)
+        BROWSER_APP="com.brave.Browser"
+        FLATPAK_APPS+=(com.brave.Browser)
+        ;;
+    3)
+        BROWSER_APP="io.gitlab.librewolf-community"
+        FLATPAK_APPS+=(io.gitlab.librewolf-community)
+        ;;
+    0)
+        ;;
+esac
+
+###############################################
+# Office selection
+###############################################
+case "$OFFICE_CHOICE" in
+    1)
+        OFFICE_APP="org.onlyoffice.desktopeditors"
+        FLATPAK_APPS+=(org.onlyoffice.desktopeditors)
+        ;;
+    2)
+        OFFICE_APP="org.libreoffice.LibreOffice"
+        FLATPAK_APPS+=(org.libreoffice.LibreOffice)
+        ;;
+    3)
+        OFFICE_APP="com.collaboraoffice.Office"
+        FLATPAK_APPS+=(com.collaboraoffice.Office)
+        ;;
+    0)
+        ;;
+esac
+
+###############################################
+# Install Flatpaks
+###############################################
+flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
+
+###############################################
+# Gnome apps override
+###############################################
+runuser -u "$TARGET_USER" -- bash -c \
+    "flatpak override --user com.transmissionbt.Transmission --nofilesystem=host --filesystem=xdg-download"
+
+###############################################
+# Browser override (dynamic)
+###############################################
+if [ -n "$BROWSER_APP" ]; then
+    runuser -u "$TARGET_USER" -- bash -c "
+        flatpak override --user $BROWSER_APP \
+        --nofilesystem=host \
+        --filesystem=xdg-download \
+        --nodevice=all \
+        --nosocket=x11
+    "
+fi
+
+###############################################
+# Browsers
+###############################################
+BROWSERS_TO_INSTALL=()
+for browser in "${BROWSERS[@]}"; do
+    browser="${browser// /}"
+
+    case "$browser" in
+        1)
+            bash "$SCRIPT_DIR/brave.sh"
+            ;;
+        2)
+            bash "$SCRIPT_DIR/chrome.sh"
+            ;;
+        3)
+            bash "$SCRIPT_DIR/firefox.sh"
+            ;;
+    esac
+done
+
+###############################################
+# Visual Studio Code
+###############################################
+if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/vscode.sh"
+fi
+
+###############################################
+# Applications & Utilities
+###############################################
+dnf install -y \
+  vim \
+  htop \
+  fastfetch \
+  curl \
+  rclone \
+  unrar \
+  tar \
+  gzip \
+  xz \
+  util-linux \
+  coreutils
+
+  # Starship
+if ! command -v starship >/dev/null 2>&1; then
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+fi
 
 ###############################################
 # Multimedia
@@ -150,25 +353,11 @@ dnf install -y \
   google-noto-color-emoji-fonts
 
 ###############################################
-# Applications & Utilities
+# Printing & Scanning
 ###############################################
-dnf install -y \
-  vim \
-  htop \
-  fastfetch \
-  curl \
-  rclone \
-  unrar \
-  tar \
-  gzip \
-  xz \
-  util-linux \
-  coreutils
-
-# Starship
-if ! command -v starship >/dev/null 2>&1; then
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
-fi
+dnf install -y cups gutenprint cups-pdf
+systemctl enable cups
+usermod -aG sys "$TARGET_USER"
 
 ###############################################
 # Fastgate
