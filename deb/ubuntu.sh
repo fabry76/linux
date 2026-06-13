@@ -146,6 +146,7 @@ apt-get install -y \
 ###############################################
 bash "$SCRIPT_DIR/vscode.sh"
 bash "$SCRIPT_DIR/brave.sh"
+bash "$SCRIPT_DIR/chrome.sh"
 
 ###############################################
 # Multimedia and Extra
@@ -209,6 +210,26 @@ if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     apt-get install -y cifs-utils
     bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
 fi
+
+###############################################
+# Hardening
+###############################################
+write_if_changed /etc/modprobe.d/disable-protocols.conf "$(cat << 'EOF'
+install dccp /bin/false
+install sctp /bin/false
+install rds /bin/false
+install tipc /bin/false
+
+blacklist dccp
+blacklist sctp
+blacklist rds
+blacklist tipc
+EOF
+)"
+
+sysctl --system
+echo
+echo "Hardening completed."
 
 ###############################################
 # Cleanup
