@@ -187,6 +187,11 @@ https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -
 # Desktop Environment
 ################################################
 bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+RC=$?
+
+echo "RC=$RC"
+
+echo "dopo"
 
 ###############################################
 # Browsers
@@ -266,9 +271,6 @@ dnf install -y cups gutenprint cups-pdf
 systemctl enable cups
 usermod -aG sys "$TARGET_USER"
 
-###############################################
-# Virtualization
-###############################################
 ###############################################
 # Cockpit + Virtual Machines
 ###############################################
