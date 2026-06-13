@@ -37,18 +37,17 @@ mkdir -p \
 ###############################################
 # Shortcuts
 ###############################################
-# Brave
 SRC_BRV="/usr/share/applications/brave-origin.desktop"
 DST_BRV="$HOME/.local/share/applications/brave-origin.desktop"
 
-[[ -f "$SRC_BRV" ]] || return 0
-
-if [[ -f "$DST_BRV" ]]; then
-    echo "Brave shortcut already exists, skipping"
-else
+if [[ -f "$SRC_BRV" && ! -f "$DST_BRV" ]]; then
     mkdir -p "$(dirname "$DST_BRV")"
     cp "$SRC_BRV" "$DST_BRV"
     sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_BRV"
+elif [[ ! -f "$SRC_BRV" ]]; then
+    echo "Brave not installed, skipping shortcut"
+else
+    echo "Brave shortcut already exists, skipping"
 fi
 
 ###############################################
