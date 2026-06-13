@@ -224,6 +224,7 @@ dnf install -y \
   vim \
   htop \
   fastfetch \
+  timeshift \
   curl \
   rclone \
   unrar \
@@ -282,13 +283,6 @@ dnf install -y firewalld firewall-config
 systemctl enable firewalld
 firewall-cmd --permanent --add-service=mdns
 firewall-cmd --reload
-
-###############################################
-# Timeshift & Grub-Btrfs
-###############################################
-dnf install -y timeshift grub-btrfs
-systemctl enable --now grub-btrfsd
-grub2-mkconfig -o /boot/grub2/grub.cfg
 
 ###############################################
 # Fastgate
