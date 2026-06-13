@@ -22,8 +22,7 @@ systemctl set-default graphical.target
 dnf install -y \
     gnome-tweaks \
     gnome-extensions-app \
-    gnome-shell-extension-dash-to-panel \
-    adw-gtk3-theme
+    gnome-shell-extension-dash-to-panel
 
 ###############################################
 # Flatpak
@@ -39,7 +38,7 @@ BROWSER_APP=""
 OFFICE_APP=""
 
 FLATPAK_APPS=(
-    com.transmissionbt.Transmission
+    org.qbittorrent.qbittorrent
     com.github.tchx84.Flatseal
 )
 
@@ -92,7 +91,7 @@ flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 # Gnome apps override
 ###############################################
 runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user com.transmissionbt.Transmission --nofilesystem=host --filesystem=xdg-download --env=GTK_THEME=adw-gtk3-dark"
+    "flatpak override --user org.qbittorrent.qbittorrent --nofilesystem=host --filesystem=xdg-download"
 
 ###############################################
 # Browser override (dynamic)
