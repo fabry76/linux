@@ -308,15 +308,6 @@ systemctl enable cockpit.socket
 systemctl enable libvirtd
 
 ###############################################
-# Firewall
-###############################################
-dnf install -y firewalld firewall-config
-systemctl enable firewalld
-firewall-cmd --permanent --add-service=mdns
-firewall-cmd --permanent --remove-service={ssh,dhcpv6-client}
-firewall-cmd --reload
-
-###############################################
 # Locale
 ###############################################
 localectl set-locale \
@@ -348,9 +339,20 @@ if [ -f "$SCRIPT_DIR/hard_fed.sh" ]; then
 fi
 
 ###############################################
+# Firewall
+###############################################
+dnf install -y firewalld firewall-config
+systemctl enable firewalld
+firewall-cmd --permanent --add-service=mdns
+firewall-cmd --permanent --remove-service={ssh,dhcpv6-client}
+firewall-cmd --reload
+
+###############################################
 # Cleanup
 ###############################################
 dnf update -y
+dnf clean all
+sudo dnf makecache --refresh -q
 echo "System installation completed."
 
 ###############################################
