@@ -35,18 +35,21 @@ mkdir -p \
     "$HOME/Virtual"
 
 ###############################################
-# Desktop shortcuts
+# Shortcuts
 ###############################################
 # Brave
 SRC_BRV="/usr/share/applications/brave-origin.desktop"
 DST_BRV="$HOME/.local/share/applications/brave-origin.desktop"
 
-[[ -f "$SRC_BRV" ]] || exit 0
-[[ -f "$DST_BRV" ]] && exit 0
+[[ -f "$SRC_BRV" ]] || return 0
 
-mkdir -p "$(dirname "$DST_BRV")"
-cp "$SRC_BRV" "$DST_BRV"
-sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_BRV"
+if [[ -f "$DST_BRV" ]]; then
+    echo "Brave shortcut already exists, skipping"
+else
+    mkdir -p "$(dirname "$DST_BRV")"
+    cp "$SRC_BRV" "$DST_BRV"
+    sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_BRV"
+fi
 
 ###############################################
 # Starship
