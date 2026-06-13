@@ -77,12 +77,12 @@ install -D \
 KONSOLERC="$HOME/.config/konsolerc"
 KONSOLERC_CONTENT=$(cat <<EOF
 [Desktop Entry]
-DefaultProfile=FF.profile
+DefaultProfile=ff.profile
 Version=1.0
 
 [General]
 ConfigVersion=1
-DefaultProfile=FF.profile
+DefaultProfile=ff.profile
 
 [UiSettings]
 ColorScheme=
