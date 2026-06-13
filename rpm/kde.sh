@@ -11,32 +11,25 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # KDE Plasma base
 ###############################################
-sudo dnf install --setopt=install_weak_deps=False @kde-desktop
+dnf install --setopt=install_weak_deps=False @kde-desktop
 
-sudo dnf install -y \
-    konsole \
-    ark \
+dnf install -y \
+    sddm \
     kcalc \
     isoimagewriter \
     kolourpaint \
     gwenview \
     okular \
-    okular-extra-backends \
-    kcharselect \
     kcolorchooser \
-    filelight \
     krecorder \
-    plasma-workspace-wallpapers \
     inotify-tools \
-    libnotify \
     mpv \
-    print-manager \
     skanpage
 
 ###############################################
 # KDE Flatpak base setup
 ###############################################
-sudo dnf install -y \
+dnf install -y \
     plasma-discover-flatpak \
     xdg-desktop-portal-kde
 
