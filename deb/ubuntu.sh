@@ -146,7 +146,7 @@ apt-get install -y \
 ###############################################
 bash "$SCRIPT_DIR/vscode.sh"
 bash "$SCRIPT_DIR/brave.sh"
-bash "$SCRIPT_DIR/chrome.sh"
+#bash "$SCRIPT_DIR/chrome.sh"
 
 ###############################################
 # Multimedia and Extra
