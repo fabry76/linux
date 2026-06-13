@@ -311,6 +311,12 @@ if [ -f "$SCRIPT_DIR/hard_fed.sh" ]; then
 fi
 
 ###############################################
+# Cleanup
+###############################################
+dnf update -y
+echo "System installation completed."
+
+###############################################
 # User session script
 ###############################################
 runuser -u "$TARGET_USER" -- bash "$GIT_DIR/gnome_user.sh"
