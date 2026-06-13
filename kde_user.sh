@@ -91,10 +91,10 @@ EOF
 
 write_if_changed "$KONSOLERC" "$KONSOLERC_CONTENT"
 
-[ -f "$HOME/Git/linux/etc/FF.profile" ] && \
+[ -f "$HOME/Git/linux/etc/ff.profile" ] && \
 install -D \
-  "$HOME/Git/linux/etc/FF.profile" \
-  "$HOME/.local/share/konsole/FF.profile"
+  "$HOME/Git/linux/etc/ff.profile" \
+  "$HOME/.local/share/konsole/ff.profile"
 
 ###############################################
 # Locale

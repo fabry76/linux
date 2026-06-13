@@ -41,6 +41,18 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 # Initial selection
 ###############################################
 while :; do
+    echo "Which desktop environment would you like to install?"
+    echo "1) KDE"
+    echo "2) GNOME"
+    read -rp "Choice [1-2]: " DESKTOP_CHOICE
+
+    [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
+
+    echo "Please enter 1 for KDE or 2 for GNOME."
+    echo
+done
+
+while :; do
     echo "Which main browser would you like to install?"
     echo "1) Brave"
     echo "2) Chrome"
@@ -193,10 +205,21 @@ https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -
 
 echo "fastestmirror=True" | sudo tee -a /etc/dnf/dnf.conf
 
-################################################
+###############################################
 # Desktop Environment
-################################################
-bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+###############################################
+case "$DESKTOP_CHOICE" in
+    1)
+        echo
+        echo "Installing KDE Plasma..."
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        ;;
+    2)
+        echo
+        echo "Installing GNOME..."
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        ;;
+esac
 
 ###############################################
 # Browsers
@@ -291,6 +314,29 @@ dnf install -y firewalld firewall-config
 systemctl enable firewalld
 firewall-cmd --permanent --add-service=mdns
 firewall-cmd --reload
+
+###############################################
+# Locale
+###############################################
+grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
+  printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
+
+locale-gen
+
+update-locale \
+LANG=en_US.UTF-8 \
+LANGUAGE=en_US:en \
+LC_CTYPE="en_US.UTF-8" \
+LC_NUMERIC=it_IT.UTF-8 \
+LC_TIME=it_IT.UTF-8 \
+LC_COLLATE="en_US.UTF-8" \
+LC_MONETARY=it_IT.UTF-8 \
+LC_MESSAGES="en_US.UTF-8" \
+LC_PAPER=it_IT.UTF-8 \
+LC_NAME=it_IT.UTF-8 \
+LC_ADDRESS=it_IT.UTF-8 \
+LC_TELEPHONE=it_IT.UTF-8 \
+LC_MEASUREMENT=it_IT.UTF-8
 
 ###############################################
 # Fastgate
