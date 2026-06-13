@@ -373,3 +373,4 @@ if [ -n "$USER_SCRIPT" ] && [ -f "$GIT_DIR/$USER_SCRIPT" ]; then
     echo "Switching to user session script: $USER_SCRIPT"
 
     runuser -u "$TARGET_USER" -- bash "$GIT_DIR/$USER_SCRIPT"
+fi
