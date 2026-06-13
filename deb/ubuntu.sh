@@ -123,7 +123,6 @@ apt-get install -y \
   gnome-tweaks \
   gnome-snapshot \
   gnome-sound-recorder \
-  gnome-boxes \
   showtime
 
 ###############################################
@@ -162,7 +161,7 @@ apt-get install -y \
 ###############################################
 # Snaps
 ###############################################
-snap install pinta onlyoffice-desktopeditors transmission
+snap install pinta onlyoffice-desktopeditors transmission gnome-boxes
 
 ###############################################
 # Firewall

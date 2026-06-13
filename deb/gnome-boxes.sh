@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-apt-get install -y gnome-boxes
+flatpak install -y --system flathub org.gnome.Boxes
 
 echo "Gnome Boxes installed."

@@ -41,6 +41,7 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     org.qbittorrent.qBittorrent
     com.github.tchx84.Flatseal
+    com.github.PintaProject.Pinta
 )
 
 ###############################################
