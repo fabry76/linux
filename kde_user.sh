@@ -33,7 +33,6 @@ DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 mkdir -p \
   "$HOME/.config" \
   "$HOME/.config/mpv" \
-  "$HOME/Virtual" \
   "$HOME/.local/share/konsole"
   
 ###############################################

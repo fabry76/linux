@@ -31,8 +31,7 @@ xdg-user-dirs-update
 DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 
 mkdir -p \
-  "$HOME/.config" \
-    "$HOME/Virtual"
+  "$HOME/.config"
 
 ###############################################
 # Shortcuts
