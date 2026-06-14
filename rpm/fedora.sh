@@ -49,7 +49,6 @@ while :; do
     [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
 
     echo "Please enter 1 for KDE or 2 for GNOME."
-    echo
 done
 
 while :; do
@@ -85,12 +84,9 @@ while :; do
 
     [ "$VALID" = true ] && break
 
-    echo
     echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
-    echo
 done
 
-echo
 while :; do
     echo "Which Flatpak browser would you like to install?"
     echo "0) None"
@@ -106,15 +102,13 @@ while :; do
     echo "Please enter a number between 0 and 3."
 done
 
-echo
 while :; do
     echo "Which Office suite would you like to install?"
     echo "0) None"
     echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
     echo "2) LibreOffice (org.libreoffice.LibreOffice)"
     echo "3) Collabora Office (com.collaboraoffice.Office)"
-    echo
-
+    
     read -rp "Choice [0-3]: " OFFICE_CHOICE
 
     [[ "$OFFICE_CHOICE" =~ ^[0-3]$ ]] && break
@@ -122,14 +116,17 @@ while :; do
     echo "Please enter a number between 0 and 3."
 done
 
-echo
 while :; do
     read -rp "Do you want to install Visual Studio Code? (y/N): " INSTALL_VSCODE
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
 
-echo
+while :; do
+    read -rp "Do you want to install VM support? (y/N): " INSTALL_VM
+    [[ "$INSTALL_VM" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
+done
 
 while :; do
     read -rp "Do you want to mount the Fastgate SMB share? (y/N): " RUN_FASTGATE
@@ -138,11 +135,8 @@ while :; do
 done
 
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-
     CRED_FILE="/etc/samba/fastgate.creds"
-    
     install -d -m 700 /etc/samba
-
     CRED_STATE="missing"
 
     if [ -f "$CRED_FILE" ]; then
@@ -187,7 +181,6 @@ EOF
     fi
 fi
 
-echo
 while :; do
     read -rp "Do you want to apply system hardening at the end of installation? (y/N): " RUN_HARDENING
     [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
@@ -263,7 +256,8 @@ dnf install -y \
   xz \
   util-linux \
   coreutils \
-  dnf-automatic
+  dnf-automatic \
+  cockpit
 
 # Starship
 if ! command -v starship >/dev/null 2>&1; then
@@ -303,9 +297,9 @@ usermod -aG sys "$TARGET_USER"
 ###############################################
 # Cockpit + Virtual Machines
 ###############################################
-dnf install -y cockpit cockpit-machines qemu-kvm libvirt virt-install virt-viewer
-systemctl enable cockpit.socket
-systemctl enable libvirtd
+if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/cockpit_vm.sh"
+fi
 
 ###############################################
 # Locale
