@@ -3,7 +3,7 @@ set -euo pipefail
 
 TARGET_USER="$1"
 
-apt-get install -y cockpit-machines virt-viewer qemu-kvm libvirt-daemon-system
+apt-get install -y cockpit-machines qemu-kvm libvirt-daemon-system virtinst libvirt-clients bridge-utils virt-viewer
 usermod -aG libvirt,kvm "$TARGET_USER"
 sudo systemctl enable libvirtd
 
