@@ -343,23 +343,6 @@ systemctl enable NetworkManager
 systemctl restart NetworkManager
 
 ###############################################
-# Virtualization
-###############################################
-case "$VIRT_CHOICE" in
-    0)
-        ;;
-    1)
-        bash "$SCRIPT_DIR/virt-manager.sh" "$TARGET_USER"
-        ;;
-    2)
-        bash "$SCRIPT_DIR/cockpit.sh" "$TARGET_USER"
-        ;;
-    3)
-        bash "$SCRIPT_DIR/gnome-boxes.sh"
-        ;;
-esac
-
-###############################################
 # GRUB
 ###############################################
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
