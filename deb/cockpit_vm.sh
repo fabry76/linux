@@ -10,8 +10,7 @@ libvirt-daemon-system \
 virtinst \
 libvirt-clients \
 bridge-utils \
-virt-viewer \
-dnsmasq
+virt-viewer
 
 usermod -aG libvirt,kvm "$TARGET_USER"
 sudo systemctl enable libvirtd
