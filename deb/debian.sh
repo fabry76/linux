@@ -377,7 +377,7 @@ LC_MEASUREMENT=it_IT.UTF-8
 # Cockpit + Virtual Machines
 ###############################################
 if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/cockpit_vm.sh"
+    bash "$SCRIPT_DIR/cockpit_vm.sh" "$TARGET_USER" 
 fi
 
 ###############################################
