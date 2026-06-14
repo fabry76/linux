@@ -385,7 +385,7 @@ fi
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     apt-get install -y cifs-utils
-    bash "$GIT_DIR/fastgate.sh" "$TARGET_USER"
+    bash "$GIT_DIR/fastgate.sh"
 fi
 
 ###############################################
