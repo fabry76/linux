@@ -50,6 +50,7 @@ while :; do
 
     echo "Please enter 1 for KDE or 2 for GNOME."
 done
+echo
 
 while :; do
     echo "Which main browser would you like to install?"
@@ -86,6 +87,7 @@ while :; do
 
     echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
 done
+echo
 
 while :; do
     echo "Which Flatpak browser would you like to install?"
@@ -101,6 +103,7 @@ while :; do
 
     echo "Please enter a number between 0 and 3."
 done
+echo
 
 while :; do
     echo "Which Office suite would you like to install?"
@@ -115,24 +118,28 @@ while :; do
 
     echo "Please enter a number between 0 and 3."
 done
+echo
 
 while :; do
     read -rp "Do you want to install Visual Studio Code? (y/N): " INSTALL_VSCODE
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
+echo
 
 while :; do
     read -rp "Do you want to install VM support? (y/N): " INSTALL_VM
     [[ "$INSTALL_VM" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
+echo
 
 while :; do
     read -rp "Do you want to mount the Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
+echo
 
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     CRED_FILE="/etc/samba/fastgate.creds"
@@ -180,6 +187,7 @@ EOF
         chmod 600 "$CRED_FILE"
     fi
 fi
+echo
 
 while :; do
     read -rp "Do you want to apply system hardening at the end of installation? (y/N): " RUN_HARDENING
@@ -258,6 +266,8 @@ dnf install -y \
   coreutils \
   dnf-automatic \
   cockpit
+
+systemctl enable cockpit.socket
 
 # Starship
 if ! command -v starship >/dev/null 2>&1; then

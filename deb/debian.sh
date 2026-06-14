@@ -52,8 +52,8 @@ while :; do
     echo "Please enter 1 for KDE or 2 for GNOME."
     echo
 done
-
 echo
+
 while :; do
     echo "Which main browser would you like to install?"
     echo "1) Brave"
@@ -91,8 +91,8 @@ while :; do
     echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
     echo
 done
-
 echo
+
 while :; do
     echo "Which Flatpak browser would you like to install?"
     echo "0) None"
@@ -107,8 +107,8 @@ while :; do
 
     echo "Please enter a number between 0 and 3."
 done
-
 echo
+
 while :; do
     echo "Which Office suite would you like to install?"
     echo "0) None"
@@ -123,31 +123,21 @@ while :; do
 
     echo "Please enter a number between 0 and 3."
 done
-
 echo
+
 while :; do
     read -rp "Do you want to install Visual Studio Code? (y/N): " INSTALL_VSCODE
     [[ "$INSTALL_VSCODE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
-
 echo
+
 while :; do
-    echo "Which virtualization tool would you like to install?"
-    echo "0) None"
-    echo "1) Virt-Manager"
-    echo "2) Cockpit"
-    echo "3) Gnome Boxes"
-    echo
-
-    read -rp "Choice [0-3]: " VIRT_CHOICE
-
-    [[ "$VIRT_CHOICE" =~ ^[0-3]$ ]] && break
-
-    echo
-    echo "Please enter a number between 0 and 3."
-    echo
+    read -rp "Do you want to install VM support? (y/N): " INSTALL_VM
+    [[ "$INSTALL_VM" =~ ^([Yy]|[Nn]|)$ ]] && break
+    echo "Please answer y or n."
 done
+echo
 
 while :; do
     read -rp "Do you want to mount the Fastgate SMB share? (y/N): " RUN_FASTGATE
@@ -204,8 +194,8 @@ EOF
         chmod 600 "$CRED_FILE"
     fi
 fi
-
 echo
+
 while :; do
     read -rp "Do you want to apply system hardening at the end of installation? (y/N): " RUN_HARDENING
     [[ "$RUN_HARDENING" =~ ^([Yy]|[Nn]|)$ ]] && break
@@ -311,8 +301,9 @@ fi
 ###############################################
 # Common Utilities and Configurations
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades cockpit
 
+systemctl enable cockpit.socket
 systemctl enable thermald
 plymouth-set-default-theme lines -R
 
@@ -398,6 +389,13 @@ LC_NAME=it_IT.UTF-8 \
 LC_ADDRESS=it_IT.UTF-8 \
 LC_TELEPHONE=it_IT.UTF-8 \
 LC_MEASUREMENT=it_IT.UTF-8
+
+###############################################
+# Cockpit + Virtual Machines
+###############################################
+if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/cockpit_vm.sh"
+fi
 
 ###############################################
 # Fastgate
