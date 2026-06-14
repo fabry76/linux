@@ -16,4 +16,4 @@ usermod -aG libvirt,kvm "$TARGET_USER"
 
 systemctl enable libvirtd
 
-echo "Cockpit + libvirt installed"
+echo "Cockpit + libvirt installed."
