@@ -308,7 +308,7 @@ usermod -aG sys "$TARGET_USER"
 # Cockpit + Virtual Machines
 ###############################################
 if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/cockpit_vm.sh"
+    bash "$SCRIPT_DIR/cockpit_vm.sh" "$TARGET_USER" 
 fi
 
 ###############################################
