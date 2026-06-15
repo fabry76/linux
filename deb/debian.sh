@@ -374,10 +374,10 @@ LC_TELEPHONE=it_IT.UTF-8 \
 LC_MEASUREMENT=it_IT.UTF-8
 
 ###############################################
-# Cockpit + Virtual Machines
+# VM Support
 ###############################################
 if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/cockpit_vm.sh" "$TARGET_USER" 
+    bash "$SCRIPT_DIR/vm.sh" "$TARGET_USER" "$DESKTOP_CHOICE"
 fi
 
 ###############################################

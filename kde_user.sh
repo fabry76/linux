@@ -31,6 +31,7 @@ xdg-user-dirs-update
 DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 
 mkdir -p \
+  "$HOME/Virtual" \
   "$HOME/.config" \
   "$HOME/.config/mpv" \
   "$HOME/.local/share/konsole"
