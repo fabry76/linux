@@ -297,7 +297,6 @@ dnf install -y \
 ###############################################
 dnf install -y cups gutenprint cups-pdf
 systemctl enable cups
-usermod -aG lpadmin "$TARGET_USER"
 
 ###############################################
 # VM Support
