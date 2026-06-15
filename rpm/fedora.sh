@@ -267,8 +267,7 @@ dnf install -y \
   dnf-automatic
   
 # Starship
-dnf install -y https://extras.getpagespeed.com/release-latest.rpm
-dnf install -y starship
+curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 ###############################################
 # Multimedia
