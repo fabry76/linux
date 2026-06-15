@@ -10,19 +10,16 @@ case "$DESKTOP_CHOICE" in
 
         apt-get install -y \
             virt-manager \
-            cockpit-machines \
             qemu-kvm \
             libvirt-daemon-system \
             virtinst \
             libvirt-clients \
-            bridge-utils \
             virt-viewer
 
         usermod -aG libvirt,kvm "$TARGET_USER"
-
         systemctl enable libvirtd
 
-        echo "Cockpit + libvirt installed."
+        echo "Virtualization stack installed."
         ;;
 
     2)

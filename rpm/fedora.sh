@@ -270,9 +270,8 @@ dnf install -y \
 systemctl enable cockpit.socket
 
 # Starship
-if ! command -v starship >/dev/null 2>&1; then
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
-fi
+dnf install -y https://extras.getpagespeed.com/release-latest.rpm
+dnf install -y starship
 
 ###############################################
 # Multimedia
@@ -302,13 +301,13 @@ dnf install -y \
 ###############################################
 dnf install -y cups gutenprint cups-pdf
 systemctl enable cups
-usermod -aG sys "$TARGET_USER"
+usermod -aG lpadmin "$TARGET_USER"
 
 ###############################################
-# Cockpit + Virtual Machines
+# VM Support
 ###############################################
 if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/cockpit_vm.sh" "$TARGET_USER" 
+    bash "$SCRIPT_DIR/vm.sh" "$TARGET_USER" "$DESKTOP_CHOICE"
 fi
 
 ###############################################

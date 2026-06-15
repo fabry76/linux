@@ -301,9 +301,8 @@ fi
 ###############################################
 # Common Utilities and Configurations
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades cockpit
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades
 
-systemctl enable cockpit.socket
 systemctl enable thermald
 plymouth-set-default-theme lines -R
 
