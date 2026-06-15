@@ -12,6 +12,7 @@ case "$DESKTOP_CHOICE" in
         echo "Installing KDE virtualization stack..."
 
         dnf install -y \
+            cockpit \
             cockpit-machines \
             qemu-kvm \
             libvirt \
@@ -21,6 +22,7 @@ case "$DESKTOP_CHOICE" in
 
         usermod -aG libvirt,kvm "$TARGET_USER"
         systemctl enable libvirtd
+        systemctl enable cockpit.socket
 
         echo "Virtualization stack installed."
         ;;

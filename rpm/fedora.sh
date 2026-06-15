@@ -264,11 +264,8 @@ dnf install -y \
   xz \
   util-linux \
   coreutils \
-  dnf-automatic \
-  cockpit
-
-systemctl enable cockpit.socket
-
+  dnf-automatic
+  
 # Starship
 dnf install -y https://extras.getpagespeed.com/release-latest.rpm
 dnf install -y starship
