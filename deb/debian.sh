@@ -315,7 +315,7 @@ apt-get install -y ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plu
 # Fonts & Icons
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode
+apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
 apt-get install -y papirus-icon-theme
 
 ###############################################
