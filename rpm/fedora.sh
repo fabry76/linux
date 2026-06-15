@@ -307,7 +307,7 @@ usermod -aG lpadmin "$TARGET_USER"
 # VM Support
 ###############################################
 if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/vm.sh" "$TARGET_USER" "$DESKTOP_CHOICE"
+    bash "$SCRIPT_DIR/virtualization.sh" "$TARGET_USER" "$DESKTOP_CHOICE"
 fi
 
 ###############################################
