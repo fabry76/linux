@@ -13,13 +13,13 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 apt-get install -y --no-install-recommends \
     gnome-core \
-    gnome-console \
+    ptyxis \
+    papers \
+    showtime \
     network-manager \
     gnome-tweaks \
     gnome-shell-extension-manager \
-    gnome-shell-extension-dash-to-panel \
-    papers \
-    showtime
+    gnome-shell-extension-dash-to-panel
     
 ###############################################
 # Firewall
