@@ -267,7 +267,7 @@ dnf install -y \
   dnf-automatic
   
 # Starship
-curl -sS https://starship.rs/install.sh | sh -s -- -y
+curl -fsSL https://starship.rs/install.sh | sh -s -- -y >/dev/null 2>&1
 
 ###############################################
 # Multimedia
@@ -308,6 +308,8 @@ fi
 ###############################################
 # Locale
 ###############################################
+dnf install -y glibc-langpack-it
+
 localectl set-locale \
 LANG=en_US.UTF-8 \
 LC_NUMERIC=it_IT.UTF-8 \
