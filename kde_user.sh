@@ -55,14 +55,6 @@ install -D \
   "$HOME/.config/mpv/mpv.conf"
 
 ###############################################
-# KWRITE
-###############################################
-[ -f "$HOME/Git/linux/etc/kwriterc" ] && \
-install -D \
-  "$HOME/Git/linux/etc/kwriterc" \
-  "$HOME/.config/kwriterc"
-
-###############################################
 # Desktop icon
 ###############################################
 [ -f "$HOME/Git/linux/etc/computer.desktop" ] && \

@@ -11,13 +11,18 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # KDE Plasma base
 ###############################################
-apt-mark hold plasma-browser-integration konqueror
-
 apt-get install -y \
-    kde-plasma-desktop \
+    plasma-desktop \
+    plasma-workspace \
+    sddm \
+    dolphin \
+    kdialog \
+    kfind \
     konsole \
     ark \
-    kalk \
+    udisks2 \
+    upower \
+    kcalc \
     isoimagewriter \
     kolourpaint \
     gwenview \
@@ -64,6 +69,7 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
     org.kde.ktorrent
+    org.kde.kwrite
 )
 
 ###############################################
