@@ -21,7 +21,6 @@ apt-get install -y --no-install-recommends \
     gnome-shell-extension-manager \
     gnome-shell-extension-dash-to-panel \
     gnome-shell-extension-system-monitor \
-    gnome-shell-extension-appindicator \
     gnome-shell-extension-apps-menu
     
 ###############################################
