@@ -19,7 +19,10 @@ apt-get install -y --no-install-recommends \
     network-manager \
     gnome-tweaks \
     gnome-shell-extension-manager \
-    gnome-shell-extension-dash-to-panel
+    gnome-shell-extension-dash-to-panel \
+    gnome-shell-extension-system-monitor \
+    gnome-shell-extension-appindicator \
+    gnome-shell-extension-apps-menu
     
 ###############################################
 # Firewall
@@ -48,7 +51,7 @@ BROWSER_APP=""
 OFFICE_APP=""
 
 FLATPAK_APPS=(
-    com.transmissionbt.Transmission
+    org.qbittorrent.qBittorrent
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
 )
@@ -102,7 +105,7 @@ flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 # Gnome apps override
 ###############################################
 runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user com.transmissionbt.Transmission --nofilesystem=host --filesystem=xdg-download"
+    "flatpak override --user org.qbittorrent.qBittorrent --nofilesystem=host --filesystem=xdg-download"
 
 ###############################################
 # Browser override (dynamic)
