@@ -21,8 +21,7 @@ case "$DESKTOP_CHOICE" in
 
         usermod -aG libvirt,kvm "$TARGET_USER"
         systemctl enable libvirtd
-        systemctl enable cockpit.socket
-
+      
         echo "Virtualization stack installed."
         ;;
 

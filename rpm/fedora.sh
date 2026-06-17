@@ -308,8 +308,6 @@ fi
 ###############################################
 # Locale
 ###############################################
-dnf install -y glibc-langpack-it
-
 localectl set-locale \
 LANG=en_US.UTF-8 \
 LC_NUMERIC=it_IT.UTF-8 \
