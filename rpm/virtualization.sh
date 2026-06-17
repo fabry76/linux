@@ -17,7 +17,7 @@ case "$DESKTOP_CHOICE" in
             qemu-kvm \
             libvirt \
             virt-install \
-            libvirt-clients \
+            libvirt-client \
             virt-viewer
 
         usermod -aG libvirt,kvm "$TARGET_USER"
