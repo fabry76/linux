@@ -204,7 +204,8 @@ fedora-workstation-repositories \
 https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-echo "fastestmirror=True" | sudo tee -a /etc/dnf/dnf.conf
+grep -q "^fastestmirror=True" /etc/dnf/dnf.conf \
+|| echo "fastestmirror=True" >> /etc/dnf/dnf.conf
 
 ###############################################
 # Desktop Environment
@@ -278,7 +279,7 @@ dnf install -y @multimedia \
   --setopt=install_weak_deps=False \
   --exclude=PackageKit-gstreamer-plugin
 
-dnf install -y ffmpegthumbnailer
+dnf install -y ffmpegthumbnailer intel-media-driver
 
 ###############################################
 # Fonts & Icons
