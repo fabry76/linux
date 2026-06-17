@@ -326,6 +326,8 @@ LC_MEASUREMENT=it_IT.UTF-8
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     dnf install -y cifs-utils
+    systemctl enable NetworkManager
+    systemctl restart NetworkManager
     bash "$GIT_DIR/fastgate.sh"
 fi
 
