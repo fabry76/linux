@@ -12,8 +12,7 @@ case "$DESKTOP_CHOICE" in
         echo "Installing KDE virtualization stack..."
 
         dnf install -y \
-            cockpit \
-            cockpit-machines \
+            virt-manager \
             qemu-kvm \
             libvirt \
             virt-install \
