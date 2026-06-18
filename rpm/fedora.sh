@@ -292,7 +292,7 @@ dnf install -y \
   liberation-fonts \
   fira-code-fonts \
   papirus-icon-theme
-  
+
 ###############################################
 # Printing & Scanning
 ###############################################
