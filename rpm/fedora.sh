@@ -287,12 +287,12 @@ dnf install -y ffmpegthumbnailer intel-media-driver
 dnf install -y \
   google-noto-sans-fonts \
   google-noto-serif-fonts \
+  google-noto-color-emoji-fonts \
   fira-code-fonts \
   liberation-fonts \
   fira-code-fonts \
-  papirus-icon-theme \
-  google-noto-color-emoji-fonts
-
+  papirus-icon-theme
+  
 ###############################################
 # Printing & Scanning
 ###############################################
