@@ -16,6 +16,7 @@ apt-get install -y \
     plasma-workspace \
     sddm \
     dolphin \
+    kate \
     kdialog \
     kfind \
     konsole \
@@ -69,7 +70,6 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
     org.kde.ktorrent
-    org.kde.kwrite
 )
 
 ###############################################
