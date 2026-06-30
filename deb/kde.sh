@@ -38,7 +38,8 @@ apt-get install -y \
     libnotify-bin \
     mpv \
     print-manager \
-    skanpage
+    skanpage \
+    ktorrent
 
 ###############################################
 # Firewall
@@ -69,28 +70,7 @@ OFFICE_APP=""
 
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
-    org.kde.ktorrent
 )
-
-###############################################
-# Browser selection
-###############################################
-case "$FLATPAK_BROWSER" in
-    1)
-        BROWSER_APP="org.mozilla.firefox"
-        FLATPAK_APPS+=(org.mozilla.firefox)
-        ;;
-    2)
-        BROWSER_APP="com.brave.Browser"
-        FLATPAK_APPS+=(com.brave.Browser)
-        ;;
-    3)
-        BROWSER_APP="io.gitlab.librewolf-community"
-        FLATPAK_APPS+=(io.gitlab.librewolf-community)
-        ;;
-    0)
-        ;;
-esac
 
 ###############################################
 # Office selection
@@ -116,28 +96,6 @@ esac
 # Install Flatpaks
 ###############################################
 flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
-
-###############################################
-# KDE apps override
-###############################################
-runuser -u "$TARGET_USER" -- bash -c "
-    flatpak override --user org.kde.ktorrent \
-    --nofilesystem=host \
-    --filesystem=xdg-download
-"
-
-###############################################
-# Browser override (dynamic)
-###############################################
-if [ -n "$BROWSER_APP" ]; then
-    runuser -u "$TARGET_USER" -- bash -c "
-        flatpak override --user $BROWSER_APP \
-        --nofilesystem=host \
-        --filesystem=xdg-download \
-        --nodevice=all \
-        --nosocket=x11
-    "
-fi
 
 ###############################################
 # Office override (dynamic)
