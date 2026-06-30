@@ -5,7 +5,7 @@ set -euo pipefail
 # Args
 ###############################################
 TARGET_USER="$1"
-OFFICE_CHOICE="${3:-0}"
+OFFICE_CHOICE="${2:-0}"
 
 ###############################################
 # KDE Plasma base
