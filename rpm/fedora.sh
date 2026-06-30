@@ -128,13 +128,6 @@ done
 echo
 
 while :; do
-    read -rp "Do you want to install VM support? (y/N): " INSTALL_VM
-    [[ "$INSTALL_VM" =~ ^([Yy]|[Nn]|)$ ]] && break
-    echo "Please answer y or n."
-done
-echo
-
-while :; do
     read -rp "Do you want to mount the Fastgate SMB share? (y/N): " RUN_FASTGATE
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
