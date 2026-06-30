@@ -353,13 +353,6 @@ LC_TELEPHONE=it_IT.UTF-8 \
 LC_MEASUREMENT=it_IT.UTF-8
 
 ###############################################
-# VM Support
-###############################################
-if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/virtualization.sh" "$TARGET_USER" "$DESKTOP_CHOICE"
-fi
-
-###############################################
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
