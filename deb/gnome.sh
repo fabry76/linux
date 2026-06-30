@@ -5,7 +5,6 @@ set -euo pipefail
 # Args
 ###############################################
 TARGET_USER="$1"
-#FLATPAK_BROWSER="${2:-0}"
 OFFICE_CHOICE="${3:-0}"
 
 ###############################################
@@ -46,7 +45,6 @@ flatpak remote-add --if-not-exists \
 ###############################################
 # Variables
 ###############################################
-#BROWSER_APP=""
 OFFICE_APP=""
 
 FLATPAK_APPS=(
