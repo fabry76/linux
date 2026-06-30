@@ -61,7 +61,7 @@ flatpak remote-add --if-not-exists \
     flathub \
     https://dl.flathub.org/repo/flathub.flatpakrepo
 
-flatpak remote-modify --subset=verified flathub
+#flatpak remote-modify --subset=verified flathub
 
 ###############################################
 # Variables
