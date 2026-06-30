@@ -239,12 +239,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$OFFICE_CHOICE"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$OFFICE_CHOICE"
         ;;
 esac
 
