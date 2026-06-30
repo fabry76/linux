@@ -64,9 +64,7 @@ while :; do
     echo "Examples:"
     echo "  1"
     echo "  1,3"
-    echo "  1,2,3"
-    echo "  4"
-
+    
     read -rp "Selection: " BROWSER_SELECTION
 
     VALID=true
@@ -96,7 +94,7 @@ done
 echo
 
 while :; do
-    echo "Which Office suite would you like to install?"
+    echo "Which Office suite would you like to install? (flatpak)"
     echo "0) None"
     echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
     echo "2) LibreOffice (org.libreoffice.LibreOffice)"
