@@ -138,7 +138,9 @@ apt-get install -y \
   rclone \
   unrar \
   starship \
-  debsums
+  debsums \
+  wakeonlan \
+  virt-viewer
 
 ###############################################
 # Other apps
@@ -161,7 +163,7 @@ apt-get install -y \
 ###############################################
 # Snaps
 ###############################################
-snap install pinta onlyoffice-desktopeditors transmission gnome-boxes
+snap install pinta onlyoffice-desktopeditors transmission
 
 ###############################################
 # Firewall
