@@ -259,8 +259,7 @@ dnf install -y \
   util-linux \
   coreutils \
   dnf-automatic \
-  wakeonlan \
-  virt-viewer
+  wakeonlan
   
 # Starship
 curl -fsSL https://starship.rs/install.sh | sh -s -- -y >/dev/null 2>&1
