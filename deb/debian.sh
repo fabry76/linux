@@ -47,7 +47,8 @@ while :; do
     echo "2) GNOME"
     echo
     echo "Please enter 1 for KDE or 2 for GNOME."
-    read -rp "Choice [1-2]: " DESKTOP_CHOICE
+    echo
+    read -rp "Selection: " DESKTOP_CHOICE
 
     [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
 done
