@@ -139,8 +139,7 @@ apt-get install -y \
   unrar \
   starship \
   debsums \
-  wakeonlan \
-  virt-viewer
+  wakeonlan
 
 ###############################################
 # Other apps
