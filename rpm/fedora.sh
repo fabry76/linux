@@ -258,7 +258,9 @@ dnf install -y \
   xz \
   util-linux \
   coreutils \
-  dnf-automatic
+  dnf-automatic \
+  wakeonlan \
+  virt-viewer
   
 # Starship
 curl -fsSL https://starship.rs/install.sh | sh -s -- -y >/dev/null 2>&1
@@ -291,13 +293,6 @@ dnf install -y \
 ###############################################
 dnf install -y cups gutenprint cups-pdf
 systemctl enable cups
-
-###############################################
-# VM Support
-###############################################
-if [[ "$INSTALL_VM" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/virtualization.sh" "$TARGET_USER" "$DESKTOP_CHOICE"
-fi
 
 ###############################################
 # Locale
