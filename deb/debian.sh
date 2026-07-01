@@ -60,9 +60,10 @@ while :; do
     echo "2) Chrome"
     echo "3) Firefox"
     echo
-
+    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
+    echo
     read -rp "Selection: " BROWSER_SELECTION
-
+    
     VALID=true
     IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
 
@@ -75,10 +76,6 @@ while :; do
     done
 
     $VALID && break
-
-    echo
-    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
-    echo
 done
 echo
 
