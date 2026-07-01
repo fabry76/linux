@@ -59,42 +59,47 @@ while :; do
     echo "1) Brave"
     echo "2) Chrome"
     echo "3) Firefox"
-    echo "4) LibreWolf"
     echo
-    echo "Examples:"
-    echo "  1"
-    echo "  1,3"
-    
+
     read -rp "Selection: " BROWSER_SELECTION
 
     VALID=true
     IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
 
-    [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
-
     for browser in "${BROWSERS[@]}"; do
         browser="${browser// /}"
-
-        case "$browser" in
-            1|2|3|4)
-                ;;
-            *)
-                VALID=false
-                break
-                ;;
-        esac
+        [[ $browser =~ ^[123]$ ]] || {
+            VALID=false
+            break
+        }
     done
 
-    [ "$VALID" = true ] && break
+    $VALID && break
 
     echo
-    echo "Please select one or more browsers using comma-separated values (e.g. 1,3,4)."
+    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
     echo
 done
 echo
 
 while :; do
-    echo "Which Office suite would you like to install? (flatpak)"
+    echo "Which Flatpak browser would you like to install?"
+    echo "0) None"
+    echo "1) Firefox (org.mozilla.firefox)"
+    echo "2) Brave (com.brave.Browser)"
+    echo "3) LibreWolf (io.gitlab.librewolf-community)"
+    echo
+
+    read -rp "Choice [0-3]: " FLATPAK_BROWSER
+
+    [[ "$FLATPAK_BROWSER" =~ ^[0-3]$ ]] && break
+
+    echo "Please enter a number between 0 and 3."
+done
+echo
+
+while :; do
+    echo "Which Office suite would you like to install?"
     echo "0) None"
     echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
     echo "2) LibreOffice (org.libreoffice.LibreOffice)"
@@ -239,12 +244,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
         ;;
 esac
 
@@ -264,9 +269,6 @@ for browser in "${BROWSERS[@]}"; do
             ;;
         3)
             bash "$SCRIPT_DIR/firefox.sh"
-            ;;
-         4)
-            bash "$SCRIPT_DIR/librewolf.sh"
             ;;
     esac
 done

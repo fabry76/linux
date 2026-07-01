@@ -5,7 +5,8 @@ set -euo pipefail
 # Args
 ###############################################
 TARGET_USER="$1"
-OFFICE_CHOICE="${2:-0}"
+FLATPAK_BROWSER="${2:-0}"
+OFFICE_CHOICE="${3:-0}"
 
 ###############################################
 # KDE Plasma base
@@ -73,6 +74,26 @@ FLATPAK_APPS=(
 )
 
 ###############################################
+# Browser selection
+###############################################
+case "$FLATPAK_BROWSER" in
+    1)
+        BROWSER_APP="org.mozilla.firefox"
+        FLATPAK_APPS+=(org.mozilla.firefox)
+        ;;
+    2)
+        BROWSER_APP="com.brave.Browser"
+        FLATPAK_APPS+=(com.brave.Browser)
+        ;;
+    3)
+        BROWSER_APP="io.gitlab.librewolf-community"
+        FLATPAK_APPS+=(io.gitlab.librewolf-community)
+        ;;
+    0)
+        ;;
+esac
+
+###############################################
 # Office selection
 ###############################################
 case "$OFFICE_CHOICE" in
@@ -96,6 +117,19 @@ esac
 # Install Flatpaks
 ###############################################
 flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
+
+###############################################
+# Browser override (dynamic)
+###############################################
+if [ -n "$BROWSER_APP" ]; then
+    runuser -u "$TARGET_USER" -- bash -c "
+        flatpak override --user $BROWSER_APP \
+        --nofilesystem=host \
+        --filesystem=xdg-download \
+        --nodevice=all \
+        --nosocket=x11
+    "
+fi
 
 ###############################################
 # Office override (dynamic)
