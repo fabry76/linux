@@ -45,7 +45,9 @@ apt-get install -y \
 ###############################################
 apt-get install -y ufw
 
-ufw allow mdns
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 5353/udp
 ufw --force enable
 
 ###############################################
