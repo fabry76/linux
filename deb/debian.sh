@@ -281,7 +281,7 @@ fi
 ###############################################
 # Common Utilities and Configurations
 ###############################################
-apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades wakeonlan virt-viewer
+apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades wakeonlan
 
 systemctl enable thermald
 plymouth-set-default-theme lines -R
