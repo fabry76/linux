@@ -28,7 +28,9 @@ apt-get install -y --no-install-recommends \
 ###############################################
 apt-get install -y gufw
 
-ufw allow mdns
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 5353/udp
 ufw --force enable
 
 ###############################################
@@ -49,7 +51,6 @@ flatpak remote-add --if-not-exists \
 OFFICE_APP=""
 
 FLATPAK_APPS=(
-    org.qbittorrent.qBittorrent
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
 )
@@ -111,9 +112,3 @@ if [ -n "$BROWSER_APP" ]; then
         --nosocket=x11
     "
 fi
-
-###############################################
-# Gnome apps override
-###############################################
-runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user org.qbittorrent.qBittorrent --nofilesystem=host --filesystem=xdg-download"
