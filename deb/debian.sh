@@ -321,6 +321,16 @@ systemctl enable NetworkManager
 systemctl restart NetworkManager
 
 ###############################################
+# Firewall
+###############################################
+apt-get install -y ufw
+
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 5353/udp
+ufw --force enable
+
+###############################################
 # GRUB
 ###############################################
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub

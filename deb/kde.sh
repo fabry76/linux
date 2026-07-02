@@ -42,16 +42,6 @@ apt-get install -y \
     ktorrent
 
 ###############################################
-# Firewall
-###############################################
-apt-get install -y ufw
-
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow 5353/udp
-ufw --force enable
-
-###############################################
 # KDE Flatpak base setup
 ###############################################
 apt-get install -y \

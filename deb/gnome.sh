@@ -25,16 +25,6 @@ apt-get install -y --no-install-recommends \
     gnome-themes-extra \
     gnome-sound-recorder \
     fragments
-    
-###############################################
-# Firewall
-###############################################
-apt-get install -y ufw
-
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow 5353/udp
-ufw --force enable
 
 ###############################################
 # Gnome Flatpak base setup
