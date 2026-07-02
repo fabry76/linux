@@ -29,7 +29,7 @@ apt-get install -y --no-install-recommends \
 ###############################################
 # Firewall
 ###############################################
-apt-get install -y gufw
+apt-get install -y ufw
 
 ufw default deny incoming
 ufw default allow outgoing
