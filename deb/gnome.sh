@@ -23,7 +23,8 @@ apt-get install -y --no-install-recommends \
     gnome-shell-extension-system-monitor \
     gnome-shell-extension-apps-menu \
     gnome-themes-extra \
-    gnome-sound-recorder
+    gnome-sound-recorder \
+    fragments
     
 ###############################################
 # Firewall
@@ -55,7 +56,6 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
-    com.transmissionbt.Transmission
 )
 
 ###############################################
