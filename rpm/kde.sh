@@ -25,7 +25,8 @@ dnf install -y \
     krecorder \
     inotify-tools \
     mpv \
-    skanpage
+    skanpage \
+    ktorrent
 
 systemctl set-default graphical.target
 
@@ -48,7 +49,6 @@ OFFICE_APP=""
 
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
-    org.kde.ktorrent
 )
 
 ###############################################
@@ -95,15 +95,6 @@ esac
 # Install Flatpaks
 ###############################################
 flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
-
-###############################################
-# KDE apps override
-###############################################
-runuser -u "$TARGET_USER" -- bash -c "
-    flatpak override --user org.kde.ktorrent \
-    --nofilesystem=host \
-    --filesystem=xdg-download
-"
 
 ###############################################
 # Browser override (dynamic)
