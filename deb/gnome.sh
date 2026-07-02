@@ -21,7 +21,9 @@ apt-get install -y --no-install-recommends \
     gnome-shell-extension-manager \
     gnome-shell-extension-dash-to-panel \
     gnome-shell-extension-system-monitor \
-    gnome-shell-extension-apps-menu
+    gnome-shell-extension-apps-menu \
+    gnome-themes-extra \
+    gnome-sound-recorder
     
 ###############################################
 # Firewall
