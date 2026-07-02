@@ -169,6 +169,8 @@ snap install pinta onlyoffice-desktopeditors fragments
 ###############################################
 apt-get install -y gufw
 
+ufw default deny incoming
+ufw default allow outgoing
 ufw allow mdns
 ufw --force enable
 
