@@ -55,6 +55,7 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
+    com.transmissionbt.Transmission
 )
 
 ###############################################

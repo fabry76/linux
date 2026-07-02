@@ -1,6 +1,3 @@
-dnf install -y  qemu-kvm libvirt virt-install virt-viewer
-systemctl enable libvirtd
-
 #!/bin/bash
 set -euo pipefail
 

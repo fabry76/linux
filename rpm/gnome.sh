@@ -40,9 +40,9 @@ BROWSER_APP=""
 OFFICE_APP=""
 
 FLATPAK_APPS=(
-    org.qbittorrent.qBittorrent
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
+    com.transmissionbt.Transmission
 )
 
 ###############################################
@@ -89,12 +89,6 @@ esac
 # Install Flatpaks
 ###############################################
 flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
-
-###############################################
-# Gnome apps override
-###############################################
-runuser -u "$TARGET_USER" -- bash -c \
-    "flatpak override --user org.qbittorrent.qBittorrent --nofilesystem=host --filesystem=xdg-download"
 
 ###############################################
 # Browser override (dynamic)
