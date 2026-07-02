@@ -39,8 +39,9 @@ apt-get install -y \
     mpv \
     print-manager \
     skanpage \
-    ktorrent
-
+    ktorrent \
+    kclock
+    
 ###############################################
 # KDE Flatpak base setup
 ###############################################

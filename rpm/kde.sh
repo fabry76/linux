@@ -26,7 +26,8 @@ dnf install -y \
     inotify-tools \
     mpv \
     skanpage \
-    ktorrent
+    ktorrent \
+    kclock
 
 systemctl set-default graphical.target
 
