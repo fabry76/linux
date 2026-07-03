@@ -16,7 +16,7 @@ dnf install -y @kde-desktop \
 
 dnf install -y \
     sddm \
-    kcalc \
+    qalculate-qt \
     isoimagewriter \
     kolourpaint \
     gwenview \

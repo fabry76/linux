@@ -23,7 +23,7 @@ apt-get install -y \
     ark \
     udisks2 \
     upower \
-    kcalc \
+    qalculate-qt \
     isoimagewriter \
     kolourpaint \
     gwenview \
