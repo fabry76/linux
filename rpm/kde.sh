@@ -27,7 +27,8 @@ dnf install -y \
     mpv \
     skanpage \
     ktorrent \
-    kclock
+    kclock \
+    kamoso
 
 systemctl set-default graphical.target
 

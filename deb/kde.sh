@@ -40,7 +40,8 @@ apt-get install -y \
     print-manager \
     skanpage \
     ktorrent \
-    kclock
+    kclock \
+    kamoso
     
 ###############################################
 # KDE Flatpak base setup
