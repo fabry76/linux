@@ -26,7 +26,6 @@ dnf install -y \
     inotify-tools \
     mpv \
     skanpage \
-    ktorrent \
     kclock \
     kamoso
 
@@ -51,6 +50,7 @@ OFFICE_APP=""
 
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
+    org.qbittorrent.qBittorrent
 )
 
 ###############################################

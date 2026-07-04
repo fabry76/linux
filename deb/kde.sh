@@ -39,7 +39,6 @@ apt-get install -y \
     mpv \
     print-manager \
     skanpage \
-    ktorrent \
     kclock \
     kamoso
     
@@ -63,6 +62,7 @@ OFFICE_APP=""
 
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
+    org.qbittorrent.qBittorrent
 )
 
 ###############################################

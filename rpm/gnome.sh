@@ -24,8 +24,7 @@ dnf install -y \
     gnome-extensions-app \
     gnome-shell-extension-dash-to-panel \
     gnome-shell-extension-system-monitor \
-    gnome-sound-recorder \
-    fragments
+    gnome-sound-recorder
 
 ###############################################
 # Flatpak
@@ -43,6 +42,7 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
+    de.haeckerfelix.Fragments
 )
 
 ###############################################
