@@ -23,7 +23,6 @@ apt-get install -y \
     ark \
     udisks2 \
     upower \
-    qalculate-qt \
     isoimagewriter \
     kolourpaint \
     gwenview \
@@ -63,6 +62,7 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
     org.qbittorrent.qBittorrent
+    io.github.Qalculate.qalculate-qt
 )
 
 ###############################################
