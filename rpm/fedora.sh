@@ -100,7 +100,8 @@ while :; do
     echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
     echo "2) LibreOffice (org.libreoffice.LibreOffice)"
     echo "3) Collabora Office (com.collaboraoffice.Office)"
-    
+    echo
+
     read -rp "Choice [0-3]: " OFFICE_CHOICE
 
     [[ "$OFFICE_CHOICE" =~ ^[0-3]$ ]] && break
