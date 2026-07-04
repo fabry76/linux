@@ -122,14 +122,3 @@ if [ -n "$BROWSER_APP" ]; then
         --nosocket=x11
     "
 fi
-
-###############################################
-# Office override (dynamic)
-###############################################
-if [ -n "$OFFICE_APP" ]; then
-    runuser -u "$TARGET_USER" -- bash -c "
-        flatpak override --user $OFFICE_APP \
-        --env=GTK_USE_PORTAL=1 \
-        --env=GTK_THEME=Breeze:dark
-    "
-fi

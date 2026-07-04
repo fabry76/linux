@@ -44,11 +44,12 @@ while :; do
     echo "Which desktop environment would you like to install?"
     echo "1) KDE"
     echo "2) GNOME"
-    read -rp "Choice [1-2]: " DESKTOP_CHOICE
+    echo
+    echo "Please enter 1 for KDE or 2 for GNOME."
+    echo
+    read -rp "Selection: " DESKTOP_CHOICE
 
     [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
-
-    echo "Please enter 1 for KDE or 2 for GNOME."
 done
 echo
 
