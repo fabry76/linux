@@ -59,34 +59,22 @@ while :; do
     echo "2) Chrome"
     echo "3) Firefox"
     echo
-    echo "Examples:"
-    echo "  1"
-    echo "  1,3"
-    echo "  1,2,3"
-
+    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
+    echo
     read -rp "Selection: " BROWSER_SELECTION
-
+    
     VALID=true
     IFS=',' read -ra BROWSERS <<< "$BROWSER_SELECTION"
 
-    [ "${#BROWSERS[@]}" -eq 0 ] && VALID=false
-
     for browser in "${BROWSERS[@]}"; do
         browser="${browser// /}"
-
-        case "$browser" in
-            1|2|3)
-                ;;
-            *)
-                VALID=false
-                break
-                ;;
-        esac
+        [[ $browser =~ ^[123]$ ]] || {
+            VALID=false
+            break
+        }
     done
 
-    [ "$VALID" = true ] && break
-
-    echo "Please select one or more browsers using comma-separated values (e.g. 1,3)."
+    $VALID && break
 done
 echo
 
