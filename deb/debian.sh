@@ -277,7 +277,7 @@ if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
     bash "$SCRIPT_DIR/vscode.sh"
 fi
 
-###############################################
+##############################################
 # Common Utilities and Configurations
 ###############################################
 apt-get install -y timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades wakeonlan
