@@ -13,6 +13,7 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 apt-get install -y \
     plasma-desktop \
+    plasma-browser-integration- \
     plasma-workspace \
     sddm \
     dolphin \
