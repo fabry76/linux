@@ -319,11 +319,12 @@ fi
 ###############################################
 # Firewall
 ###############################################
-dnf install -y firewalld firewall-config
-systemctl enable firewalld
-firewall-cmd --permanent --add-service=mdns
-firewall-cmd --permanent --remove-service={ssh,dhcpv6-client}
-firewall-cmd --reload
+dnf install -y ufw
+
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 5353/udp
+ufw --force enable
 
 ###############################################
 # Cleanup

@@ -26,7 +26,8 @@ dnf install -y \
     mpv \
     skanpage \
     kclock \
-    kamoso
+    kamoso \
+    plasma-firewall-ufw
 
 systemctl set-default graphical.target
 
