@@ -179,6 +179,19 @@ while :; do
 done
 
 ################################################
+# Hostname
+################################################
+read -rp "Enter the hostname for this system: " NEW_HOSTNAME
+
+if [ -n "$NEW_HOSTNAME" ]; then
+    CURRENT_HOSTNAME="$(hostnamectl --static)"
+
+    if [ "$CURRENT_HOSTNAME" != "$NEW_HOSTNAME" ]; then
+        hostnamectl set-hostname --static "$NEW_HOSTNAME"
+    fi
+fi
+
+################################################
 # Repositories, plugins and mirrors
 ################################################
 dnf install -y \
@@ -266,6 +279,16 @@ dnf install -y @multimedia \
 dnf install -y ffmpegthumbnailer intel-media-driver
 
 ###############################################
+# Fastgate
+###############################################
+if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+    dnf install -y cifs-utils
+    systemctl enable NetworkManager
+    systemctl restart NetworkManager
+    bash "$GIT_DIR/fastgate.sh"
+fi
+
+###############################################
 # Fonts & Icons
 ###############################################
 dnf install -y \
@@ -276,6 +299,11 @@ dnf install -y \
   liberation-fonts \
   fira-code-fonts \
   papirus-icon-theme
+
+install -d -m 755 /usr/local/share/fonts/ubuntu
+cp -f /home/fabri/Fastgate/Varie/ubuntu/*.ttf /usr/local/share/fonts/ubuntu/
+
+fc-cache -fv
 
 ###############################################
 # Printing & Scanning
@@ -298,16 +326,6 @@ LC_TELEPHONE=it_IT.UTF-8 \
 LC_MEASUREMENT=it_IT.UTF-8
 
 ###############################################
-# Fastgate
-###############################################
-if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    dnf install -y cifs-utils
-    systemctl enable NetworkManager
-    systemctl restart NetworkManager
-    bash "$GIT_DIR/fastgate.sh"
-fi
-
-###############################################
 # Hardening
 ###############################################
 if [ -f "$SCRIPT_DIR/hard_fed.sh" ]; then
@@ -325,13 +343,6 @@ ufw default deny incoming
 ufw default allow outgoing
 ufw allow 5353/udp
 ufw --force enable
-
-###############################################
-# Fonts
-###############################################
-mkdir -p /usr/local/share/fonts/ubuntu
-cp /home/fabri/Fastgate/Varie/ubuntu/*.ttf /usr/local/share/fonts/ubuntu/
-fc-cache -fv
 
 ###############################################
 # Cleanup
