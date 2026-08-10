@@ -189,6 +189,7 @@ if [ -n "$NEW_HOSTNAME" ]; then
         hostnamectl set-hostname --static "$NEW_HOSTNAME"
     fi
 fi
+echo
 
 ################################################
 # Repositories, plugins and mirrors
