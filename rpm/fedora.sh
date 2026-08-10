@@ -181,11 +181,10 @@ done
 ################################################
 # Hostname
 ################################################
+echo
 read -rp "Enter the hostname for this system: " NEW_HOSTNAME
-
 if [ -n "$NEW_HOSTNAME" ]; then
     CURRENT_HOSTNAME="$(hostnamectl --static)"
-
     if [ "$CURRENT_HOSTNAME" != "$NEW_HOSTNAME" ]; then
         hostnamectl set-hostname --static "$NEW_HOSTNAME"
     fi
