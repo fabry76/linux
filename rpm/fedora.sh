@@ -327,11 +327,18 @@ ufw allow 5353/udp
 ufw --force enable
 
 ###############################################
+# Fonts
+###############################################
+mkdir -p /usr/local/share/fonts/ubuntu
+cp /home/fabri/Fastgate/Varie/ubuntu/*.ttf /usr/local/share/fonts/ubuntu/
+fc-cache -fv
+
+###############################################
 # Cleanup
 ###############################################
 dnf update -y
 dnf clean all
-sudo dnf makecache --refresh -q
+dnf makecache --refresh -q
 echo "System installation completed."
 
 ###############################################
