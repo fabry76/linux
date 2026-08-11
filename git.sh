@@ -19,7 +19,7 @@ write_if_changed() {
 # Configuration
 ###############################################
 REPO_PATH="$HOME/Git/linux"
-SOURCE_KEY="$HOME/Fastgate/Varie/id_ed25519"
+SOURCE_KEY="$HOME/Fastgate/Varie/github/id_ed25519"
 DEST_KEY="$HOME/.ssh/id_ed25519"
 REMOTE_URL="git@github.com:fabry76/linux.git"
 
