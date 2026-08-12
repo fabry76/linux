@@ -24,9 +24,11 @@ write_if_changed() {
 }
 
 ###############################################
-# Required paths
+# Required paths and folders
 ###############################################
 xdg-user-dirs-update
+rm -rf /home/fabri/Videos
+ln -s /home/fabri/Fastgate/Media/ /home/fabri/Videos
 
 DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 
