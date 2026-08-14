@@ -124,13 +124,11 @@ while :; do
     [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn]|)$ ]] && break
     echo "Please answer y or n."
 done
+echo
 
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-
     CRED_FILE="/etc/samba/fastgate.creds"
-    
     install -d -m 700 /etc/samba
-
     CRED_STATE="missing"
 
     if [ -f "$CRED_FILE" ]; then
@@ -163,18 +161,15 @@ if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
         read -rsp "Password: " NAS_PASS
         echo
 
-OLD_UMASK=$(umask)
         umask 077
 
         cat > "$CRED_FILE" <<EOF
-            username=$NAS_USER
-            password=$NAS_PASS
-        EOF
+username=$NAS_USER
+password=$NAS_PASS
+EOF
 
-umask "$OLD_UMASK"
-
-chown root:root "$CRED_FILE"
-chmod 600 "$CRED_FILE"
+        chown root:root "$CRED_FILE"
+        chmod 600 "$CRED_FILE"
     fi
 fi
 echo
