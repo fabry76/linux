@@ -101,6 +101,14 @@ EOF
 chmod 750 /etc/sudoers.d
 chown root:root /etc/sudoers.d
 
+################################################
+# Restrict Core Dumps
+###############################################
+write_if_changed /etc/security/limits.d/99-hardening.conf "$(cat << 'EOF'
+* hard core 0
+EOF
+)"
+
 ###############################################
 # Apply settings
 ###############################################
