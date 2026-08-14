@@ -314,10 +314,32 @@ dnf install -y \
   liberation-fonts \
   papirus-icon-theme
 
-install -d -m 755 /usr/local/share/fonts/ubuntu
-cp -f "$TARGET_HOME/Fastgate/Varie/fonts/ubuntu/"*.ttf /usr/local/share/fonts/ubuntu/
+FONT_SRC="$TARGET_HOME/Fastgate/Varie/fonts/ubuntu"
+FONT_DST="/usr/local/share/fonts/ubuntu"
 
-fc-cache -fv
+install -d -m 755 "$FONT_DST"
+
+if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
+    FONT_CHANGED=false
+
+    for font in "$FONT_SRC"/*.ttf; do
+        dest="$FONT_DST/$(basename "$font")"
+
+        if [[ ! -f "$dest" ]] || ! cmp -s "$font" "$dest"; then
+            install -m 644 "$font" "$dest"
+            FONT_CHANGED=true
+        fi
+    done
+
+    if [[ "$FONT_CHANGED" == true ]]; then
+        echo "Updating font cache..."
+        fc-cache -f "$FONT_DST"
+    else
+        echo "Ubuntu fonts already up to date."
+    fi
+else
+    echo "WARNING: No Ubuntu TTF fonts found in $FONT_SRC"
+fi
 
 ###############################################
 # Printing & Scanning
