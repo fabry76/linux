@@ -102,7 +102,7 @@ install -D -m 644 \
 ###############################################
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -f "$SCRIPT_DIR/git.sh" ]; then
+if [ -f "$SCRIPT_DIR/git.sh" ] && [ -d "$HOME/Fastgate/Varie/github" ]; then
   echo "Running Git setup..."
   bash "$SCRIPT_DIR/git.sh"
 fi
