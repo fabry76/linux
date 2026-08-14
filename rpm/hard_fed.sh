@@ -63,9 +63,12 @@ EOF
 )"
 
 ################################################
-# Restrict COre Dumps
+# Restrict Core Dumps
 ###############################################
-echo '* hard core 0' | tee -a /etc/security/limits.conf
+write_if_changed /etc/security/limits.d/99-hardening.conf "$(cat << 'EOF'
+* hard core 0
+EOF
+)"
 
 ###############################################
 # Apply settings
