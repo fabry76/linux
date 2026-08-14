@@ -27,8 +27,8 @@ write_if_changed() {
 # Required paths and folders
 ###############################################
 xdg-user-dirs-update
-rm -rf /home/fabri/Videos
-ln -s /home/fabri/Fastgate/Media/ /home/fabri/Videos
+rm -rf "$HOME/Videos"
+ln -sfn "$HOME/Fastgate/Media/" "$HOME/Videos"
 
 DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 
@@ -44,7 +44,7 @@ grep -qF 'eval "$(starship init bash)"' "$HOME/.bashrc" || \
   echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
 
 [ -f "$HOME/Git/linux/etc/starship.toml" ] && \
-install -D \
+install -D -m 644 \
   "$HOME/Git/linux/etc/starship.toml" \
   "$HOME/.config/starship.toml"
 
@@ -52,7 +52,7 @@ install -D \
 # MPV
 ###############################################
 [ -f "$HOME/Git/linux/etc/mpv.conf" ] && \
-install -D \
+install -D -m 644 \
   "$HOME/Git/linux/etc/mpv.conf" \
   "$HOME/.config/mpv/mpv.conf"
 
@@ -85,7 +85,7 @@ EOF
 write_if_changed "$KONSOLERC" "$KONSOLERC_CONTENT"
 
 [ -f "$HOME/Git/linux/etc/ff.profile" ] && \
-install -D \
+install -D -m 644 \
   "$HOME/Git/linux/etc/ff.profile" \
   "$HOME/.local/share/konsole/ff.profile"
 
@@ -93,7 +93,7 @@ install -D \
 # Locale
 ###############################################
 [ -f "$HOME/Git/linux/etc/plasma-localerc" ] && \
-install -D \
+install -D -m 644 \
   "$HOME/Git/linux/etc/plasma-localerc" \
   "$HOME/.config/plasma-localerc"
 

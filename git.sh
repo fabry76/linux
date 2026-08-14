@@ -36,19 +36,6 @@ if [ ! -f "$SOURCE_KEY" ]; then
 fi
 
 ###############################################
-# Repository (auto-clone if missing)
-###############################################
-if [ ! -d "$REPO_PATH/.git" ]; then
-    echo "Repository not found, cloning..."
-
-    mkdir -p "$(dirname "$REPO_PATH")"
-    git clone "$REMOTE_URL" "$REPO_PATH"
-fi
-
-cd "$REPO_PATH"
-echo "Inside repository: $(pwd)"
-
-###############################################
 # SSH directory
 ###############################################
 mkdir -p "$HOME/.ssh"
@@ -85,6 +72,19 @@ if [ ! -f "$DEST_KEY" ] || ! cmp -s "$SOURCE_KEY" "$DEST_KEY"; then
     chmod 600 "$DEST_KEY"
     echo "SSH key installed/updated (no passphrase)"
 fi
+
+###############################################
+# Repository (auto-clone if missing)
+###############################################
+if [ ! -d "$REPO_PATH/.git" ]; then
+    echo "Repository not found, cloning..."
+
+    mkdir -p "$(dirname "$REPO_PATH")"
+    git clone "$REMOTE_URL" "$REPO_PATH"
+fi
+
+cd "$REPO_PATH"
+echo "Inside repository: $(pwd)"
 
 ###############################################
 # Git config
