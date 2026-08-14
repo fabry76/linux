@@ -256,7 +256,6 @@ esac
 ###############################################
 # Browsers
 ###############################################
-BROWSERS_TO_INSTALL=()
 for browser in "${BROWSERS[@]}"; do
     browser="${browser// /}"
 
