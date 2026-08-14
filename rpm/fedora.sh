@@ -200,8 +200,11 @@ fedora-workstation-repositories \
 https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-grep -q "^fastestmirror=True" /etc/dnf/dnf.conf \
-|| echo "fastestmirror=True" >> /etc/dnf/dnf.conf
+# Fast Mirror
+if ! grep -q "^fastestmirror=True" /etc/dnf/dnf.conf; then
+    echo "fastestmirror=True" >> /etc/dnf/dnf.conf
+fi
+
 
 ###############################################
 # Desktop Environment
@@ -222,7 +225,6 @@ esac
 ###############################################
 # Browsers
 ###############################################
-BROWSERS_TO_INSTALL=()
 for browser in "${BROWSERS[@]}"; do
     browser="${browser// /}"
 
@@ -265,7 +267,20 @@ dnf install -y \
   wol
   
 # Starship
-curl -fsSL https://starship.rs/install.sh | sh -s -- -y >/dev/null 2>&1
+STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
+    | grep -oP '"tag_name": "\K[^"]+')
+
+STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
+
+echo "Installing Starship ${STARSHIP_LATEST}..."
+
+TMP_FILE=$(mktemp)
+curl -fsSL "$STARSHIP_URL" -o "$TMP_FILE"
+tar -xzf "$TMP_FILE" -C /usr/local/bin/
+rm -f "$TMP_FILE"
+chmod 755 /usr/local/bin/starship
+
+echo "Starship ${STARSHIP_LATEST} installed."
 
 ###############################################
 # Multimedia
@@ -297,11 +312,10 @@ dnf install -y \
   google-noto-color-emoji-fonts \
   fira-code-fonts \
   liberation-fonts \
-  fira-code-fonts \
   papirus-icon-theme
 
 install -d -m 755 /usr/local/share/fonts/ubuntu
-cp -f /home/fabri/Fastgate/Varie/ubuntu/*.ttf /usr/local/share/fonts/ubuntu/
+cp -f "$TARGET_HOME/Fastgate/Varie/fonts/ubuntu/"*.ttf /usr/local/share/fonts/ubuntu/
 
 fc-cache -fv
 
@@ -337,12 +351,12 @@ fi
 ###############################################
 # Firewall
 ###############################################
-dnf install -y ufw
+dnf install -y firewalld firewall-config
 
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow 5353/udp
-ufw --force enable
+firewall-offline-cmd --set-default-zone=drop
+firewall-offline-cmd --zone=drop --add-service=mdns
+
+systemctl enable firewalld
 
 ###############################################
 # Cleanup
