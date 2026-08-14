@@ -187,7 +187,12 @@ if [ -n "$NEW_HOSTNAME" ]; then
     CURRENT_HOSTNAME="$(hostnamectl --static)"
     if [ "$CURRENT_HOSTNAME" != "$NEW_HOSTNAME" ]; then
         hostnamectl set-hostname --static "$NEW_HOSTNAME"
+        echo "Hostname changed from '$CURRENT_HOSTNAME' to '$NEW_HOSTNAME'."
+    else
+        echo "Hostname is already set to '$NEW_HOSTNAME'."
     fi
+else
+    echo "No hostname provided, keeping current hostname."
 fi
 echo
 
