@@ -27,8 +27,8 @@ write_if_changed() {
 # Required paths
 ###############################################
 xdg-user-dirs-update
-rm -rf /home/fabri/Videos
-ln -s /home/fabri/Fastgate/Media/ /home/fabri/Videos
+rm -rf "$HOME/Videos"
+ln -sfn "$HOME/Fastgate/Media/" "$HOME/Videos"
 
 DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
 
@@ -71,7 +71,7 @@ grep -qF 'eval "$(starship init bash)"' "$HOME/.bashrc" || \
   echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
 
 [ -f "$HOME/Git/linux/etc/starship.toml" ] && \
-install -D \
+install -D -m 644 \
   "$HOME/Git/linux/etc/starship.toml" \
   "$HOME/.config/starship.toml"
 

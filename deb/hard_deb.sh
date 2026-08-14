@@ -24,9 +24,24 @@ write_if_changed() {
 }
 
 ###############################################
+# Detect real network interfaces (excluding lo)
+###############################################
+IFACES=()
+for path in /sys/class/net/*; do
+  iface="$(basename "$path")"
+  [ "$iface" = "lo" ] && continue
+  IFACES+=("$iface")
+done
+
+IFACE_RP_FILTER_LINES=""
+for iface in "${IFACES[@]}"; do
+  IFACE_RP_FILTER_LINES+="net.ipv4.conf.${iface}.rp_filter = 1"$'\n'
+done
+
+###############################################
 # Kernel Hardening
 ###############################################
-write_if_changed /etc/sysctl.d/99-hardening.conf "$(cat << 'EOF'
+HARDENING_CONTENT="$(cat << 'EOF'
 kernel.kptr_restrict = 2
 kernel.sysrq = 0
 kernel.dmesg_restrict = 1
@@ -36,8 +51,14 @@ kernel.unprivileged_bpf_disabled = 1
 
 net.core.bpf_jit_harden = 2
 
-net.ipv4.conf.all.rp_filter = 2
-net.ipv4.conf.default.rp_filter = 2
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+EOF
+)"
+
+HARDENING_CONTENT+=$'\n'"${IFACE_RP_FILTER_LINES}"
+
+HARDENING_CONTENT+="$(cat << 'EOF'
 
 net.ipv4.conf.all.send_redirects = 0
 net.ipv4.conf.default.send_redirects = 0
@@ -52,6 +73,8 @@ fs.protected_hardlinks = 1
 fs.suid_dumpable = 0
 EOF
 )"
+
+write_if_changed /etc/sysctl.d/99-hardening.conf "$HARDENING_CONTENT"
 
 ###############################################
 # Disable legacy network protocols
