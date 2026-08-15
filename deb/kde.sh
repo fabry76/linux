@@ -41,7 +41,10 @@ apt-get install -y \
     skanpage \
     kclock \
     kamoso
-    
+
+systemctl enable sddm
+systemctl set-default graphical.target
+
 ###############################################
 # KDE Flatpak base setup
 ###############################################
