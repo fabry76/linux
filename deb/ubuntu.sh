@@ -84,29 +84,32 @@ if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
         read -rsp "Password: " NAS_PASS
         echo
 
+      OLD_UMASK="$(umask)"
         umask 077
-
+ 
         cat > "$CRED_FILE" <<EOF
-username=$NAS_USER
-password=$NAS_PASS
-EOF
-
+        username=$NAS_USER
+        password=$NAS_PASS
+        EOF
+ 
+      umask "$OLD_UMASK"
+ 
         chown root:root "$CRED_FILE"
         chmod 600 "$CRED_FILE"
     fi
 fi
 
 ###############################################
-# Install dependencies for key management
-###############################################
-apt-get install -y curl
-install -d -m 0755 /etc/apt/keyrings
-
-###############################################
 # Update repositories
 ###############################################
 apt-get update
 apt-get -y upgrade
+
+###############################################
+# Install dependencies for key management
+###############################################
+apt-get install -y curl
+install -d -m 0755 /etc/apt/keyrings
 
 ###############################################
 # Base system & firmware
