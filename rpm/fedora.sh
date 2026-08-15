@@ -406,11 +406,14 @@ systemctl enable firewalld
 ###############################################
 SNAPPER_CONFIG="/etc/snapper/configs/root"
 
-if [[ ! -f "$SNAPPER_CONFIG" ]]; then
+if snapper list-configs | grep -qw root; then
+    echo "Snapper config 'root' already exists, skipping."
+else
     snapper -c root create-config /
-fi
 
-SNAPPER_CONTENT=$(cat << 'EOF'
+    SNAPPER_CONTENT=$(cat << 'EOF'
+SUBVOLUME="/"
+FSTYPE="btrfs"
 NUMBER_CLEANUP="yes"
 NUMBER_LIMIT="5"
 TIMELINE_CREATE="yes"
@@ -422,10 +425,14 @@ TIMELINE_LIMIT_MONTHLY="0"
 TIMELINE_LIMIT_YEARLY="0"
 EOF
 )
-write_if_changed "$SNAPPER_CONFIG" "$SNAPPER_CONTENT"
+    write_if_changed "$SNAPPER_CONFIG" "$SNAPPER_CONTENT"
 
-systemctl enable snapper-timeline.timer
-systemctl enable snapper-cleanup.timer
+    systemctl enable snapper-timeline.timer
+    systemctl enable snapper-cleanup.timer
+    systemctl enable snapperd
+
+    echo "Snapper config 'root' created and configured."
+fi
 
 ###############################################
 # User session script
