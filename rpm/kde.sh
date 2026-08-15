@@ -26,9 +26,9 @@ dnf install -y \
     mpv \
     skanpage \
     kclock \
-    kamoso \
-    plasma-firewall-ufw
+    kamoso
 
+systemctl enable sddm
 systemctl set-default graphical.target
 
 ###############################################

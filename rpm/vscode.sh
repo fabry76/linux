@@ -8,12 +8,12 @@ PKG="code"
 
 # 1) Ensure Microsoft GPG key
 echo "Ensuring Microsoft GPG key..."
-curl -fsSL "$KEY_URL" | sudo rpm --import -
+curl -fsSL "$KEY_URL" | rpm --import -
 
 # 2) Ensure repository exists and is correct
 if [[ ! -f "$REPO_FILE" ]] || ! grep -q "packages.microsoft.com/yumrepos/vscode" "$REPO_FILE"; then
   echo "Adding VS Code repository..."
-  curl -fsSL "$REPO_URL" | sudo tee "$REPO_FILE" > /dev/null
+  curl -fsSL "$REPO_URL" | tee "$REPO_FILE" > /dev/null
 else
   echo "VS Code repository already present"
 fi
