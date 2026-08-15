@@ -385,8 +385,8 @@ fi
 ###############################################
 dnf install -y firewalld firewall-config
 
-firewall-offline-cmd --set-default-zone=drop
-firewall-offline-cmd --zone=drop --add-service=mdns
+firewall-offline-cmd --set-default-zone=drop || true
+firewall-offline-cmd --zone=drop --add-service=mdns || true
 
 systemctl enable firewalld
 
@@ -395,7 +395,6 @@ systemctl enable firewalld
 ###############################################
 SNAPPER_CONFIG="/etc/snapper/configs/root"
 
-echo "=== Configuring Snapper ==="
 if [[ ! -f "$SNAPPER_CONFIG" ]]; then
     snapper -c root create-config /
 fi
