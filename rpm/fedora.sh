@@ -395,7 +395,10 @@ systemctl enable firewalld
 ###############################################
 SNAPPER_CONFIG="/etc/snapper/configs/root"
 
-snapper -c root create-config /
+echo "=== Configuring Snapper ==="
+if [[ ! -f "$SNAPPER_CONFIG" ]]; then
+    snapper -c root create-config /
+fi
 
 SNAPPER_CONTENT=$(cat << 'EOF'
 NUMBER_CLEANUP="yes"
@@ -413,14 +416,6 @@ write_if_changed "$SNAPPER_CONFIG" "$SNAPPER_CONTENT"
 
 systemctl enable snapper-timeline.timer
 systemctl enable snapper-cleanup.timer
-
-###############################################
-# Cleanup
-###############################################
-dnf update -y
-dnf clean all
-dnf makecache --refresh -q
-echo "System installation completed."
 
 ###############################################
 # User session script
