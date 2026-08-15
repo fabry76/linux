@@ -395,10 +395,7 @@ systemctl enable firewalld
 ###############################################
 SNAPPER_CONFIG="/etc/snapper/configs/root"
 
-# Create Snapper configuration if it does not exist
-if [[ ! -f "$SNAPPER_CONFIG" ]]; then
-    snapper -c root create-config /
-fi
+snapper -c root create-config /
 
 SNAPPER_CONTENT=$(cat << 'EOF'
 NUMBER_CLEANUP="yes"
