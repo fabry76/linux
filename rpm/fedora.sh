@@ -279,7 +279,7 @@ dnf install -y \
 ###############################################
 # Starship
 ###############################################
-STARSHIP_BIN="/usr/local/bin/starship"
+STARSHIP_BIN="/usr/bin/starship"
 
 STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
     | grep -oP '"tag_name": "\K[^"]+')
