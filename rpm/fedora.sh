@@ -274,25 +274,20 @@ dnf install -y \
   coreutils \
   dnf-automatic \
   wol \
-  snapper
+  snapper \
+  btrfs-assistant
   
 ###############################################
 # Starship
 ###############################################
-STARSHIP_BIN="/usr/bin/starship"
-
-STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
-    | grep -oP '"tag_name": "\K[^"]+')
-
-INSTALLED_VERSION=""
+STARSHIP_BIN="/usr/local/bin/starship"
 
 if [[ -x "$STARSHIP_BIN" ]]; then
-    INSTALLED_VERSION=$("$STARSHIP_BIN" --version | awk '{print $2}')
-fi
-
-if [[ "$INSTALLED_VERSION" == "${STARSHIP_LATEST#v}" ]]; then
-    echo "Starship ${INSTALLED_VERSION} already installed."
+    echo "Starship already installed, skipping."
 else
+    STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
+        | grep -oP '"tag_name": "\K[^"]+')
+
     echo "Installing Starship ${STARSHIP_LATEST}..."
 
     STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
