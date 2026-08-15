@@ -276,21 +276,37 @@ dnf install -y \
   wol \
   snapper
   
+###############################################
 # Starship
+###############################################
+STARSHIP_BIN="/usr/local/bin/starship"
+
 STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
     | grep -oP '"tag_name": "\K[^"]+')
 
-STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
+INSTALLED_VERSION=""
 
-echo "Installing Starship ${STARSHIP_LATEST}..."
+if [[ -x "$STARSHIP_BIN" ]]; then
+    INSTALLED_VERSION=$("$STARSHIP_BIN" --version | awk '{print $2}')
+fi
 
-TMP_FILE=$(mktemp)
-curl -fsSL "$STARSHIP_URL" -o "$TMP_FILE"
-tar -xzf "$TMP_FILE" -C /usr/local/bin/
-rm -f "$TMP_FILE"
-chmod 755 /usr/local/bin/starship
+if [[ "$INSTALLED_VERSION" == "${STARSHIP_LATEST#v}" ]]; then
+    echo "Starship ${INSTALLED_VERSION} already installed."
+else
+    echo "Installing Starship ${STARSHIP_LATEST}..."
 
-echo "Starship ${STARSHIP_LATEST} installed."
+    STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
+
+    TMP_FILE=$(mktemp)
+    trap 'rm -f "$TMP_FILE"' EXIT
+
+    curl -fsSL "$STARSHIP_URL" -o "$TMP_FILE"
+    tar -xzf "$TMP_FILE" -C /usr/local/bin/
+
+    chmod 755 "$STARSHIP_BIN"
+
+    echo "Starship ${STARSHIP_LATEST} installed."
+fi
 
 ###############################################
 # Multimedia
