@@ -273,7 +273,8 @@ dnf install -y \
   util-linux \
   coreutils \
   dnf-automatic \
-  wol
+  wol \
+  snapper
   
 # Starship
 STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
@@ -396,6 +397,33 @@ dnf update -y
 dnf clean all
 dnf makecache --refresh -q
 echo "System installation completed."
+
+###############################################
+# Snapper
+###############################################
+SNAPPER_CONFIG="/etc/snapper/configs/root"
+
+# Create Snapper configuration if it does not exist
+if [[ ! -f "$SNAPPER_CONFIG" ]]; then
+    snapper -c root create-config /
+fi
+
+SNAPPER_CONTENT=$(cat << 'EOF'
+NUMBER_CLEANUP="yes"
+NUMBER_LIMIT="5"
+TIMELINE_CREATE="yes"
+TIMELINE_CLEANUP="yes"
+TIMELINE_LIMIT_HOURLY="0"
+TIMELINE_LIMIT_DAILY="5"
+TIMELINE_LIMIT_WEEKLY="0"
+TIMELINE_LIMIT_MONTHLY="0"
+TIMELINE_LIMIT_YEARLY="0"
+EOF
+)
+write_if_changed "$SNAPPER_CONFIG" "$SNAPPER_CONTENT"
+
+systemctl enable snapper-timeline.timer
+systemctl enable snapper-cleanup.timer
 
 ###############################################
 # User session script
