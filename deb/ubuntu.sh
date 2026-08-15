@@ -84,20 +84,21 @@ if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
         read -rsp "Password: " NAS_PASS
         echo
 
-      OLD_UMASK="$(umask)"
+        OLD_UMASK="$(umask)"
         umask 077
- 
+
         cat > "$CRED_FILE" <<EOF
-        username=$NAS_USER
-        password=$NAS_PASS
-        EOF
- 
-      umask "$OLD_UMASK"
- 
+username=$NAS_USER
+password=$NAS_PASS
+EOF
+
+        umask "$OLD_UMASK"
+
         chown root:root "$CRED_FILE"
         chmod 600 "$CRED_FILE"
     fi
 fi
+echo
 
 ###############################################
 # Update repositories
