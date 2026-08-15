@@ -391,14 +391,6 @@ firewall-offline-cmd --zone=drop --add-service=mdns
 systemctl enable firewalld
 
 ###############################################
-# Cleanup
-###############################################
-dnf update -y
-dnf clean all
-dnf makecache --refresh -q
-echo "System installation completed."
-
-###############################################
 # Snapper
 ###############################################
 SNAPPER_CONFIG="/etc/snapper/configs/root"
@@ -424,6 +416,14 @@ write_if_changed "$SNAPPER_CONFIG" "$SNAPPER_CONTENT"
 
 systemctl enable snapper-timeline.timer
 systemctl enable snapper-cleanup.timer
+
+###############################################
+# Cleanup
+###############################################
+dnf update -y
+dnf clean all
+dnf makecache --refresh -q
+echo "System installation completed."
 
 ###############################################
 # User session script
