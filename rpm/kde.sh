@@ -28,7 +28,6 @@ dnf install -y \
     kclock \
     kamoso
 
-systemctl enable sddm
 systemctl set-default graphical.target
 
 ###############################################
