@@ -274,8 +274,7 @@ dnf install -y \
   coreutils \
   dnf-automatic \
   wol \
-  snapper \
-  btrfs-assistant
+  snapper
   
 ###############################################
 # Starship
