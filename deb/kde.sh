@@ -73,16 +73,16 @@ FLATPAK_APPS=(
 ###############################################
 case "$FLATPAK_BROWSER" in
     1)
-        BROWSER_APP="org.mozilla.firefox"
-        FLATPAK_APPS+=(org.mozilla.firefox)
+        BROWSER_APP="io.gitlab.librewolf-community"
+        FLATPAK_APPS+=(io.gitlab.librewolf-community)
         ;;
     2)
         BROWSER_APP="com.brave.Browser"
         FLATPAK_APPS+=(com.brave.Browser)
         ;;
     3)
-        BROWSER_APP="io.gitlab.librewolf-community"
-        FLATPAK_APPS+=(io.gitlab.librewolf-community)
+        BROWSER_APP="org.mozilla.firefox"
+        FLATPAK_APPS+=(org.mozilla.firefox)
         ;;
     0)
         ;;
