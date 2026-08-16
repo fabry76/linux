@@ -449,7 +449,6 @@ EOF
 
     systemctl enable snapper-timeline.timer
     systemctl enable snapper-cleanup.timer
-    systemctl enable snapperd
 
     echo "Snapper config 'root' created and configured."
 fi
