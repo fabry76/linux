@@ -423,10 +423,10 @@ systemctl enable firewalld
 ###############################################
 # Btrfs Snapshots
 ###############################################
-dnf install -y python3-dnf-plugins-extras-actions
- 
+dnf install -y libdnf5-plugin-actions
+
 SNAP_DIR="/.snapshots"
- 
+
 if btrfs subvolume show "$SNAP_DIR" &>/dev/null; then
     echo "$SNAP_DIR è già un subvolume, skip."
 else
@@ -434,23 +434,23 @@ else
     btrfs subvolume create "$SNAP_DIR"
     echo "$SNAP_DIR creato come subvolume."
 fi
- 
+
 SNAP_SCRIPT="/usr/local/bin/btrfs-snapshot.sh"
- 
+
 SNAP_SCRIPT_CONTENT=$(cat << 'EOF'
 #!/bin/bash
 set -euo pipefail
- 
+
 SNAP_DIR="/.snapshots"
 SUBVOL="/"
 LIMIT=5
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 SNAP_NAME="pre-update-${TIMESTAMP}"
- 
+
 btrfs subvolume snapshot -r "$SUBVOL" "${SNAP_DIR}/${SNAP_NAME}"
- 
+
 mapfile -t SNAPSHOTS < <(ls -1dt "${SNAP_DIR}"/pre-update-* 2>/dev/null)
- 
+
 if [ "${#SNAPSHOTS[@]}" -gt "$LIMIT" ]; then
     for old in "${SNAPSHOTS[@]:$LIMIT}"; do
         btrfs subvolume delete "$old"
@@ -460,14 +460,15 @@ EOF
 )
 write_if_changed "$SNAP_SCRIPT" "$SNAP_SCRIPT_CONTENT"
 chmod 755 "$SNAP_SCRIPT"
- 
-ACTION_FILE="/etc/dnf/plugins/actions.d/btrfs-snapshot.action"
-mkdir -p /etc/dnf/plugins/actions.d
- 
-ACTION_CONTENT="pre-transaction:*:${SNAP_SCRIPT}"
+
+ACTION_DIR="/etc/dnf/libdnf5-plugins/actions.d"
+ACTION_FILE="${ACTION_DIR}/btrfs-snapshot.actions"
+mkdir -p "$ACTION_DIR"
+
+ACTION_CONTENT="pre_transaction::::${SNAP_SCRIPT}"
 write_if_changed "$ACTION_FILE" "$ACTION_CONTENT"
- 
-echo "Btrfs snapshot script and dnf hook configured."
+
+echo "Btrfs snapshot script and dnf5 hook configured."
 
 ###############################################
 # User session script
