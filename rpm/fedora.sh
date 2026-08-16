@@ -427,29 +427,27 @@ dnf install -y libdnf5-plugin-actions
 
 SNAP_DIR="/.snapshots"
 
-if btrfs subvolume show "$SNAP_DIR" &>/dev/null; then
-    echo "$SNAP_DIR è già un subvolume, skip."
-else
+if ! btrfs subvolume show "$SNAP_DIR" &>/dev/null; then
     rmdir "$SNAP_DIR" 2>/dev/null || true
     btrfs subvolume create "$SNAP_DIR"
-    echo "$SNAP_DIR creato come subvolume."
 fi
 
 SNAP_SCRIPT="/usr/local/bin/btrfs-snapshot.sh"
 
-SNAP_SCRIPT_CONTENT=$(cat << 'EOF'
+cat > "$SNAP_SCRIPT" <<'EOF'
 #!/bin/bash
 set -euo pipefail
 
 SNAP_DIR="/.snapshots"
-SUBVOL="/"
 LIMIT=5
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-SNAP_NAME="pre-update-${TIMESTAMP}"
 
-btrfs subvolume snapshot -r "$SUBVOL" "${SNAP_DIR}/${SNAP_NAME}"
+btrfs subvolume snapshot -r / \
+    "$SNAP_DIR/pre-update-$TIMESTAMP"
 
-mapfile -t SNAPSHOTS < <(ls -1dt "${SNAP_DIR}"/pre-update-* 2>/dev/null)
+mapfile -t SNAPSHOTS < <(
+    ls -1dt "$SNAP_DIR"/pre-update-* 2>/dev/null
+)
 
 if [ "${#SNAPSHOTS[@]}" -gt "$LIMIT" ]; then
     for old in "${SNAPSHOTS[@]:$LIMIT}"; do
@@ -457,18 +455,39 @@ if [ "${#SNAPSHOTS[@]}" -gt "$LIMIT" ]; then
     done
 fi
 EOF
-)
-write_if_changed "$SNAP_SCRIPT" "$SNAP_SCRIPT_CONTENT"
+
 chmod 755 "$SNAP_SCRIPT"
 
 ACTION_DIR="/etc/dnf/libdnf5-plugins/actions.d"
-ACTION_FILE="${ACTION_DIR}/btrfs-snapshot.actions"
 mkdir -p "$ACTION_DIR"
 
-ACTION_CONTENT="pre_transaction::::${SNAP_SCRIPT}"
-write_if_changed "$ACTION_FILE" "$ACTION_CONTENT"
+cat > "$ACTION_DIR/btrfs-snapshot.actions" <<EOF
+pre_transaction::::$SNAP_SCRIPT
+EOF
 
-echo "Btrfs snapshot script and dnf5 hook configured."
+###############################################
+# Btrfs: use default subvolume
+###############################################
+
+FSTAB="/etc/fstab"
+
+if grep -qE '^\S+[[:space:]]+/[[:space:]]+btrfs[[:space:]]+\S*subvol=root\S*' "$FSTAB"; then
+
+    cp -n "$FSTAB" "${FSTAB}.bak-preprovision"
+
+    sed -i -E \
+        '/^[^#]\S+[[:space:]]+\/[[:space:]]+btrfs[[:space:]]/ {
+            s/(^|,)subvol=root(,|$)/\1\2/g;
+            s/,,+/,/g;
+            s/,\s*$//;
+        }' "$FSTAB"
+
+    dracut -f --regenerate-all
+
+    echo "Btrfs configurato per usare il default subvolume."
+else
+    echo "fstab già configurato per usare il default subvolume."
+fi
 
 ###############################################
 # User session script
