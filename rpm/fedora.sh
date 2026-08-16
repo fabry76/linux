@@ -290,8 +290,7 @@ dnf install -y \
   util-linux \
   coreutils \
   dnf-automatic \
-  wol \
-  snapper
+  wol
   
 ###############################################
 # Starship
@@ -422,36 +421,53 @@ firewall-offline-cmd --zone=drop --add-service=mdns || true
 systemctl enable firewalld
 
 ###############################################
-# Snapper
+# Btrfs Snapshots
 ###############################################
-SNAPPER_CONFIG="/etc/snapper/configs/root"
-
-if snapper list-configs | grep -qw root; then
-    echo "Snapper config 'root' already exists, skipping."
+dnf install -y python3-dnf-plugins-extras-actions
+ 
+SNAP_DIR="/.snapshots"
+ 
+if btrfs subvolume show "$SNAP_DIR" &>/dev/null; then
+    echo "$SNAP_DIR è già un subvolume, skip."
 else
-    snapper -c root create-config /
-
-    SNAPPER_CONTENT=$(cat << 'EOF'
-SUBVOLUME="/"
-FSTYPE="btrfs"
-NUMBER_CLEANUP="yes"
-NUMBER_LIMIT="5"
-TIMELINE_CREATE="yes"
-TIMELINE_CLEANUP="yes"
-TIMELINE_LIMIT_HOURLY="0"
-TIMELINE_LIMIT_DAILY="5"
-TIMELINE_LIMIT_WEEKLY="0"
-TIMELINE_LIMIT_MONTHLY="0"
-TIMELINE_LIMIT_YEARLY="0"
+    rmdir "$SNAP_DIR" 2>/dev/null || true
+    btrfs subvolume create "$SNAP_DIR"
+    echo "$SNAP_DIR creato come subvolume."
+fi
+ 
+SNAP_SCRIPT="/usr/local/bin/btrfs-snapshot.sh"
+ 
+SNAP_SCRIPT_CONTENT=$(cat << 'EOF'
+#!/bin/bash
+set -euo pipefail
+ 
+SNAP_DIR="/.snapshots"
+SUBVOL="/"
+LIMIT=5
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+SNAP_NAME="pre-update-${TIMESTAMP}"
+ 
+btrfs subvolume snapshot -r "$SUBVOL" "${SNAP_DIR}/${SNAP_NAME}"
+ 
+mapfile -t SNAPSHOTS < <(ls -1dt "${SNAP_DIR}"/pre-update-* 2>/dev/null)
+ 
+if [ "${#SNAPSHOTS[@]}" -gt "$LIMIT" ]; then
+    for old in "${SNAPSHOTS[@]:$LIMIT}"; do
+        btrfs subvolume delete "$old"
+    done
+fi
 EOF
 )
-    write_if_changed "$SNAPPER_CONFIG" "$SNAPPER_CONTENT"
-
-    systemctl enable snapper-timeline.timer
-    systemctl enable snapper-cleanup.timer
-
-    echo "Snapper config 'root' created and configured."
-fi
+write_if_changed "$SNAP_SCRIPT" "$SNAP_SCRIPT_CONTENT"
+chmod 755 "$SNAP_SCRIPT"
+ 
+ACTION_FILE="/etc/dnf/plugins/actions.d/btrfs-snapshot.action"
+mkdir -p /etc/dnf/plugins/actions.d
+ 
+ACTION_CONTENT="pre-transaction:*:${SNAP_SCRIPT}"
+write_if_changed "$ACTION_FILE" "$ACTION_CONTENT"
+ 
+echo "Btrfs snapshot script and dnf hook configured."
 
 ###############################################
 # User session script
