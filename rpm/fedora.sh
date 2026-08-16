@@ -370,6 +370,10 @@ systemctl enable cups
 ###############################################
 # Locale
 ###############################################
+# Install Italian locale data
+dnf install -y glibc-langpack-it
+
+# English UI, Italian regional formats
 localectl set-locale \
 LANG=en_US.UTF-8 \
 LC_NUMERIC=it_IT.UTF-8 \
