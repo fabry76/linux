@@ -288,7 +288,6 @@ dnf install -y \
   xz \
   util-linux \
   coreutils \
-  dnf-automatic \
   wol
   
 ###############################################
