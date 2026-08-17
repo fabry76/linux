@@ -231,7 +231,6 @@ if ! grep -q "^fastestmirror=True" /etc/dnf/dnf.conf; then
     echo "fastestmirror=True" >> /etc/dnf/dnf.conf
 fi
 
-
 ###############################################
 # Desktop Environment
 ###############################################
