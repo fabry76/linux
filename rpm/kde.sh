@@ -11,12 +11,23 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # KDE Plasma base
 ###############################################
-dnf install -y @kde-desktop \
-    --exclude=krfb \
-    --exclude=akonadi-server-mysql
+#dnf install -y @kde-desktop \
+#    --exclude=krfb \
+#    --exclude=akonadi-server-mysql
 
-dnf install -y \
+dnf install -y --setopt=install_weak_deps=False \
+    plasma-desktop \
     sddm \
+    kwin \
+    plasma-nm \
+    plasma-pa \
+    kscreen \
+    konsole \
+    dolphin \
+    ark \
+    spectacle \
+    kwrite \
+    plasma-systemmonitor \
     isoimagewriter \
     kolourpaint \
     gwenview \
@@ -28,6 +39,7 @@ dnf install -y \
     kclock \
     kamoso
 
+systemctl enable sddm
 systemctl set-default graphical.target
 
 ###############################################
