@@ -12,7 +12,8 @@ OFFICE_CHOICE="${3:-0}"
 # KDE Plasma base
 ###############################################
 dnf install -y @kde-desktop \
-    --exclude=krfb
+    --exclude=krfb \
+    --exclude=akonadi-server-mysql
 
 dnf install -y \
     sddm \
@@ -22,7 +23,6 @@ dnf install -y \
     okular \
     kcolorchooser \
     krecorder \
-    inotify-tools \
     mpv \
     skanpage \
     kclock \

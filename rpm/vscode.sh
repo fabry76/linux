@@ -2,29 +2,33 @@
 set -euo pipefail
 
 KEY_URL="https://packages.microsoft.com/keys/microsoft.asc"
-REPO_URL="https://packages.microsoft.com/yumrepos/vscode/config.repo"
 REPO_FILE="/etc/yum.repos.d/vscode.repo"
 PKG="code"
 
-# 1) Ensure Microsoft GPG key
+# 1) Microsoft GPG key
 echo "Ensuring Microsoft GPG key..."
 curl -fsSL "$KEY_URL" | rpm --import -
 
-# 2) Ensure repository exists and is correct
-if [[ ! -f "$REPO_FILE" ]] || ! grep -q "packages.microsoft.com/yumrepos/vscode" "$REPO_FILE"; then
-  echo "Adding VS Code repository..."
-  curl -fsSL "$REPO_URL" | tee "$REPO_FILE" > /dev/null
-else
-  echo "VS Code repository already present"
-fi
+# 2) Configure VS Code repository
+echo "Configuring VS Code repository..."
+cat > "$REPO_FILE" <<'EOF'
+[vscode-yum]
+name=Visual Studio Code
+baseurl=https://packages.microsoft.com/yumrepos/vscode/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
 
-# 3) Refresh metadata after adding the repo
-  dnf makecache --refresh
+# 3) Refresh metadata
+echo "Refreshing DNF metadata..."
+dnf makecache --refresh
 
 # 4) Install VS Code if missing
 if ! rpm -q "$PKG" &>/dev/null; then
-  echo "Installing VS Code..."
-  dnf install -y "$PKG"
+    echo "Installing VS Code..."
+    dnf install -y "$PKG"
 else
-  echo "VS Code already installed"
+    echo "VS Code already installed"
 fi
