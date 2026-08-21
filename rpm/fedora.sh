@@ -288,7 +288,8 @@ dnf install -y \
   xz \
   util-linux \
   coreutils \
-  wol
+  wol \
+  alsa-sof-firmware
   
 ###############################################
 # Starship
@@ -409,9 +410,9 @@ if [ -f "$SCRIPT_DIR/hard_fed.sh" ]; then
 fi
 
 ###############################################
-# Firewall
+# Networking & Firewall
 ###############################################
-dnf install -y firewalld firewall-config
+dnf install -y networkmanager-wifi iwlwifi-mvm-firmware firewalld firewall-config
 
 firewall-offline-cmd --set-default-zone=drop || true
 firewall-offline-cmd --zone=drop --add-service=mdns || true
