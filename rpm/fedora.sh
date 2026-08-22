@@ -463,10 +463,13 @@ fi
 ###############################################
 # Networking & Firewall
 ###############################################
-dnf install -y NetworkManager-wifi iwlwifi-mvm-firmware firewalld firewall-config
+dnf install -y \
+    NetworkManager-wifi \
+    iwlwifi-mvm-firmware \
+    firewalld \
+    firewall-config
 
 firewall-offline-cmd --set-default-zone=drop || true
-firewall-offline-cmd --zone=drop --add-service=mdns || true
 
 systemctl enable firewalld
 
