@@ -11,13 +11,10 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # KDE Plasma base
 ###############################################
-#dnf install -y @kde-desktop \
-#    --exclude=krfb \
-#    --exclude=akonadi-server-mysql
-
 dnf install -y --setopt=install_weak_deps=False \
     plasma-desktop \
     sddm \
+    sddm-breeze \
     kwin \
     plasma-nm \
     plasma-pa \
@@ -37,7 +34,13 @@ dnf install -y --setopt=install_weak_deps=False \
     mpv \
     skanpage \
     kclock \
-    kamoso
+    kamoso \
+    plasma-print-manager \
+    filelight \
+    kcharselect \
+    kde-partitionmanager \
+    kwalletmanager5 \
+    bluedevil
 
 systemctl enable sddm
 systemctl set-default graphical.target
