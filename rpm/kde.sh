@@ -13,8 +13,7 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 dnf install -y --setopt=install_weak_deps=False \
     plasma-desktop \
-    sddm \
-    sddm-breeze \
+    plasma-login-manager \
     kwin \
     plasma-nm \
     plasma-pa \
@@ -44,7 +43,7 @@ dnf install -y --setopt=install_weak_deps=False \
     kde-gtk-config \
     breeze-gtk
 
-systemctl enable sddm
+systemctl enable plasmalogin
 systemctl set-default graphical.target
 
 ###############################################
