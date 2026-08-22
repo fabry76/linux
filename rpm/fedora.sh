@@ -300,7 +300,8 @@ dnf install -y \
   rsync \
   smartmontools \
   traceroute \
-  usbutils
+  usbutils \
+  cabextract
   
 ###############################################
 # Starship
@@ -360,6 +361,7 @@ dnf install -y \
   liberation-fonts \
   papirus-icon-theme
 
+# Ubuntu fonts
 FONT_SRC="$TARGET_HOME/Fastgate/Varie/fonts/ubuntu"
 FONT_DST="/usr/local/share/fonts/ubuntu"
 
@@ -385,6 +387,34 @@ if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
     fi
 else
     echo "WARNING: No Ubuntu TTF fonts found in $FONT_SRC"
+fi
+
+# MS Core Fonts
+FONT_SRC="$TARGET_HOME/Fastgate/Varie/fonts/ms-fonts"
+FONT_DST="/usr/local/share/fonts/ms-fonts"
+
+install -d -m 755 "$FONT_DST"
+
+if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
+    FONT_CHANGED=false
+
+    for font in "$FONT_SRC"/*.ttf; do
+        dest="$FONT_DST/$(basename "$font")"
+
+        if [[ ! -f "$dest" ]] || ! cmp -s "$font" "$dest"; then
+            install -m 644 "$font" "$dest"
+            FONT_CHANGED=true
+        fi
+    done
+
+    if [[ "$FONT_CHANGED" == true ]]; then
+        echo "Updating MS font cache..."
+        fc-cache -f "$FONT_DST"
+    else
+        echo "MS fonts already up to date."
+    fi
+else
+    echo "WARNING: No MS TTF fonts found in $FONT_SRC"
 fi
 
 ###############################################
