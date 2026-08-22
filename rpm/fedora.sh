@@ -289,7 +289,8 @@ dnf install -y \
   util-linux \
   coreutils \
   wol \
-  upower
+  upower \
+  pciutils
   
 ###############################################
 # Starship
