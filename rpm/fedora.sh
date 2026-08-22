@@ -276,7 +276,7 @@ fi
 ###############################################
 # Applications & Utilities
 ###############################################
-dnf install -y \
+dnf install -y --setopt=install_weak_deps=False \
   vim \
   htop \
   fastfetch \
@@ -430,7 +430,7 @@ fi
 ###############################################
 # Printing & Scanning
 ###############################################
-dnf install -y cups gutenprint cups-pdf
+dnf install -y cups gutenprint
 systemctl enable cups
 
 ###############################################
