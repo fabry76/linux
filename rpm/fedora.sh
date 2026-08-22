@@ -293,7 +293,7 @@ dnf install -y \
   upower \
   pciutils \
   bat \
-  bind-tools \
+  bind-utils \
   lsof \
   ncdu \
   nmap \
