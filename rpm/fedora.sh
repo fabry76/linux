@@ -367,6 +367,8 @@ FONT_DST="/usr/local/share/fonts/ubuntu"
 
 install -d -m 755 "$FONT_DST"
 
+shopt -s nocaseglob
+
 if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
     FONT_CHANGED=false
 
@@ -379,13 +381,16 @@ if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
         fi
     done
 
+    shopt -u nocaseglob
+
     if [[ "$FONT_CHANGED" == true ]]; then
-        echo "Updating font cache..."
+        echo "Updating Ubuntu font cache..."
         fc-cache -f "$FONT_DST"
     else
         echo "Ubuntu fonts already up to date."
     fi
 else
+    shopt -u nocaseglob
     echo "WARNING: No Ubuntu TTF fonts found in $FONT_SRC"
 fi
 
