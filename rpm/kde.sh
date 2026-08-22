@@ -40,7 +40,9 @@ dnf install -y --setopt=install_weak_deps=False \
     kcharselect \
     kde-partitionmanager \
     kwalletmanager5 \
-    bluedevil
+    bluedevil \
+    kde-gtk-config \
+    breeze-gtk
 
 systemctl enable sddm
 systemctl set-default graphical.target
