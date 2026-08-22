@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+shopt -s nullglob
 
 ###############################################
 # Root check
@@ -35,7 +36,11 @@ done
 
 IFACE_RP_FILTER_LINES=""
 for iface in "${IFACES[@]}"; do
-  IFACE_RP_FILTER_LINES+="net.ipv4.conf.${iface}.rp_filter = 1"$'\n'
+  # sysctl uses '.' as its OID separator, so interface names containing a
+  # literal dot (e.g. VLAN sub-interfaces like eth0.100) must have the dot
+  # replaced with '/' in the key.
+  sysctl_iface="${iface//./\/}"
+  IFACE_RP_FILTER_LINES+="net.ipv4.conf.${sysctl_iface}.rp_filter = 1"$'\n'
 done
 
 ###############################################
@@ -43,7 +48,7 @@ done
 ###############################################
 HARDENING_CONTENT="$(cat << 'EOF'
 kernel.kptr_restrict = 2
-kernel.sysrq = 0
+kernel.sysrq = 176
 kernel.dmesg_restrict = 1
 kernel.kexec_load_disabled = 1
 kernel.yama.ptrace_scope = 1
@@ -67,6 +72,15 @@ net.ipv4.conf.default.send_redirects = 0
 
 net.ipv4.conf.all.accept_redirects = 0
 net.ipv4.conf.default.accept_redirects = 0
+
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0
+
+net.ipv6.conf.all.accept_source_route = 0
+net.ipv6.conf.default.accept_source_route = 0
 
 fs.protected_fifos = 2
 fs.protected_regular = 2
@@ -99,6 +113,8 @@ EOF
 ###############################################
 chmod 750 /etc/sudoers.d
 chown root:root /etc/sudoers.d
+find /etc/sudoers.d -type f -exec chown root:root {} \;
+find /etc/sudoers.d -type f -exec chmod 440 {} \;
 
 ################################################
 # Restrict Core Dumps
