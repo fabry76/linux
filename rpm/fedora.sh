@@ -285,12 +285,22 @@ dnf install -y \
   unrar \
   tar \
   gzip \
+  zip \
   xz \
   util-linux \
   coreutils \
   wol \
   upower \
-  pciutils
+  pciutils \
+  bat \
+  bind-tools \
+  lsof \
+  ncdu \
+  nmap \
+  rsync \
+  smartmontools \
+  traceroute \
+  usbutils
   
 ###############################################
 # Starship
