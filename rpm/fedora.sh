@@ -395,6 +395,8 @@ FONT_DST="/usr/local/share/fonts/ms-fonts"
 
 install -d -m 755 "$FONT_DST"
 
+shopt -s nocaseglob
+
 if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
     FONT_CHANGED=false
 
@@ -406,6 +408,8 @@ if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
             FONT_CHANGED=true
         fi
     done
+    
+    shopt -u nocaseglob
 
     if [[ "$FONT_CHANGED" == true ]]; then
         echo "Updating MS font cache..."
@@ -414,6 +418,7 @@ if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
         echo "MS fonts already up to date."
     fi
 else
+    shopt -u nocaseglob
     echo "WARNING: No MS TTF fonts found in $FONT_SRC"
 fi
 
