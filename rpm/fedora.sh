@@ -430,7 +430,7 @@ fi
 ###############################################
 # Printing & Scanning
 ###############################################
-dnf install -y cups gutenprint
+dnf install -y cups gutenprint sane-backends
 systemctl enable cups
 
 ###############################################
