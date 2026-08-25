@@ -280,15 +280,10 @@ dnf install -y --setopt=install_weak_deps=False \
   vim \
   htop \
   fastfetch \
-  curl \
   rclone \
   unrar \
   tar \
-  gzip \
   zip \
-  xz \
-  util-linux \
-  coreutils \
   wol \
   upower \
   pciutils \
@@ -430,7 +425,7 @@ fi
 ###############################################
 # Printing & Scanning
 ###############################################
-dnf install -y cups gutenprint sane-backends
+dnf install -y gutenprint sane-backends
 systemctl enable cups
 
 AIRSCAN_CONF="/etc/sane.d/airscan.conf"
@@ -474,7 +469,6 @@ fi
 dnf install -y \
     NetworkManager-wifi \
     iwlwifi-mvm-firmware \
-    firewalld \
     firewall-config
 
 firewall-offline-cmd --set-default-zone=drop || true
