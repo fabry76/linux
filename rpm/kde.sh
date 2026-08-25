@@ -39,6 +39,7 @@ dnf install -y --setopt=install_weak_deps=False \
     kcharselect \
     kde-partitionmanager \
     kwalletmanager5 \
+    pam-kwallet \
     bluedevil \
     kde-gtk-config \
     breeze-gtk
