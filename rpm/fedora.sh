@@ -296,7 +296,8 @@ dnf install -y --setopt=install_weak_deps=False \
   smartmontools \
   traceroute \
   usbutils \
-  cabextract
+  cabextract \
+  inotify-tools
   
 ###############################################
 # Starship
