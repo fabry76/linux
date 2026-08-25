@@ -335,7 +335,7 @@ dnf install -y @multimedia \
   --setopt=install_weak_deps=False \
   --exclude=PackageKit-gstreamer-plugin
 
-dnf install -y ffmpegthumbnailer intel-media-driver alsa-sof-firmware 
+dnf install -y ffmpegthumbnailer ffmpegthumbs intel-media-driver alsa-sof-firmware 
 
 ###############################################
 # Fastgate
