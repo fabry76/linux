@@ -297,7 +297,8 @@ dnf install -y \
   traceroute \
   usbutils \
   cabextract \
-  inotify-tools
+  inotify-tools \
+  thermald
   
 ###############################################
 # Starship
