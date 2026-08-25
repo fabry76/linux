@@ -42,7 +42,8 @@ dnf install -y --setopt=install_weak_deps=False \
     pam-kwallet \
     bluedevil \
     kde-gtk-config \
-    breeze-gtk
+    breeze-gtk \
+    kinfocenter
 
 systemctl enable plasmalogin
 systemctl set-default graphical.target
