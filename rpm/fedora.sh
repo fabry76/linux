@@ -433,6 +433,14 @@ fi
 dnf install -y cups gutenprint sane-backends
 systemctl enable cups
 
+AIRSCAN_CONF="/etc/sane.d/airscan.conf"
+
+if ! grep -qE '^[[:space:]]*scanner[[:space:]]*=' "$AIRSCAN_CONF"; then
+    sed -i \
+        '/^\[devices\]$/a scanner = http://192.168.1.10/eSCL' \
+        "$AIRSCAN_CONF"
+fi
+
 ###############################################
 # Locale
 ###############################################
