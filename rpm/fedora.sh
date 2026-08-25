@@ -276,7 +276,7 @@ fi
 ###############################################
 # Applications & Utilities
 ###############################################
-dnf install -y --setopt=install_weak_deps=False \
+dnf install -y \
   vim \
   htop \
   fastfetch \

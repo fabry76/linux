@@ -11,7 +11,7 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # KDE Plasma base
 ###############################################
-dnf install -y --setopt=install_weak_deps=False \
+dnf install -y \
     plasma-desktop \
     plasma-login-manager \
     kwin \
