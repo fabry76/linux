@@ -1,11 +1,12 @@
 #!/bin/bash
 
-WATCH="/home/fabri/Documents"
+WATCH="$HOME/Documents"
 LOCK="/tmp/rclone-sync.lock"
 DEBOUNCE=10
 
 inotifywait -r -m \
   -e create,modify,delete,move \
+  --exclude '(^|/)(\.git|node_modules)(/|$)' \
   --format '%e|%f' "$WATCH" |
 while IFS='|' read -r event file; do
 
@@ -40,6 +41,6 @@ while IFS='|' read -r event file; do
 
     fi
 
-  ) 9>"$LOCK"
+  ) 9>"$LOCK" &
 
 done

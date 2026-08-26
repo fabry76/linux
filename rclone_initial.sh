@@ -9,20 +9,18 @@ if [ "$EUID" -eq 0 ]; then
   exit 1
 fi
 
-INSTALL_MARKER="$HOME/.config/rclone/.install_done"
 BOOTSTRAP_MARKER="$HOME/.config/rclone/.bootstrap_done"
 
 # =========================
-# 1) SKIP IF ALREADY INSTALLED
+# 1) INSTALL / REFRESH systemd SERVICE
+#    (always rewritten — daemon-reload + enable --now are idempotent,
+#    so no marker is needed here)
 # =========================
-if [ -f "$INSTALL_MARKER" ]; then
-  echo "⏭️ Already installed, skipping"
-else
-  echo "📦 Installing systemd service..."
+echo "📦 Installing/updating systemd service..."
 
-  mkdir -p "$HOME/.config/systemd/user"
+mkdir -p "$HOME/.config/systemd/user"
 
-  cat > "$HOME/.config/systemd/user/rclone-sync.service" <<'EOF'
+cat > "$HOME/.config/systemd/user/rclone-sync.service" <<'EOF'
 [Unit]
 Description=Rclone sync
 Wants=network-online.target
@@ -31,18 +29,7 @@ After=network-online.target
 [Service]
 Type=simple
 
-ExecStartPre=/usr/bin/env bash -c '\
-  : > /home/fabri/rclone.log; \
-  rclone sync gdrive: /home/fabri/Documents \
-    --drive-skip-gdocs \
-    --exclude "*.tmp" \
-    --exclude "*.swp" \
-    --exclude "**/.git/**" \
-    --exclude "**node_modules/**" \
-    --log-file /home/fabri/rclone.log \
-    --log-level INFO'
-
-ExecStart=/home/fabri/Git/linux/rclone_watch.sh
+ExecStart=%h/Git/linux/rclone_watch.sh
 Restart=always
 RestartSec=5
 Nice=10
@@ -51,15 +38,15 @@ Nice=10
 WantedBy=default.target
 EOF
 
-  touch "$INSTALL_MARKER"
-  echo "✅ Service installed"
-fi
+echo "✅ Service file written"
 
 # =========================
 # 2) BOOTSTRAP (REMOTE -> LOCAL, ONLY ONCE)
 # =========================
 if [ ! -f "$BOOTSTRAP_MARKER" ]; then
   echo "📦 Initial full Google Drive sync (remote -> local)..."
+
+  mkdir -p "$(dirname "$BOOTSTRAP_MARKER")"
 
   if rclone sync gdrive: "$HOME/Documents" \
     --drive-skip-gdocs \
