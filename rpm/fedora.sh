@@ -458,13 +458,23 @@ LC_MEASUREMENT=it_IT.UTF-8
 # Lid switch
 ################################################
 LOGIND_LID_CONF="/etc/systemd/logind.conf.d/no-lid-suspend.conf"
-
-write_if_changed "$LOGIND_LID_CONF" \
-"[Login]
+LOGIND_LID_CONTENT="[Login]
 HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
 "
 
-echo "Lid switch configured to ignore."
+if [ -f "$LOGIND_LID_CONF" ] &&
+   printf "%s" "$LOGIND_LID_CONTENT" | cmp -s - "$LOGIND_LID_CONF"; then
+
+    echo "Lid switch already configured, skipping."
+
+else
+
+    install -d -m 755 "$(dirname "$LOGIND_LID_CONF")"
+    write_if_changed "$LOGIND_LID_CONF" "$LOGIND_LID_CONTENT"
+    echo "Lid switch configured to ignore."
+
+fi
 
 ###############################################
 # Hardening
