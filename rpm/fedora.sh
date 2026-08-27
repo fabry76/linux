@@ -454,6 +454,18 @@ LC_ADDRESS=it_IT.UTF-8 \
 LC_TELEPHONE=it_IT.UTF-8 \
 LC_MEASUREMENT=it_IT.UTF-8
 
+################################################
+# Lid switch
+################################################
+LOGIND_LID_CONF="/etc/systemd/logind.conf.d/no-lid-suspend.conf"
+
+write_if_changed "$LOGIND_LID_CONF" \
+"[Login]
+HandleLidSwitch=ignore
+"
+
+echo "Lid switch configured to ignore."
+
 ###############################################
 # Hardening
 ###############################################
