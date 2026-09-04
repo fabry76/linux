@@ -148,6 +148,7 @@ EOF
 	install_if_changed \
 		"$HOME/Git/linux/etc/computer.desktop" \
 		"$DESKTOP_DIR/computer.desktop"
+	755
 fi
 
 ###############################################
