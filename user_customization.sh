@@ -145,9 +145,10 @@ EOF
 		"$HOME/.config/mpv/mpv.conf"
 
 	[ -f "$HOME/Git/linux/etc/computer.desktop" ] && \
-	install -D \
-  		"$HOME/Git/linux/etc/computer.desktop" \
-  		"$DESKTOP_DIR/computer.desktop"
+	install_if_changed \
+		"$HOME/Git/linux/etc/computer.desktop" \
+		"$DESKTOP_DIR/computer.desktop" \
+	755
 fi
 
 ###############################################
