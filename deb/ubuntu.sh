@@ -161,7 +161,8 @@ apt-get install -y \
   ffmpeg \
   ffmpegthumbnailer \
   ubuntu-restricted-extras \
-  fonts-firacode
+  fonts-firacode \
+  lsp-plugins-lv2
   
 ###############################################
 # Snaps
