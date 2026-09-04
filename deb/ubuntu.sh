@@ -249,4 +249,4 @@ echo "Installation completed."
 ###############################################
 # User session script
 ###############################################
-runuser -u "$TARGET_USER" -- bash "$GIT_DIR/gnome_user.sh"
+runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE=2 bash "$GIT_DIR/user_customization.sh"

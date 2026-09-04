@@ -306,7 +306,7 @@ plymouth-set-default-theme lines -R
 ###############################################
 # Multimedia
 ###############################################
-apt-get install -y ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly}
+apt-get install -y ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly} lsp-plugins-lv2
 
 ###############################################
 # Fonts & Icons
@@ -407,22 +407,10 @@ echo "System installation completed."
 ###############################################
 # User session script
 ###############################################
-USER_SCRIPT=""
+USER_SCRIPT="$GIT_DIR/user_customization.sh"
 
-case "$DESKTOP_CHOICE" in
-    1)
-        USER_SCRIPT="kde_user.sh"
-        ;;
-    2)
-        USER_SCRIPT="gnome_user.sh"
-        ;;
-    *)
-        USER_SCRIPT=""
-        ;;
-esac
+if [ -f "$USER_SCRIPT" ]; then
+    echo "Running user session script: $USER_SCRIPT"
 
-if [ -n "$USER_SCRIPT" ] && [ -f "$GIT_DIR/$USER_SCRIPT" ]; then
-    echo "Switching to user session script: $USER_SCRIPT"
-
-    runuser -u "$TARGET_USER" -- bash "$GIT_DIR/$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" bash "$USER_SCRIPT"
 fi

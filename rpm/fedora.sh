@@ -333,7 +333,7 @@ dnf install -y @multimedia \
   --setopt=install_weak_deps=False \
   --exclude=PackageKit-gstreamer-plugin
 
-dnf install -y ffmpegthumbnailer intel-media-driver alsa-sof-firmware 
+dnf install -y ffmpegthumbnailer intel-media-driver alsa-sof-firmware lsp-plugins-lv2 pipewire-module-filter-chain-lv2
 
 ###############################################
 # Fastgate
@@ -500,22 +500,10 @@ systemctl enable firewalld
 ###############################################
 # User session script
 ###############################################
-USER_SCRIPT=""
+USER_SCRIPT="$GIT_DIR/user_customization.sh"
 
-case "$DESKTOP_CHOICE" in
-    1)
-        USER_SCRIPT="kde_user.sh"
-        ;;
-    2)
-        USER_SCRIPT="gnome_user.sh"
-        ;;
-    *)
-        USER_SCRIPT=""
-        ;;
-esac
+if [ -f "$USER_SCRIPT" ]; then
+    echo "Running user session script: $USER_SCRIPT"
 
-if [ -n "$USER_SCRIPT" ] && [ -f "$GIT_DIR/$USER_SCRIPT" ]; then
-    echo "Switching to user session script: $USER_SCRIPT"
-
-    runuser -u "$TARGET_USER" -- bash "$GIT_DIR/$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" bash "$USER_SCRIPT"
 fi
