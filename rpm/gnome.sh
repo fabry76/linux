@@ -12,7 +12,6 @@ OFFICE_CHOICE="${3:-0}"
 # Gnome
 ###############################################
 dnf install -y @gnome-desktop \
-    --setopt=install_weak_deps=False \
     --exclude=gnome-boxes \
     --exclude=gnome-maps
 

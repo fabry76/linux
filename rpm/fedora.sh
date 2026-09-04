@@ -425,7 +425,7 @@ fi
 ###############################################
 # Printing & Scanning
 ###############################################
-dnf install -y gutenprint sane-backends
+dnf install -y cups gutenprint sane-backends
 systemctl enable cups
 
 AIRSCAN_CONF="/etc/sane.d/airscan.conf"
