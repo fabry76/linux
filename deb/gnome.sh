@@ -19,7 +19,7 @@ apt-get install -y --no-install-recommends \
     network-manager \
     gnome-tweaks \
     gnome-shell-extension-manager \
-    gnome-shell-extension-dash-to-panel \
+    gnome-shell-extension-dash-to-dock \
     gnome-shell-extension-system-monitor \
     gnome-shell-extension-apps-menu \
     gnome-themes-extra \

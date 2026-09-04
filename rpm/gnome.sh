@@ -21,7 +21,7 @@ systemctl set-default graphical.target
 dnf install -y \
     gnome-tweaks \
     gnome-extensions-app \
-    gnome-shell-extension-dash-to-panel \
+    gnome-shell-extension-dash-to-dock \
     gnome-shell-extension-system-monitor \
     gnome-sound-recorder
 
