@@ -9,6 +9,12 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ###############################################
+# Disable automatic apt timers during provisioning
+###############################################
+systemctl stop apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
+systemctl stop apt-daily.service apt-daily-upgrade.service 2>/dev/null || true
+
+###############################################
 # Variables
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
