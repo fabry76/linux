@@ -41,7 +41,7 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 ###############################################
 # Questions
 ###############################################
-source "$SCRIPT_DIR/questions.sh"
+source "$GIT_DIR/questions.sh"
 run_installer_questions
 
 ################################################
