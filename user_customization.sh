@@ -215,7 +215,7 @@ fi
 if [ ! -f "$DEST_KEY" ] || ! cmp -s "$SOURCE_KEY" "$DEST_KEY"; then
     cp "$SOURCE_KEY" "$DEST_KEY"
     chmod 600 "$DEST_KEY"
-    echo "SSH key installed/updated (no passphrase)"
+    echo "SSH key installed/updated"
 fi
 
 # Repository (auto-clone if missing)
