@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 ###############################################
+# questions.sh
+#
 # Generic interactive prompts shared by every distro installer
 # (fedora.sh, debian.sh, ...).
 #
@@ -7,6 +9,10 @@
 #
 #   source "$SCRIPT_DIR/questions.sh"
 #   run_installer_questions
+#
+# Any prompt that is specific to a single distro (e.g. the
+# hostname question in fedora.sh) stays in that distro's own
+# script, right after the call to run_installer_questions.
 #
 # IMPORTANT: this file must be `source`d, never executed with
 # `bash questions.sh`, otherwise the variables it sets (DESKTOP_CHOICE,
@@ -116,8 +122,8 @@ ask_fastgate() {
         install -d -m 700 /etc/samba
         CRED_STATE="missing"
         if [ -f "$CRED_FILE" ]; then
-            if grep -q "^username=" "$CRED_FILE" &&
-               grep -q "^password=" "$CRED_FILE"; then
+            if grep -qE "^username=.+" "$CRED_FILE" &&
+               grep -qE "^password=.+" "$CRED_FILE"; then
                 CRED_STATE="valid"
             else
                 CRED_STATE="invalid"
@@ -140,18 +146,31 @@ ask_fastgate() {
            [ "$CRED_STATE" = "update" ]; then
             echo
             echo "=== Fastgate credentials ==="
-            read -rp "Username: " NAS_USER
-            read -rsp "Password: " NAS_PASS
-            echo
+            while :; do
+                read -rp "Username: " NAS_USER
+                [ -n "$NAS_USER" ] && break
+                echo "Username cannot be empty."
+            done
+            while :; do
+                read -rsp "Password: " NAS_PASS
+                echo
+                [ -n "$NAS_PASS" ] && break
+                echo "Password cannot be empty."
+            done
             OLD_UMASK="$(umask)"
             umask 077
             cat > "$CRED_FILE" <<EOF
-            username=$NAS_USER
-            password=$NAS_PASS
+username=$NAS_USER
+password=$NAS_PASS
 EOF
             umask "$OLD_UMASK"
             chown root:root "$CRED_FILE"
             chmod 600 "$CRED_FILE"
+
+            if ! grep -qE "^username=.+" "$CRED_FILE" || ! grep -qE "^password=.+" "$CRED_FILE"; then
+                echo "ERROR: failed to write valid Fastgate credentials to $CRED_FILE" >&2
+                exit 1
+            fi
         fi
     fi
     echo
