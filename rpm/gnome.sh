@@ -11,9 +11,7 @@ OFFICE_CHOICE="${3:-0}"
 ###############################################
 # Gnome
 ###############################################
-dnf install -y @gnome-desktop \
-    --exclude=gnome-boxes \
-    --exclude=gnome-maps
+dnf install -y @gnome-desktop --exclude=gnome-boxes
 
 systemctl enable gdm
 systemctl set-default graphical.target
