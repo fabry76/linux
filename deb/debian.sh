@@ -92,6 +92,7 @@ EOF
 # Update Repositories
 ###############################################
 apt-get update
+apt-get -y upgrade
 
 ###############################################
 # Initial Firmware, Drivers and Utilities
