@@ -44,7 +44,8 @@ dnf install -y \
     kde-gtk-config \
     breeze-gtk \
     kinfocenter \
-    kdegraphics-thumbnailers
+    kdegraphics-thumbnailers \
+    qalculate-qt
 
 systemctl enable plasmalogin
 systemctl set-default graphical.target
@@ -69,7 +70,6 @@ OFFICE_APP=""
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
     org.qbittorrent.qBittorrent
-    io.github.Qalculate.qalculate-qt
 )
 
 ###############################################
