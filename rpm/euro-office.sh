@@ -2,9 +2,9 @@
 set -euo pipefail
 
 REPO_FILE="/etc/yum.repos.d/nextcloud-office.repo"
+KEY_URL="https://download.nextcloud.com/office/repo/nextcloud-office.asc"
 KEY_FILE="/etc/pki/rpm-gpg/RPM-GPG-KEY-nextcloud-office"
-GPG_KEY="https://download.nextcloud.com/office/repo/nextcloud-office.asc"
-EXPECTED_FINGERPRINT="C013F0BEF96800BBBC4D93DDE6E70E5FA287C3D0"
+EXPECTED="C013F0BEF96800BBBC4D93DDE6E70E5FA287C3D0"
 PKG="nextcloud-office-desktopeditors"
 
 if [[ "$EUID" -ne 0 ]]; then
@@ -12,17 +12,22 @@ if [[ "$EUID" -ne 0 ]]; then
     exit 1
 fi
 
+for cmd in curl gpg rpm dnf sha256sum; do
+    command -v "$cmd" >/dev/null 2>&1 || {
+        echo "Missing command: $cmd" >&2
+        exit 1
+    }
+done
+
 TMP_KEY="$(mktemp)"
 trap 'rm -f "$TMP_KEY"' EXIT
 
-curl -fsSL "$GPG_KEY" -o "$TMP_KEY"
+curl -fsSL "$KEY_URL" -o "$TMP_KEY"
 
-ACTUAL_FINGERPRINT="$(
-    gpg --batch --show-keys --with-colons "$TMP_KEY" |
-    awk -F: '$1 == "fpr" { print toupper($10); exit }'
-)"
+ACTUAL="$(gpg --batch --show-keys --with-colons "$TMP_KEY" |
+    awk -F: '$1 == "fpr" {print toupper($10); exit}')"
 
-if [[ "$ACTUAL_FINGERPRINT" != "$EXPECTED_FINGERPRINT" ]]; then
+if [[ "$ACTUAL" != "$EXPECTED" ]]; then
     echo "ERROR: GPG fingerprint mismatch." >&2
     exit 1
 fi
@@ -38,16 +43,19 @@ enabled=1
 gpgcheck=1
 repo_gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-nextcloud-office
-skip_if_unavailable=False
 EOF
 
 dnf clean metadata
-dnf -y --refresh makecache --repo=nextcloud-office
 
-if ! rpm -q "$PKG" >/dev/null 2>&1; then
-    dnf install -y "$PKG"
-else
+if ! dnf -y --refresh makecache --repo=nextcloud-office; then
+    echo "ERROR: Repository metadata GPG verification failed." >&2
+    exit 1
+fi
+
+if rpm -q "$PKG" >/dev/null 2>&1; then
     echo "Package already installed: $PKG"
+else
+    dnf install -y "$PKG"
 fi
 
 echo "Done."
