@@ -5,6 +5,7 @@ set -euo pipefail
 REPO_FILE="/etc/yum.repos.d/nextcloud-office.repo"
 REPO_ID="nextcloud-office"
 GPG_KEY="https://download.nextcloud.com/office/repo/nextcloud-office.asc"
+EXPECTED_FINGERPRINT="C013F0BEF96800BBBC4D93DDE6E70E5FA287C3D0"
 
 # Package name
 PKG="nextcloud-office-desktopeditors"
@@ -15,35 +16,50 @@ if [[ "$EUID" -ne 0 ]]; then
     exit 1
 fi
 
-# 2) Idempotent repository setup
-if [[ ! -f "$REPO_FILE" ]] ||
-   ! grep -q "^\[$REPO_ID\]$" "$REPO_FILE"; then
+# 2) Download and verify the repository signing key
+TMP_KEY="$(mktemp)"
+trap 'rm -f "$TMP_KEY"' EXIT
 
-    cat > "$REPO_FILE" <<'EOF'
-[nextcloud-office]
+curl -fsSL "$GPG_KEY" -o "$TMP_KEY"
+
+ACTUAL_FINGERPRINT="$(
+    gpg --show-keys --with-colons "$TMP_KEY" |
+    awk -F: '$1 == "fpr" { print toupper($10); exit }'
+)"
+
+if [[ "$ACTUAL_FINGERPRINT" != "$EXPECTED_FINGERPRINT" ]]; then
+    echo "ERROR: GPG key fingerprint mismatch!" >&2
+    echo "Expected: $EXPECTED_FINGERPRINT" >&2
+    echo "Actual:   ${ACTUAL_FINGERPRINT:-unavailable}" >&2
+    exit 1
+fi
+
+# 3) Import the verified key without interactive prompts
+rpm --import "$TMP_KEY"
+echo "Repository signing key verified and imported."
+
+# 4) Configure the repository
+cat > "$REPO_FILE" <<EOF
+[$REPO_ID]
 name=Nextcloud Office
-baseurl=https://download.nextcloud.com/office/repo/rpm/stable/$basearch
+baseurl=https://download.nextcloud.com/office/repo/rpm/stable/\\$basearch
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey=https://download.nextcloud.com/office/repo/nextcloud-office.asc
+gpgkey=$GPG_KEY
 EOF
 
-    echo "Repository configuration created."
-else
-    echo "Repository already configured."
-fi
+echo "Repository configuration created."
 
-# 3) Import the repository signing key
-rpm --import "$GPG_KEY"
+# 5) Refresh repository metadata automatically
+dnf -y makecache --refresh
 
-# 4) Refresh repository metadata
-dnf makecache --refresh
-
-# 5) Idempotent package installation
+# 6) Install the package if it is not already installed
 if ! rpm -q "$PKG" &>/dev/null; then
     dnf install -y "$PKG"
     echo "Package installed: $PKG"
 else
     echo "Package already installed: $PKG"
 fi
+
+echo "Done."
