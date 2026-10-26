@@ -2,9 +2,8 @@
 set -euo pipefail
 
 REPO_FILE="/etc/yum.repos.d/nextcloud-office.repo"
-REPO_ID="nextcloud-office"
-PKG="nextcloud-office-nextcloudoffice"
-GPG_KEY="https://nextcloud.com"
+PKG="nextcloud-office-desktopeditors"
+GPG_KEY="https://download.nextcloud.com/office/repo/nextcloud-office.asc"
 
 # 1) Check root privileges
 if [[ "$EUID" -ne 0 ]]; then
@@ -12,31 +11,32 @@ if [[ "$EUID" -ne 0 ]]; then
     exit 1
 fi
 
-# 2) Configure Nextcloud Office repository
-echo "Configuring Nextcloud Office repository..."
+# 2) Import the signing key
+echo "Importing GPG key..."
+rpm --import "$GPG_KEY"
 
+# 3) Configure the Nextcloud Office repository
+#    Quoted heredoc: $basearch must reach DNF unexpanded.
+echo "Configuring Nextcloud Office repository..."
 cat > "$REPO_FILE" <<'EOF'
 [nextcloud-office]
 name=Nextcloud Office
-baseurl=https://nextcloud.com
+baseurl=https://download.nextcloud.com/office/repo/rpm/stable/$basearch
 enabled=1
 gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://nextcloud.com
+gpgkey=https://download.nextcloud.com/office/repo/nextcloud-office.asc
 EOF
 
-echo "Repository configured."
-
-# 3) Refresh DNF metadata
+# 4) Refresh DNF metadata
 echo "Refreshing DNF metadata..."
 dnf makecache --refresh
 
-# 4) Install package if missing
+# 5) Install package if missing
 if ! rpm -q "$PKG" &>/dev/null; then
-    echo "Installing Nextcloud Office..."
-    dnf install -y --nogpgcheck "$PKG"
+    echo "Installing Nextcloud Office Desktop Editors..."
+    dnf install -y "$PKG"
 else
-    echo "Nextcloud Office already installed."
+    echo "Nextcloud Office Desktop Editors already installed."
 fi
 
 echo "Done."
