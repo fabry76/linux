@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_FILE="/etc/yum.repos.d/nextcloud-office.repo"
-PKG="nextcloud-office-desktopeditors"
+PKG="nextcloud-office-nextcloudoffice"
 GPG_KEY="https://download.nextcloud.com/office/repo/nextcloud-office.asc"
 
 # 1) Check root privileges

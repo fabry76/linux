@@ -7,7 +7,7 @@ set -euo pipefail
 KEY_URL="https://download.nextcloud.com/office/repo/nextcloud-office.asc"
 KEY_FILE="/etc/apt/keyrings/nextcloud-office.gpg"
 SOURCES_FILE="/etc/apt/sources.list.d/nextcloud-office.sources"
-PKG="nextcloud-office-desktopeditors"
+PKG="nextcloud-office-nextcloudoffice"
 
 ###############################################
 # Functions
