@@ -106,12 +106,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER" "$OFFICE_CHOICE"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
         ;;
 esac
 
@@ -133,6 +133,13 @@ for browser in "${BROWSERS[@]}"; do
             ;;
     esac
 done
+
+###############################################
+# Office
+###############################################
+if [[ "$INSTALL_OFFICE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/nextcloud.sh"
+fi
 
 ###############################################
 # Visual Studio Code
