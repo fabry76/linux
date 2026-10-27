@@ -83,18 +83,10 @@ ask_flatpak_browser() {
 
 ask_office() {
     while :; do
-        echo "Which Office suite would you like to install?"
-        echo "0) None"
-        echo "1) ONLYOFFICE (org.onlyoffice.desktopeditors)"
-        echo "2) LibreOffice (org.libreoffice.LibreOffice)"
-        echo "3) Collabora Office (com.collaboraoffice.Office)"
-        echo
-
-        read -rp "Choice [0-3]: " OFFICE_CHOICE
-
-        [[ "$OFFICE_CHOICE" =~ ^[0-3]$ ]] && break
-
-        echo "Please enter a number between 0 and 3."
+        read -rp "Do you want to install an Nextcloud Office? (Y/n): " OFFICE_CHOICE
+        OFFICE_CHOICE="${OFFICE_CHOICE:-Y}"
+        [[ "$OFFICE_CHOICE" =~ ^([Yy]|[Nn])$ ]] && break
+        echo "Please answer y or n."
     done
     echo
 }
