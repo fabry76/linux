@@ -84,8 +84,8 @@ ask_flatpak_browser() {
 ask_office() {
     while :; do
         read -rp "Do you want to install an Nextcloud Office? (Y/n): " OFFICE_CHOICE
-        OFFICE_CHOICE="${OFFICE_CHOICE:-Y}"
-        [[ "$OFFICE_CHOICE" =~ ^([Yy]|[Nn])$ ]] && break
+        INSTALL_OFFICE="${INSTALL_OFFICE:-Y}"
+        [[ "$INSTALL_OFFICE" =~ ^([Yy]|[Nn])$ ]] && break
         echo "Please answer y or n."
     done
     echo
