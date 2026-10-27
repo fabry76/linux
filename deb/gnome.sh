@@ -6,7 +6,6 @@ set -euo pipefail
 ###############################################
 TARGET_USER="$1"
 FLATPAK_BROWSER="${2:-0}"
-OFFICE_CHOICE="${3:-0}"
 
 ###############################################
 # Gnome base
@@ -40,8 +39,6 @@ flatpak remote-add --if-not-exists \
 ###############################################
 # Variables
 ###############################################
-OFFICE_APP=""
-
 FLATPAK_APPS=(
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
@@ -63,26 +60,6 @@ case "$FLATPAK_BROWSER" in
     3)
         BROWSER_APP="org.mozilla.firefox"
         FLATPAK_APPS+=(org.mozilla.firefox)
-        ;;
-    0)
-        ;;
-esac
-
-###############################################
-# Office selection
-###############################################
-case "$OFFICE_CHOICE" in
-    1)
-        OFFICE_APP="org.onlyoffice.desktopeditors"
-        FLATPAK_APPS+=(org.onlyoffice.desktopeditors)
-        ;;
-    2)
-        OFFICE_APP="org.libreoffice.LibreOffice"
-        FLATPAK_APPS+=(org.libreoffice.LibreOffice)
-        ;;
-    3)
-        OFFICE_APP="com.collaboraoffice.Office"
-        FLATPAK_APPS+=(com.collaboraoffice.Office)
         ;;
     0)
         ;;
