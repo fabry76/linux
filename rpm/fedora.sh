@@ -112,6 +112,13 @@ for browser in "${BROWSERS[@]}"; do
 done
 
 ###############################################
+# Office
+###############################################
+if [[ "$INSTALL_OFFICE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/nextcloud.sh"
+fi
+
+###############################################
 # Visual Studio Code
 ###############################################
 if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
