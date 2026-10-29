@@ -33,10 +33,10 @@ dnf makecache --refresh
 
 # 5) Install package if missing
 if ! rpm -q "$PKG" &>/dev/null; then
-    echo "Installing Nextcloud Office Desktop Editors..."
+    echo "Installing Nextcloud Office..."
     dnf install -y "$PKG"
 else
-    echo "Nextcloud Office Desktop Editors already installed."
+    echo "Nextcloud Office already installed."
 fi
 
 echo "Done."
