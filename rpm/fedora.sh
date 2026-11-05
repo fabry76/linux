@@ -136,6 +136,7 @@ dnf install -y \
   unrar \
   tar \
   zip \
+  unzip \
   wol \
   pciutils \
   bat \
@@ -357,5 +358,5 @@ USER_SCRIPT="$GIT_DIR/user_customization.sh"
 if [ -f "$USER_SCRIPT" ]; then
     echo "Running user session script: $USER_SCRIPT"
 
-    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" bash "$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" DISTRO="fedora" bash "$USER_SCRIPT"
 fi

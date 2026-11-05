@@ -10,7 +10,7 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 ###############################################
-# Desktop selection
+# Desktop & Distro selection
 ###############################################
 DESKTOP_CHOICE="${DESKTOP_CHOICE:-${desktop_choice:-}}"
 
@@ -29,6 +29,8 @@ case "$DESKTOP_CHOICE" in
 		exit 1
 		;;
 esac
+
+DISTRO="${DISTRO:-}"
 
 ###############################################
 # Write if changed
@@ -101,6 +103,29 @@ if [ "$DESKTOP_CHOICE" = "2" ]; then
 		echo "Chrome not installed, skipping shortcut"
 	else
 		echo "Chrome shortcut already exists, skipping"
+	fi
+fi
+
+###############################################
+# Fedora + GNOME: Tela icon theme
+###############################################
+if [ "$DISTRO" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
+	ICON_DIR="$HOME/.local/share/icons"
+
+	if [ -d "$ICON_DIR/Tela" ]; then
+		echo "Tela icon theme already installed, skipping."
+	else
+		echo "Installing Tela icon theme..."
+		TMP_DIR="$(mktemp -d)"
+
+		mkdir -p "$ICON_DIR"
+		curl -fsSL -o "$TMP_DIR/tela.zip" \
+			https://github.com/vinceliuice/Tela-icon-theme/archive/refs/heads/master.zip
+		unzip -q "$TMP_DIR/tela.zip" -d "$TMP_DIR"
+		"$TMP_DIR"/Tela-icon-theme-master/install.sh -d "$ICON_DIR"
+		rm -rf "$TMP_DIR"
+
+		echo "Tela icon theme installed."
 	fi
 fi
 

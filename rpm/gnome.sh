@@ -20,7 +20,8 @@ dnf install -y \
     gnome-extensions-app \
     gnome-shell-extension-dash-to-dock \
     gnome-shell-extension-system-monitor \
-    gnome-sound-recorder
+    gnome-sound-recorder \
+    virt-viewer
 
 ###############################################
 # Flatpak
