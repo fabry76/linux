@@ -84,11 +84,12 @@ for desktop_file in "$HOME/Git/linux/etc/.desktop/"*; do
 done
 
 ###############################################
-# Fedora + GNOME: Tela icon theme
+# Fedora: extras
 ###############################################
-if [ "${DISTRO:-}" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
+if [ "${DISTRO:-}" = "fedora" ]; then
 	ICON_DIR="$HOME/.local/share/icons"
 
+# Tela icon theme
 	if [ -d "$ICON_DIR/Tela" ]; then
 		echo "Tela icon theme already installed, skipping."
 	else
@@ -104,6 +105,7 @@ if [ "${DISTRO:-}" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
 
 		echo "Tela icon theme installed."
 	fi
+	
 fi
 
 ###############################################
