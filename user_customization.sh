@@ -86,10 +86,10 @@ done
 ###############################################
 # Fedora: extras
 ###############################################
-if [ "${DISTRO:-}" = "fedora" ]; then
+if [ "${DISTRO:-}" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
 	ICON_DIR="$HOME/.local/share/icons"
 
-# Tela icon theme
+# Tela icon theme installation
 	if [ -d "$ICON_DIR/Tela" ]; then
 		echo "Tela icon theme already installed, skipping."
 	else
