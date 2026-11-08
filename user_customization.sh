@@ -126,9 +126,9 @@ if [ "$DESKTOP_CHOICE" = "1" ]; then
         install_if_changed "$src" "$dst"
     done
 
-	[ -f "$HOME/Git/linux/etc/kde/.desktop/computer.desktop" ] && \
+	[ -f "$HOME/Git/linux/etc/.desktop/computer.desktop" ] && \
 	install_if_changed \
-		"$HOME/Git/linux/etc/kde/.desktop/computer.desktop" \
+		"$HOME/Git/linux/etc/.desktop/computer.desktop" \
 		"$DESKTOP_DIR/computer.desktop" \
 	755
 fi
