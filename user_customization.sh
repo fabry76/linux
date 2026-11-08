@@ -84,6 +84,14 @@ for desktop_file in "$HOME/Git/linux/etc/.desktop/"*; do
 done
 
 ###############################################
+# Wallpaper
+###############################################
+[ -f "$HOME/Fastgate/Varie/wall.jpg" ] && \
+	install_if_changed \
+		"$HOME/Fastgate/Varie/wall.jpg" \
+		"$HOME/Pictures/wall.jpg"
+
+###############################################
 # Fedora: extras
 ###############################################
 if [ "${DISTRO:-}" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
