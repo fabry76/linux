@@ -37,3 +37,5 @@ desktops().forEach(function (d) {
 	d.reloadConfig();
 });
 "
+
+rm -f "$HOME/.config/autostart/kde-desktop-custom.desktop"
