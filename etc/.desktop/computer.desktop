@@ -5,3 +5,4 @@ Comment=Dolphin
 Exec=dolphin %u
 Icon=computer
 Terminal=false
+NoDisplay=true
