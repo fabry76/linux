@@ -30,8 +30,6 @@ case "$DESKTOP_CHOICE" in
 		;;
 esac
 
-DISTRO="${DISTRO:-}"
-
 ###############################################
 # Write if changed
 ###############################################
@@ -109,7 +107,7 @@ fi
 ###############################################
 # Fedora + GNOME: Tela icon theme
 ###############################################
-if [ "$DISTRO" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
+if [ "${DISTRO:-}" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
 	ICON_DIR="$HOME/.local/share/icons"
 
 	if [ -d "$ICON_DIR/Tela" ]; then

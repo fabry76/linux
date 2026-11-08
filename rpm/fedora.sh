@@ -16,6 +16,7 @@ TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
+DISTRO="fedora"
 
 ###############################################
 # Functions
@@ -43,24 +44,6 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 ###############################################
 source "$GIT_DIR/questions.sh"
 run_installer_questions
-
-################################################
-# Hostname
-################################################
-echo
-read -rp "Enter the hostname for this system: " NEW_HOSTNAME
-if [ -n "$NEW_HOSTNAME" ]; then
-    CURRENT_HOSTNAME="$(hostnamectl --static)"
-    if [ "$CURRENT_HOSTNAME" != "$NEW_HOSTNAME" ]; then
-        hostnamectl set-hostname --static "$NEW_HOSTNAME"
-        echo "Hostname changed from '$CURRENT_HOSTNAME' to '$NEW_HOSTNAME'."
-    else
-        echo "Hostname is already set to '$NEW_HOSTNAME'."
-    fi
-else
-    echo "No hostname provided, keeping current hostname."
-fi
-echo
 
 ################################################
 # Repositories, plugins and mirrors
@@ -358,5 +341,5 @@ USER_SCRIPT="$GIT_DIR/user_customization.sh"
 if [ -f "$USER_SCRIPT" ]; then
     echo "Running user session script: $USER_SCRIPT"
 
-    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" DISTRO="fedora" bash "$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" DISTRO="$DISTRO" bash "$USER_SCRIPT"
 fi

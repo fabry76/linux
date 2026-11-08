@@ -10,9 +10,7 @@
 #   source "$SCRIPT_DIR/questions.sh"
 #   run_installer_questions
 #
-# Any prompt that is specific to a single distro (e.g. the
-# hostname question in fedora.sh) stays in that distro's own
-# script, right after the call to run_installer_questions.
+# Distro-specific prompts are guarded in run_installer_questions.
 #
 # IMPORTANT: this file must be `source`d, never executed with
 # `bash questions.sh`, otherwise the variables it sets (DESKTOP_CHOICE,
@@ -177,6 +175,23 @@ ask_hardening() {
     done
 }
 
+ask_hostname() {
+    echo
+    read -rp "Enter the hostname for this system: " NEW_HOSTNAME
+    if [ -n "$NEW_HOSTNAME" ]; then
+        CURRENT_HOSTNAME="$(hostnamectl --static)"
+        if [ "$CURRENT_HOSTNAME" != "$NEW_HOSTNAME" ]; then
+            hostnamectl set-hostname --static "$NEW_HOSTNAME"
+            echo "Hostname changed from '$CURRENT_HOSTNAME' to '$NEW_HOSTNAME'."
+        else
+            echo "Hostname is already set to '$NEW_HOSTNAME'."
+        fi
+    else
+        echo "No hostname provided, keeping current hostname."
+    fi
+    echo
+}
+
 ###############################################
 # Orchestrator
 ###############################################
@@ -188,4 +203,8 @@ run_installer_questions() {
     ask_vscode
     ask_fastgate
     ask_hardening
+
+    if [[ "${DISTRO:-}" == "fedora" ]]; then
+        ask_hostname
+    fi
 }
