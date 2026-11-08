@@ -113,7 +113,7 @@ fi
 ###############################################
 if [ "$DESKTOP_CHOICE" = "1" ]; then
 
-    CONFIG_ROOT="$HOME/Git/linux/kde/etc"
+    CONFIG_ROOT="$HOME/Git/linux/etc/kde"
 
     find "$CONFIG_ROOT/.config" \
          "$CONFIG_ROOT/.local" \
@@ -126,9 +126,9 @@ if [ "$DESKTOP_CHOICE" = "1" ]; then
         install_if_changed "$src" "$dst"
     done
 
-	[ -f "$HOME/Git/linux/kde/etc/.desktop/computer.desktop" ] && \
+	[ -f "$HOME/Git/linux/etc/kde/.desktop/computer.desktop" ] && \
 	install_if_changed \
-		"$HOME/Git/linux/kde/etc/.desktop/computer.desktop" \
+		"$HOME/Git/linux/etc/kde/.desktop/computer.desktop" \
 		"$DESKTOP_DIR/computer.desktop" \
 	755
 fi
