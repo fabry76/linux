@@ -1,0 +1,26 @@
+<!DOCTYPE Menu PUBLIC '-//freedesktop//DTD Menu 1.0//EN' 'http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd'>
+<Menu>
+ <Menu>
+  <Name>Education</Name>
+  <Menu>
+   <Name>Science</Name>
+   <Layout/>
+   <Exclude>
+    <Filename>io.github.Qalculate.qalculate-qt.desktop</Filename>
+   </Exclude>
+  </Menu>
+  <Menu>
+   <Name>Mathematics</Name>
+   <Layout/>
+   <Exclude>
+    <Filename>io.github.Qalculate.qalculate-qt.desktop</Filename>
+   </Exclude>
+  </Menu>
+ </Menu>
+ <Menu>
+  <Name>.hidden</Name>
+  <Include>
+   <Filename>io.github.Qalculate.qalculate-qt.desktop</Filename>
+  </Include>
+ </Menu>
+</Menu>
