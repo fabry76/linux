@@ -1,3 +1,5 @@
+MenuBar=Disabled
+
 [General]
 RememberOpenedTabs=false
 ShowFullPath=true
