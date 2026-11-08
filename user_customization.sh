@@ -112,41 +112,19 @@ fi
 # KDE configuration
 ###############################################
 if [ "$DESKTOP_CHOICE" = "1" ]; then
-	mkdir -p \
-		"$HOME/.config/mpv" \
-		"$HOME/.local/share/konsole"
 
-	KONSOLERC="$HOME/.config/konsolerc"
-	KONSOLERC_CONTENT=$(cat <<EOF
-[Desktop Entry]
-DefaultProfile=ff.profile
-Version=1.0
+    CONFIG_ROOT="$HOME/Git/linux/etc"
 
-[General]
-ConfigVersion=1
-DefaultProfile=ff.profile
+    find "$CONFIG_ROOT/.config" \
+         "$CONFIG_ROOT/.local" \
+         -type f 2>/dev/null |
+    while read -r src; do
 
-[UiSettings]
-ColorScheme=
-EOF
-	)
+        rel="${src#$CONFIG_ROOT/}"
+        dst="$HOME/$rel"
 
-	write_if_changed "$KONSOLERC" "$KONSOLERC_CONTENT"
-
-	[ -f "$HOME/Git/linux/etc/ff.profile" ] && \
-	install_if_changed \
-		"$HOME/Git/linux/etc/ff.profile" \
-		"$HOME/.local/share/konsole/ff.profile"
-
-	[ -f "$HOME/Git/linux/etc/plasma-localerc" ] && \
-	install_if_changed \
-		"$HOME/Git/linux/etc/plasma-localerc" \
-		"$HOME/.config/plasma-localerc"
-
-	[ -f "$HOME/Git/linux/etc/mpv.conf" ] && \
-	install_if_changed \
-		"$HOME/Git/linux/etc/mpv.conf" \
-		"$HOME/.config/mpv/mpv.conf"
+        install_if_changed "$src" "$dst"
+    done
 
 	[ -f "$HOME/Git/linux/etc/.desktop/computer.desktop" ] && \
 	install_if_changed \

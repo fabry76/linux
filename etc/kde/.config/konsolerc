@@ -1,0 +1,13 @@
+[Desktop Entry]
+DefaultProfile=ff.profile
+Version=1.0
+
+[General]
+ConfigVersion=1
+DefaultProfile=ff.profile
+
+[MainWindow]
+ToolBarsMovable=Enabled
+
+[UiSettings]
+ColorScheme=

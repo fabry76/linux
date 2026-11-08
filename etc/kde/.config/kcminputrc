@@ -1,0 +1,5 @@
+[Keyboard]
+NumLock=0
+
+[Libinput][1267][12811][ELAN06DA:00 04F3:320B Touchpad]
+NaturalScroll=true

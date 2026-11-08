@@ -1,0 +1,21 @@
+[General]
+RememberOpenedTabs=false
+ShowFullPath=true
+ShowSelectionToggle=false
+ShowStatusBar=FullWidth
+ShowZoomSlider=true
+Version=202
+ViewPropsTimestamp=2026,11,7,13,45,31.965
+
+[IconsMode]
+PreviewSize=96
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
+
+[PreviewSettings]
+Plugins=ffmpegthumbnailer,audiothumbnail,blenderthumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,mobithumbnail,opendocumentthumbnail,gsthumbnail,rawthumbnail,svgthumbnail,ffmpegthumbs,gsf-office
