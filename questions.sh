@@ -196,6 +196,9 @@ ask_hostname() {
 # Orchestrator
 ###############################################
 run_installer_questions() {
+    if [[ "${DISTRO:-}" == "fedora" ]]; then
+        ask_hostname
+    fi
     ask_desktop
     ask_browsers
     ask_flatpak_browser
@@ -203,8 +206,4 @@ run_installer_questions() {
     ask_vscode
     ask_fastgate
     ask_hardening
-
-    if [[ "${DISTRO:-}" == "fedora" ]]; then
-        ask_hostname
-    fi
 }
