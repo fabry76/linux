@@ -142,22 +142,28 @@ STARSHIP_BIN="/usr/local/bin/starship"
 if [[ -x "$STARSHIP_BIN" ]]; then
     echo "Starship already installed, skipping."
 else
-    STARSHIP_LATEST=$(curl -fsSL https://api.github.com/repos/starship/starship/releases/latest \
-        | grep -oP '"tag_name": "\K[^"]+')
+    if ! STARSHIP_LATEST=$(curl -fsSL --retry 5 --retry-delay 2 --retry-max-time 60 \
+        --connect-timeout 15 --max-time 90 \
+        https://api.github.com/repos/starship/starship/releases/latest \
+        | grep -oP '"tag_name": "\K[^"]+'); then
+        echo "WARNING: Could not determine the latest Starship release; skipping installation."
+    else
+        echo "Installing Starship ${STARSHIP_LATEST}..."
 
-    echo "Installing Starship ${STARSHIP_LATEST}..."
+        STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
+        TMP_DIR=$(mktemp -d)
+        trap 'rm -rf "$TMP_DIR"' EXIT
 
-    STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
-
-    TMP_FILE=$(mktemp)
-    trap 'rm -f "$TMP_FILE"' EXIT
-
-    curl -fsSL "$STARSHIP_URL" -o "$TMP_FILE"
-    tar -xzf "$TMP_FILE" -C /usr/local/bin/
-
-    chmod 755 "$STARSHIP_BIN"
-
-    echo "Starship ${STARSHIP_LATEST} installed."
+        if curl -fsSL --retry 5 --retry-delay 2 --retry-max-time 60 \
+            --connect-timeout 15 --max-time 90 "$STARSHIP_URL" -o "$TMP_DIR/starship.tar.gz" &&
+            tar -xzf "$TMP_DIR/starship.tar.gz" -C "$TMP_DIR" &&
+            [[ -f "$TMP_DIR/starship" ]] &&
+            install -m 755 "$TMP_DIR/starship" "$STARSHIP_BIN"; then
+            echo "Starship ${STARSHIP_LATEST} installed."
+        else
+            echo "WARNING: Could not download or install Starship; continuing without it."
+        fi
+    fi
 fi
 
 ###############################################
