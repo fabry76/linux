@@ -1,0 +1,20 @@
+[Desktop Entry]
+Categories=Qt;Utility;Calculator;Education;Science;Math;
+Comment=Powerful and easy to use calculator
+Exec=qalculate-qt
+GenericName=Calculator
+Icon=org.gnome.Calculator
+Keywords=calculation;arithmetic;scientific;financial;
+Name=Qalculate! (Qt)
+NoDisplay=false
+Path=
+PrefersNonDefaultGPU=false
+StartupNotify=true
+StartupWMClass=qalculate-qt
+Terminal=false
+TerminalOptions=
+TryExec=qalculate-qt
+Type=Application
+Version=1.0
+X-KDE-SubstituteUID=false
+X-KDE-Username=

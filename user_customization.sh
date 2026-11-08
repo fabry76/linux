@@ -74,35 +74,14 @@ mkdir -p \
 	"$HOME/.config/pipewire/pipewire.conf.d"
 
 ###############################################
-# GNOME .desktop files
+# .desktop files
 ###############################################
-if [ "$DESKTOP_CHOICE" = "2" ]; then
-	SRC_BRV="/usr/share/applications/brave-origin.desktop"
-	DST_BRV="$HOME/.local/share/applications/brave-origin.desktop"
-
-	if [[ -f "$SRC_BRV" && ! -f "$DST_BRV" ]]; then
-		mkdir -p "$(dirname "$DST_BRV")"
-		cp "$SRC_BRV" "$DST_BRV"
-		sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_BRV"
-	elif [[ ! -f "$SRC_BRV" ]]; then
-		echo "Brave not installed, skipping shortcut"
-	else
-		echo "Brave shortcut already exists, skipping"
-	fi
-
-	SRC_CHR="/usr/share/applications/google-chrome.desktop"
-	DST_CHR="$HOME/.local/share/applications/google-chrome.desktop"
-
-	if [[ -f "$SRC_CHR" && ! -f "$DST_CHR" ]]; then
-		mkdir -p "$(dirname "$DST_CHR")"
-		cp "$SRC_CHR" "$DST_CHR"
-		sed -i 's/^StartupNotify=true$/StartupNotify=false/' "$DST_CHR"
-	elif [[ ! -f "$SRC_CHR" ]]; then
-		echo "Chrome not installed, skipping shortcut"
-	else
-		echo "Chrome shortcut already exists, skipping"
-	fi
-fi
+for desktop_file in "$HOME/Git/linux/etc/.desktop/"*; do
+	[ -f "$desktop_file" ] || continue
+	install_if_changed \
+		"$desktop_file" \
+		"$HOME/.local/share/applications/$(basename "$desktop_file")"
+done
 
 ###############################################
 # Fedora + GNOME: Tela icon theme
@@ -167,9 +146,9 @@ EOF
 		"$HOME/Git/linux/etc/mpv.conf" \
 		"$HOME/.config/mpv/mpv.conf"
 
-	[ -f "$HOME/Git/linux/etc/computer.desktop" ] && \
+	[ -f "$HOME/Git/linux/etc/.desktop/computer.desktop" ] && \
 	install_if_changed \
-		"$HOME/Git/linux/etc/computer.desktop" \
+		"$HOME/Git/linux/etc/.desktop/computer.desktop" \
 		"$DESKTOP_DIR/computer.desktop" \
 	755
 fi
