@@ -140,9 +140,9 @@ if [ "$DESKTOP_CHOICE" = "1" ]; then
 		"$DESKTOP_DIR/computer.desktop" \
 	755
 
-	if [ -f "$HOME/Git/linux/etc/kde-desktop-custom.sh" ]; then
+	if [ -f "$HOME/Git/linux/kde-desktop-custom.sh" ]; then
 		install_if_changed \
-			"$HOME/Git/linux/etc/kde-desktop-custom.sh" \
+			"$HOME/Git/linux/kde-desktop-custom.sh" \
 			"$HOME/.local/bin/kde-desktop-custom.sh" \
 			755
 

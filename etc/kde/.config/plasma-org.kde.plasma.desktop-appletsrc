@@ -23,7 +23,6 @@ popupWidth=647
 
 [Containments][25][Applets][26][Configuration][General]
 favoritesPortedToKAstats=true
-icon=fedora-logo-icon
 switchCategoryOnHover=true
 systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
 
