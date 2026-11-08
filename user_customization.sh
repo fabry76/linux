@@ -139,6 +139,22 @@ if [ "$DESKTOP_CHOICE" = "1" ]; then
 		"$HOME/Git/linux/etc/.desktop/computer.desktop" \
 		"$DESKTOP_DIR/computer.desktop" \
 	755
+
+	if [ -f "$HOME/Git/linux/etc/kde-desktop-custom.sh" ]; then
+		install_if_changed \
+			"$HOME/Git/linux/etc/kde-desktop-custom.sh" \
+			"$HOME/.local/bin/kde-desktop-custom.sh" \
+			755
+
+		mkdir -p "$HOME/.config/autostart"
+		write_if_changed "$HOME/.config/autostart/kde-desktop-custom.desktop" \
+"[Desktop Entry]
+Type=Application
+Name=KDE desktop custom
+Exec=$HOME/.local/bin/kde-desktop-custom.sh
+X-KDE-autostart-after=panel
+"
+	fi
 fi
 
 ###############################################
