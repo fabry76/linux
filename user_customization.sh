@@ -76,7 +76,7 @@ mkdir -p \
 ###############################################
 # .desktop files
 ###############################################
-for desktop_file in "$HOME/Git/linux/etc/.desktop/"*; do
+for desktop_file in "$HOME/Git/linux/etc/dot_desktop/"*; do
 	[ -f "$desktop_file" ] || continue
 	install_if_changed \
 		"$desktop_file" \
