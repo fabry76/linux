@@ -119,42 +119,10 @@ fi
 ###############################################
 # KDE configuration
 ###############################################
-if [ "$DESKTOP_CHOICE" = "1" ]; then
-
-    CONFIG_ROOT="$HOME/Git/linux/etc/kde"
-
-    find "$CONFIG_ROOT/.config" \
-         "$CONFIG_ROOT/.local" \
-         -type f 2>/dev/null |
-    while read -r src; do
-
-        rel="${src#$CONFIG_ROOT/}"
-        dst="$HOME/$rel"
-
-        install_if_changed "$src" "$dst"
-    done
-
-	[ -f "$HOME/Git/linux/etc/kde/computer.desktop" ] && \
-	install_if_changed \
-		"$HOME/Git/linux/etc/kde/computer.desktop" \
-		"$DESKTOP_DIR/computer.desktop" \
-	755
-
-	if [ -f "$HOME/Git/linux/kde-desktop-custom.sh" ]; then
-		install_if_changed \
-			"$HOME/Git/linux/kde-desktop-custom.sh" \
-			"$HOME/.local/bin/kde-desktop-custom.sh" \
-			755
-
-		mkdir -p "$HOME/.config/autostart"
-		write_if_changed "$HOME/.config/autostart/kde-desktop-custom.desktop" \
-"[Desktop Entry]
-Type=Application
-Name=KDE desktop custom
-Exec=$HOME/.local/bin/kde-desktop-custom.sh
-X-KDE-autostart-after=panel
-"
-	fi
+# Config files, desktop icon, autostart entry, widgets and wallpaper are all
+# handled by kde_user_customization.sh.
+if [ "$DESKTOP_CHOICE" = "1" ] && [ -f "$HOME/Git/linux/kde_user_customization.sh" ]; then
+	bash "$HOME/Git/linux/kde_user_customization.sh"
 fi
 
 ###############################################
