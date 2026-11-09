@@ -92,37 +92,20 @@ done
 		"$HOME/Pictures/wall.jpg"
 
 ###############################################
-# Fedora: extras
-###############################################
-if [ "${DISTRO:-}" = "fedora" ] && [ "$DESKTOP_CHOICE" = "2" ]; then
-	ICON_DIR="$HOME/.local/share/icons"
-
-# Tela icon theme installation
-	if [ -d "$ICON_DIR/Tela" ]; then
-		echo "Tela icon theme already installed, skipping."
-	else
-		echo "Installing Tela icon theme..."
-		TMP_DIR="$(mktemp -d)"
-
-		mkdir -p "$ICON_DIR"
-		curl -fsSL -o "$TMP_DIR/tela.zip" \
-			https://github.com/vinceliuice/Tela-icon-theme/archive/refs/heads/master.zip
-		unzip -q "$TMP_DIR/tela.zip" -d "$TMP_DIR"
-		"$TMP_DIR"/Tela-icon-theme-master/install.sh -d "$ICON_DIR"
-		rm -rf "$TMP_DIR"
-
-		echo "Tela icon theme installed."
-	fi
-	
-fi
-
-###############################################
 # KDE configuration
 ###############################################
 # Config files, desktop icon, autostart entry, widgets and wallpaper are all
 # handled by kde_user_customization.sh.
 if [ "$DESKTOP_CHOICE" = "1" ] && [ -f "$HOME/Git/linux/kde_user_customization.sh" ]; then
 	bash "$HOME/Git/linux/kde_user_customization.sh"
+fi
+
+###############################################
+# GNOME configuration
+###############################################
+# (reads the DISTRO variable).
+if [ "$DESKTOP_CHOICE" = "2" ] && [ -f "$HOME/Git/linux/gnome_user_customization.sh" ]; then
+	bash "$HOME/Git/linux/gnome_user_customization.sh"
 fi
 
 ###############################################
