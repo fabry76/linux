@@ -180,7 +180,7 @@ fi
 # -security suite, which does not exist for testing. Update with full-upgrade.
 install_available \
   timeshift vim htop fastfetch unrar plymouth-themes fwupd debsums starship \
-  nvme-cli rclone thermald wakeonlan
+  nvme-cli thermald wakeonlan
 
 systemctl enable thermald
 
@@ -194,8 +194,7 @@ fi
 # Multimedia
 ###############################################
 install_available \
-  ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi \
-  gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly lsp-plugins-lv2
+  ffmpeg gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly lsp-plugins-lv2
 
 ###############################################
 # Fonts & Icons
