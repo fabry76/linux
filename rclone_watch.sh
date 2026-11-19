@@ -15,16 +15,20 @@ DEBOUNCE=10                        # Seconds of inactivity to wait before syncin
 # Runs rclone inside a lock. The blocking flock makes any concurrent
 # call wait for the running sync to finish instead of being discarded,
 # so no change is ever lost.
+
 do_sync() {
   (
     flock 9
-    rclone sync "$WATCH" gdrive: \
+    rclone bisync "$WATCH" gdrive: \
       --drive-skip-gdocs \
       --exclude "*.tmp" \
       --exclude "*.swp" \
       --exclude "**/.git/**" \
       --exclude ".~lock.*" \
       --exclude "**node_modules/**" \
+      --conflict-resolve newer \
+      --resilient --recover \
+      --max-delete 25 \
       --log-file "$LOGFILE" \
       --log-level INFO
   ) 9>"$LOCK"
