@@ -48,8 +48,13 @@ if [ ! -f "$BOOTSTRAP_MARKER" ]; then
 
   mkdir -p "$(dirname "$BOOTSTRAP_MARKER")"
 
-  if rclone sync gdrive: "$HOME/Documents" \
+  if rclone bisync "$HOME/Documents" gdrive: --resync \
     --drive-skip-gdocs \
+    --exclude "*.tmp" \
+    --exclude "*.swp" \
+    --exclude "**/.git/**" \
+    --exclude ".~lock.*" \
+    --exclude "**node_modules/**" \
     --progress \
     --log-file "$HOME/rclone_bootstrap.log" \
     --log-level INFO; then
