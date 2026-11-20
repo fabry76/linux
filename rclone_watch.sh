@@ -28,7 +28,7 @@ do_sync() {
       --exclude "**node_modules/**" \
       --conflict-resolve newer \
       --resilient --recover \
-      --max-delete 25 \
+      --max-delete 10 \
       --log-file "$LOGFILE" \
       --log-level INFO
   ) 9>"$LOCK"
