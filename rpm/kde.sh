@@ -64,10 +64,11 @@ flatpak remote-add --if-not-exists \
 # Variables
 ###############################################
 BROWSER_APP=""
+TORRENT_APP="org.qbittorrent.qBittorrent"
 
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
-    org.qbittorrent.qBittorrent
+    "$TORRENT_APP"
 )
 
 ###############################################
@@ -96,7 +97,7 @@ esac
 flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 
 ###############################################
-# Browser override (dynamic)
+# Browser override
 ###############################################
 if [ -n "$BROWSER_APP" ]; then
     runuser -u "$TARGET_USER" -- bash -c "
@@ -109,3 +110,20 @@ if [ -n "$BROWSER_APP" ]; then
         --nosocket=cups
     "
 fi
+
+###############################################
+# BitTorrent override
+###############################################
+runuser -u "$TARGET_USER" -- bash -c "
+    flatpak override --user '$TORRENT_APP' \
+    --nofilesystem=host \
+    --nofilesystem=home \
+    --filesystem=xdg-download \
+    --nodevice=all \
+    --nosocket=pulseaudio \
+    --nosocket=cups \
+    --nosocket=pcsc \
+    --nosocket=ssh-auth \
+    --nosocket=x11 \
+    --nosocket=fallback-x11
+"
