@@ -19,6 +19,8 @@ DEBOUNCE=10                        # Seconds of inactivity to wait before syncin
 do_sync() {
   (
     flock 9
+    set -o pipefail
+
     rclone bisync "$WATCH" gdrive: \
       --drive-skip-gdocs \
       --exclude "*.tmp" \
@@ -29,8 +31,8 @@ do_sync() {
       --conflict-resolve newer \
       --resilient --recover \
       --max-delete 10 \
-      --log-file "$LOGFILE" \
-      --log-level INFO
+      --log-level INFO 2>&1 |
+      { grep -E ': (Copied|Deleted|Renamed|Moved)|No changes found|NOTICE|WARNING|ERROR' || true; } >> "$LOGFILE"
   ) 9>"$LOCK"
 }
 
