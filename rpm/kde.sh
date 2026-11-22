@@ -100,10 +100,12 @@ flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 ###############################################
 if [ -n "$BROWSER_APP" ]; then
     runuser -u "$TARGET_USER" -- bash -c "
-        flatpak override --user $BROWSER_APP \
+        flatpak override --user '$BROWSER_APP' \
         --nofilesystem=host \
         --filesystem=xdg-download \
         --nodevice=all \
-        --nosocket=x11
+        --nosocket=x11 \
+        --nosocket=pcsc \
+        --nosocket=cups
     "
 fi
