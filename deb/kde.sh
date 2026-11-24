@@ -185,7 +185,8 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
         skanpage \
         kclock \
         kamoso \
-        qalculate-qt
+        qalculate-qt \
+        qbittorrent
 
     systemctl set-default graphical.target
 
@@ -207,12 +208,6 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
             exit 1
             ;;
     esac
-
-    ###############################################
-    # BitTorrent - Snap
-    ###############################################
-
-    snap install qbittorrent-arnatious
 
 else
     echo "ERROR: Unsupported distribution: $DISTRO" >&2

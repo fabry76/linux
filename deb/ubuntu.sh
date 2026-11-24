@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
 
 ###############################################
 # Root check
@@ -122,7 +123,7 @@ apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rcl
 ###############################################
 apt-get install -y debconf-utils
 
-echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true" \
     | debconf-set-selections
 
 ###############################################
