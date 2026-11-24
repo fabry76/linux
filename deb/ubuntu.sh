@@ -120,18 +120,17 @@ apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rcl
 ###############################################
 # Microsoft Fonts EULA
 ###############################################
+apt-get install -y debconf-utils
 
-export DEBIAN_FRONTEND=noninteractive
-
-printf '%s\n' \
-    "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
     | debconf-set-selections
 
 ###############################################
 # Multimedia packages
 ###############################################
-
 apt-get install -y \
+    -o Dpkg::Options::="--force-confdef" \
+    -o Dpkg::Options::="--force-confold" \
     ffmpeg \
     ffmpegthumbnailer \
     ubuntu-restricted-extras \

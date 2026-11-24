@@ -33,6 +33,11 @@ ask_desktop() {
         [[ "$DESKTOP_CHOICE" =~ ^[12]$ ]] && break
     done
     echo
+
+    if [[ "$DISTRO" == "ubuntu" && "$DESKTOP_CHOICE" == "2" ]]; then
+        echo "Do not use this script to install Ubuntu GNOME."
+        exit 1
+    fi
 }
 
 ###############################################
