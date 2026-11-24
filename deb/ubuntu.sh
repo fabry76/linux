@@ -17,6 +17,7 @@ TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
 DISTRO="ubuntu"
+export DISTRO
 
 ###############################################
 # Functions
