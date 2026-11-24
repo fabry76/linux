@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
 
 ###############################################
 # Root check
@@ -64,12 +65,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$SNAP_BROWSER"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$SNAP_BROWSER"
         ;;
 esac
 
