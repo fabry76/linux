@@ -4,14 +4,12 @@ set -euo pipefail
 ###############################################
 # Args
 ###############################################
-
 TARGET_USER="$1"
 BROWSER_SELECTION="${2:-0}"
 
 ###############################################
 # DEBIAN
 ###############################################
-
 if [[ "$DISTRO" == "debian" ]]; then
 
     FLATPAK_BROWSER="$BROWSER_SELECTION"
@@ -19,7 +17,6 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
     # KDE Plasma base
     ###############################################
-
     apt-get install -y \
         plasma-desktop \
         plasma-browser-integration- \
@@ -57,7 +54,6 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
     # KDE Flatpak base setup
     ###############################################
-
     apt-get install -y \
         flatpak \
         plasma-discover-backend-flatpak \
@@ -71,7 +67,6 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
     # Variables
     ###############################################
-
     BROWSER_APP=""
     TORRENT_APP="org.kde.ktorrent"
 
@@ -83,7 +78,6 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
     # Browser selection
     ###############################################
-
     case "$FLATPAK_BROWSER" in
         1)
             BROWSER_APP="io.gitlab.librewolf-community"
@@ -104,13 +98,11 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
     # Install Flatpaks
     ###############################################
-
     flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
 
     ###############################################
     # Browser override
     ###############################################
-
     if [ -n "$BROWSER_APP" ]; then
         runuser -u "$TARGET_USER" -- bash -c "
             flatpak override --user '$BROWSER_APP' \
@@ -126,7 +118,6 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
     # BitTorrent override
     ###############################################
-
     runuser -u "$TARGET_USER" -- bash -c "
         flatpak override --user '$TORRENT_APP' \
         --nofilesystem=host \
@@ -144,7 +135,6 @@ if [[ "$DISTRO" == "debian" ]]; then
 ###############################################
 # UBUNTU
 ###############################################
-
 elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     SNAP_BROWSER="$BROWSER_SELECTION"
@@ -208,7 +198,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
         2) snap install brave ;;
     esac
 
-    snap install ktorrent
+    snap install transmission
 
 else
     echo "ERROR: Unsupported distribution: $DISTRO" >&2
