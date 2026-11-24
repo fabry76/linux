@@ -9,20 +9,6 @@ TARGET_USER="$1"
 BROWSER_SELECTION="${2:-0}"
 
 ###############################################
-# Snap installation helper
-###############################################
-
-install_snap_if_missing() {
-    local package="$1"
-
-    if ! snap list "$package" >/dev/null 2>&1; then
-        snap install "$package"
-    else
-        echo "$package is already installed."
-    fi
-}
-
-###############################################
 # DEBIAN
 ###############################################
 
@@ -209,10 +195,10 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     case "$SNAP_BROWSER" in
         1)
-            install_snap_if_missing firefox
+            snap install firefox
             ;;
         2)
-            install_snap_if_missing brave
+            snap install brave
             ;;
         0)
             ;;
@@ -226,7 +212,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     # BitTorrent - Snap
     ###############################################
 
-    install_snap_if_missing qbittorrent-arnatious
+    snap install qbittorrent-arnatious
 
 else
     echo "ERROR: Unsupported distribution: $DISTRO" >&2
