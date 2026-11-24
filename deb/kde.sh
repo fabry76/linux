@@ -198,7 +198,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
         2) snap install brave ;;
     esac
 
-    snap install transmission
+    snap install ktorrent
 
 else
     echo "ERROR: Unsupported distribution: $DISTRO" >&2
