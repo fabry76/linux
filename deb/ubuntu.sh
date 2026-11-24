@@ -146,6 +146,34 @@ ufw allow 5353/udp
 ufw --force enable
 
 ###############################################
+# Network Manager only
+###############################################
+NETPLAN_FILE="/etc/netplan/99-NetworkManager.yaml"
+
+NETPLAN_CONTENT=$(cat << 'EOF'
+network:
+  version: 2
+  renderer: NetworkManager
+EOF
+)
+
+write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
+
+# Enable NetworkManager
+systemctl enable NetworkManager
+
+# Disable systemd-networkd
+systemctl disable systemd-networkd.service 2>/dev/null || true
+systemctl disable systemd-networkd.socket 2>/dev/null || true
+systemctl disable systemd-networkd-wait-online.service 2>/dev/null || true
+
+# Netplan 
+chown root:root /etc/netplan/99-NetworkManager.yaml
+chmod 600 /etc/netplan/99-NetworkManager.yaml
+netplan generate
+netplan apply
+
+###############################################
 # GRUB
 ###############################################
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub

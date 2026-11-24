@@ -172,6 +172,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
         plasma-workspace \
         kwin-wayland \
         sddm \
+        sddm-theme-breeze \
         xserver-xorg \
         dolphin \
         konsole \
