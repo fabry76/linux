@@ -1,22 +1,23 @@
+
 #!/usr/bin/env bash
 ###############################################
 # questions.sh
 #
 # Generic interactive prompts shared by every distro installer
-# (fedora.sh, debian.sh, ...).
+# (fedora.sh, debian.sh, ubuntu.sh, ...).
 #
 # Usage (from a distro script, AFTER SCRIPT_DIR is defined):
 #
 #   source "$SCRIPT_DIR/questions.sh"
 #   run_installer_questions
 #
-# Distro-specific prompts are guarded in run_installer_questions.
-#
 # IMPORTANT: this file must be `source`d, never executed with
-# `bash questions.sh`, otherwise the variables it sets (DESKTOP_CHOICE,
-# BROWSERS, FLATPAK_BROWSER, OFFICE_CHOICE, INSTALL_VSCODE,
-# RUN_FASTGATE, RUN_HARDENING, ...) would not survive in the
-# calling script.
+# `bash questions.sh`, otherwise the variables it sets will not
+# survive in the calling script.
+###############################################
+
+###############################################
+# Desktop environment
 ###############################################
 
 ask_desktop() {
@@ -33,6 +34,10 @@ ask_desktop() {
     done
     echo
 }
+
+###############################################
+# Main browsers
+###############################################
 
 ask_browsers() {
     while :; do
@@ -61,6 +66,10 @@ ask_browsers() {
     echo
 }
 
+###############################################
+# Flatpak browser
+###############################################
+
 ask_flatpak_browser() {
     while :; do
         echo "Which Flatpak browser would you like to install?"
@@ -79,6 +88,31 @@ ask_flatpak_browser() {
     echo
 }
 
+###############################################
+# Snap browser
+###############################################
+
+ask_snap_browser() {
+    while :; do
+        echo "Which Snap browser would you like to install?"
+        echo "0) None"
+        echo "1) Brave"
+        echo "2) Firefox"
+        echo
+
+        read -rp "Choice [0-2]: " SNAP_BROWSER
+
+        [[ "$SNAP_BROWSER" =~ ^[0-2]$ ]] && break
+
+        echo "Please enter a number between 0 and 2."
+    done
+    echo
+}
+
+###############################################
+# Nextcloud Office
+###############################################
+
 ask_office() {
     while :; do
         read -rp "Do you want to install Nextcloud Office? (Y/n): " INSTALL_OFFICE
@@ -89,6 +123,10 @@ ask_office() {
     echo
 }
 
+###############################################
+# Visual Studio Code
+###############################################
+
 ask_vscode() {
     while :; do
         read -rp "Do you want to install Visual Studio Code? (Y/n): " INSTALL_VSCODE
@@ -98,6 +136,10 @@ ask_vscode() {
     done
     echo
 }
+
+###############################################
+# Fastgate SMB share
+###############################################
 
 ask_fastgate() {
     while :; do
@@ -111,6 +153,7 @@ ask_fastgate() {
         CRED_FILE="/etc/samba/fastgate.creds"
         install -d -m 700 /etc/samba
         CRED_STATE="missing"
+
         if [ -f "$CRED_FILE" ]; then
             if grep -qE "^username=.+" "$CRED_FILE" &&
                grep -qE "^password=.+" "$CRED_FILE"; then
@@ -119,6 +162,7 @@ ask_fastgate() {
                 CRED_STATE="invalid"
             fi
         fi
+
         if [ "$CRED_STATE" = "valid" ]; then
             echo
             while :; do
@@ -127,44 +171,59 @@ ask_fastgate() {
                 [[ "$CONFIRM" =~ ^([Yy]|[Nn])$ ]] && break
                 echo "Please answer y or n."
             done
+
             if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
                 CRED_STATE="update"
             fi
         fi
+
         if [ "$CRED_STATE" = "missing" ] ||
            [ "$CRED_STATE" = "invalid" ] ||
            [ "$CRED_STATE" = "update" ]; then
+
             echo
             echo "=== Fastgate credentials ==="
+
             while :; do
                 read -rp "Username: " NAS_USER
                 [ -n "$NAS_USER" ] && break
                 echo "Username cannot be empty."
             done
+
             while :; do
                 read -rsp "Password: " NAS_PASS
                 echo
                 [ -n "$NAS_PASS" ] && break
                 echo "Password cannot be empty."
             done
+
             OLD_UMASK="$(umask)"
             umask 077
+
             cat > "$CRED_FILE" <<EOF
 username=$NAS_USER
 password=$NAS_PASS
 EOF
+
             umask "$OLD_UMASK"
+
             chown root:root "$CRED_FILE"
             chmod 600 "$CRED_FILE"
 
-            if ! grep -qE "^username=.+" "$CRED_FILE" || ! grep -qE "^password=.+" "$CRED_FILE"; then
+            if ! grep -qE "^username=.+" "$CRED_FILE" ||
+               ! grep -qE "^password=.+" "$CRED_FILE"; then
                 echo "ERROR: failed to write valid Fastgate credentials to $CRED_FILE" >&2
                 exit 1
             fi
         fi
     fi
+
     echo
 }
+
+###############################################
+# System hardening
+###############################################
 
 ask_hardening() {
     while :; do
@@ -175,33 +234,50 @@ ask_hardening() {
     done
 }
 
+###############################################
+# Hostname
+###############################################
+
 ask_hostname() {
     echo
     read -rp "Enter the hostname for this system: " NEW_HOSTNAME
-    if [ -n "$NEW_HOSTNAME" ]; then
-        CURRENT_HOSTNAME="$(hostnamectl --static)"
-        if [ "$CURRENT_HOSTNAME" != "$NEW_HOSTNAME" ]; then
-            hostnamectl set-hostname --static "$NEW_HOSTNAME"
-            echo "Hostname changed from '$CURRENT_HOSTNAME' to '$NEW_HOSTNAME'."
-        else
-            echo "Hostname is already set to '$NEW_HOSTNAME'."
-        fi
-    else
-        echo "No hostname provided, keeping current hostname."
-    fi
     echo
 }
 
 ###############################################
 # Orchestrator
 ###############################################
+
 run_installer_questions() {
-    if [[ "${DISTRO:-}" == "fedora" ]]; then
+
+    # Initialize distro-specific variables
+    FLATPAK_BROWSER=0
+    SNAP_BROWSER=0
+    NEW_HOSTNAME=""
+
+    # Hostname: Fedora and Ubuntu only
+    if [[ "$DISTRO" == "fedora" || "$DISTRO" == "ubuntu" ]]; then
         ask_hostname
     fi
+
     ask_desktop
     ask_browsers
-    ask_flatpak_browser
+
+    # Browser package manager depends on distribution
+    case "$DISTRO" in
+        fedora|debian)
+            ask_flatpak_browser
+            ;;
+
+        ubuntu)
+            ask_snap_browser
+            ;;
+
+        *)
+            echo "WARNING: No browser package manager configured for $DISTRO."
+            ;;
+    esac
+
     ask_office
     ask_vscode
     ask_fastgate

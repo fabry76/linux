@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 ###############################################
@@ -9,18 +10,13 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ###############################################
-# Disable automatic apt timers during provisioning
-###############################################
-systemctl stop apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
-systemctl stop apt-daily.service apt-daily-upgrade.service 2>/dev/null || true
-
-###############################################
 # Variables
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
+DISTRO="fedora"
 
 ###############################################
 # Functions
@@ -44,137 +40,87 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
-# Initial selection
+# Questions
 ###############################################
-while :; do
-    read -rp "Do you want to mount the Fastgate SMB share? (Y/n): " RUN_FASTGATE
-    RUN_FASTGATE="${RUN_FASTGATE:-Y}"
-    [[ "$RUN_FASTGATE" =~ ^([Yy]|[Nn])$ ]] && break
-    echo "Please answer y or n."
-done
-if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    CRED_FILE="/etc/samba/fastgate.creds"
-    install -d -m 700 /etc/samba
-    CRED_STATE="missing"
-    if [ -f "$CRED_FILE" ]; then
-        if grep -q "^username=" "$CRED_FILE" &&
-           grep -q "^password=" "$CRED_FILE"; then
-            CRED_STATE="valid"
-        else
-            CRED_STATE="invalid"
-        fi
-    fi
-    if [ "$CRED_STATE" = "valid" ]; then
-        echo
-        while :; do
-            read -rp "Fastgate credentials already exist. Update credentials? (y/N): " CONFIRM
-            CONFIRM="${CONFIRM:-N}"
-            [[ "$CONFIRM" =~ ^([Yy]|[Nn])$ ]] && break
-            echo "Please answer y or n."
-        done
-        if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
-            CRED_STATE="update"
-        fi
-    fi
-    if [ "$CRED_STATE" = "missing" ] ||
-       [ "$CRED_STATE" = "invalid" ] ||
-       [ "$CRED_STATE" = "update" ]; then
-        echo
-        echo "=== Fastgate credentials ==="
-        read -rp "Username: " NAS_USER
-        read -rsp "Password: " NAS_PASS
-        echo
-        OLD_UMASK="$(umask)"
-        umask 077
-        cat > "$CRED_FILE" <<EOF
-username=$NAS_USER
-password=$NAS_PASS
-EOF
-        umask "$OLD_UMASK"
-        chown root:root "$CRED_FILE"
-        chmod 600 "$CRED_FILE"
-    fi
-fi
-echo
+source "$GIT_DIR/questions.sh"
+run_installer_questions
 
 ###############################################
-# Update repositories
+# Dependencies for key management & repositories
 ###############################################
-apt-get update
-apt-get -y upgrade
-
-###############################################
-# Install dependencies for key management
-###############################################
-apt-get install -y curl
+apt-get install -y gpg curl
 install -d -m 0755 /etc/apt/keyrings
 
 ###############################################
-# Base system & firmware
+# Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y intel-media-va-driver-non-free nvme-cli
+apt-get install -y intel-media-va-driver-non-free
 
 ###############################################
-# Desktop & GNOME utilities
+# Desktop Environment
 ###############################################
-apt-get install -y \
-  gnome-shell-extension-manager \
-  gnome-weather \
-  gnome-calendar \
-  gnome-tweaks \
-  gnome-snapshot \
-  gnome-sound-recorder \
-  showtime
+case "$DESKTOP_CHOICE" in
+    1)
+        echo
+        echo "Installing KDE Plasma..."
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
+        ;;
+    2)
+        echo
+        echo "Installing GNOME..."
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$FLATPAK_BROWSER"
+        ;;
+esac
 
 ###############################################
-# Applications & Utilities
+# Browsers
 ###############################################
-apt-get install -y \
-  vim \
-  htop \
-  fastfetch \
-  curl \
-  timeshift \
-  apt-show-versions \
-  rclone \
-  unrar \
-  starship \
-  debsums \
-  wakeonlan
+for browser in "${BROWSERS[@]}"; do
+    browser="${browser// /}"
+
+    case "$browser" in
+        1)
+            bash "$SCRIPT_DIR/brave.sh"
+            ;;
+        2)
+            bash "$SCRIPT_DIR/chrome.sh"
+            ;;
+        3)
+            bash "$SCRIPT_DIR/firefox.sh"
+            ;;
+    esac
+done
 
 ###############################################
-# Other apps
+# Office
 ###############################################
-bash "$SCRIPT_DIR/vscode.sh"
-bash "$SCRIPT_DIR/brave.sh"
-#bash "$SCRIPT_DIR/chrome.sh"
+if [[ "$INSTALL_OFFICE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/nextcloud.sh"
+fi
 
 ###############################################
-# Multimedia and Extra
+# Visual Studio Code
+###############################################
+if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/vscode.sh"
+fi
+
+##############################################
+# Common Utilities
+###############################################
+apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rclone wakeonlan
+
+###############################################
+# Multimedia & Extras
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-
-apt-get install -y \
-  ffmpeg \
-  ffmpegthumbnailer \
-  ubuntu-restricted-extras \
-  fonts-firacode \
-  lsp-plugins-lv2
-  
-###############################################
-# Snaps
-###############################################
-snap install pinta onlyoffice-desktopeditors fragments
+apt-get install -y apt-get install -y ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins-lv2
 
 ###############################################
-# Firewall
+# Fonts & Icons
 ###############################################
-apt-get install -y gufw
-
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow mdns
-ufw --force enable
+apt-get install -y fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
+apt-get install -y papirus-icon-theme yaru-theme-icon
 
 ###############################################
 # Printing & Scanning
@@ -183,11 +129,20 @@ apt-get install -y \
   cups \
   printer-driver-all \
   printer-driver-cups-pdf \
-  sane \
-  simple-scan
+  sane
 
 usermod -aG lpadmin "$TARGET_USER"
 systemctl enable cups
+
+###############################################
+# Firewall
+###############################################
+apt-get install -y ufw
+
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 5353/udp
+ufw --force enable
 
 ###############################################
 # GRUB
@@ -218,22 +173,11 @@ fi
 ###############################################
 # Hardening
 ###############################################
-write_if_changed /etc/modprobe.d/disable-protocols.conf "$(cat << 'EOF'
-install dccp /bin/false
-install sctp /bin/false
-install rds /bin/false
-install tipc /bin/false
-
-blacklist dccp
-blacklist sctp
-blacklist rds
-blacklist tipc
-EOF
-)"
-
-sysctl --system
-echo
-echo "Hardening completed."
+if [ -f "$SCRIPT_DIR/hard_deb.sh" ]; then
+  if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/hard_ubu.sh"
+  fi
+fi
 
 ###############################################
 # Cleanup
@@ -241,10 +185,15 @@ echo "Hardening completed."
 apt-get -y autoremove
 apt-get clean
 
-echo
-echo "Installation completed."
+echo "System installation completed."
 
 ###############################################
 # User session script
 ###############################################
-runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE=2 bash "$GIT_DIR/user_customization.sh"
+USER_SCRIPT="$GIT_DIR/user_customization.sh"
+
+if [ -f "$USER_SCRIPT" ]; then
+    echo "Running user session script: $USER_SCRIPT"
+
+    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" bash "$USER_SCRIPT"
+fi

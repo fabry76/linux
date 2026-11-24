@@ -1,18 +1,29 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
 
 ###############################################
-# Functions
+# Ubuntu - Snap installation
 ###############################################
-write_if_changed() {
-local file="$1"
-local content="$2"
 
-if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
-return 0
+if [[ "$DISTRO" == "ubuntu" ]]; then
+    snap install code --classic
+    exit 0
 fi
 
-printf "%s" "$content" > "$file"
+###############################################
+# Functions
+###############################################
+
+write_if_changed() {
+    local file="$1"
+    local content="$2"
+
+    if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+        return 0
+    fi
+
+    printf "%s" "$content" > "$file"
 }
 
 ###############################################
@@ -22,11 +33,11 @@ printf "%s" "$content" > "$file"
 TMP_VSCODE_KEY="$(mktemp)"
 
 curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-gpg --batch --yes --dearmor --output "$TMP_VSCODE_KEY"
+    gpg --batch --yes --dearmor --output "$TMP_VSCODE_KEY"
 
 if [ ! -f /etc/apt/keyrings/microsoft-vscode.gpg ] || \
    ! cmp -s "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg; then
-  install -m 0644 "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg
+    install -m 0644 "$TMP_VSCODE_KEY" /etc/apt/keyrings/microsoft-vscode.gpg
 fi
 
 rm -f "$TMP_VSCODE_KEY"
@@ -44,6 +55,7 @@ EOF
 ###############################################
 # Installation
 ###############################################
+
 echo "code code/add-microsoft-repo boolean false" | debconf-set-selections
 
 apt-get update
