@@ -195,14 +195,13 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     ###############################################
 
     case "$SNAP_BROWSER" in
-        1)
-            snap install firefox
-            ;;
-        2)
-            snap install brave
-            ;;
-        0)
-            ;;
+        1|2)
+            snap wait system seed.loaded
+            echo "Installing snap browser (can take several minutes, no progress shown)..."
+            ;;&
+        1) snap install firefox ;;
+        2) snap install brave ;;
+        0) ;;
         *)
             echo "ERROR: Invalid Snap browser selection: $SNAP_BROWSER" >&2
             exit 1
