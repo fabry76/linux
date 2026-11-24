@@ -115,7 +115,7 @@ apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rcl
 # Multimedia & Extras
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt-get install -y apt-get install -y ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins-lv2
+apt-get install -y ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins-lv2
 
 ###############################################
 # Fonts & Icons

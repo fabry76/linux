@@ -96,8 +96,8 @@ ask_snap_browser() {
     while :; do
         echo "Which Snap browser would you like to install?"
         echo "0) None"
-        echo "1) Brave"
-        echo "2) Firefox"
+        echo "1) Firefox"
+        echo "2) Brave"
         echo
 
         read -rp "Choice [0-2]: " SNAP_BROWSER

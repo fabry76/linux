@@ -17,6 +17,8 @@ TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
+DISTRO="debian"
+export DISTRO
 
 ###############################################
 # Functions

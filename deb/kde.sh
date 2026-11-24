@@ -208,10 +208,10 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     case "$SNAP_BROWSER" in
         1)
-            install_snap_if_missing brave
+            install_snap_if_missing firefox
             ;;
         2)
-            install_snap_if_missing firefox
+            install_snap_if_missing brave
             ;;
         0)
             ;;
