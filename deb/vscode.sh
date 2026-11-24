@@ -7,7 +7,7 @@ set -euo pipefail
 ###############################################
 
 if [[ "$DISTRO" == "ubuntu" ]]; then
-    snap install code --classic
+    snap install code --classic --progress=plain
     exit 0
 fi
 

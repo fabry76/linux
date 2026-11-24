@@ -195,10 +195,10 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     case "$SNAP_BROWSER" in
         1)
-            snap install firefox
+            snap install firefox --progress=plain
             ;;
         2)
-            snap install brave
+            snap install brave --progress=plain
             ;;
         0)
             ;;
@@ -212,7 +212,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     # BitTorrent - Snap
     ###############################################
 
-    snap install qbittorrent-arnatious
+    snap install qbittorrent-arnatious --progress=plain
 
 else
     echo "ERROR: Unsupported distribution: $DISTRO" >&2
