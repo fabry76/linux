@@ -35,7 +35,8 @@ ask_desktop() {
     echo
 
     if [[ "$DISTRO" == "ubuntu" && "$DESKTOP_CHOICE" == "2" ]]; then
-        echo "Do not use this script to install Ubuntu GNOME."
+        echo "Do NOT use this script to install Ubuntu GNOME."
+        echo
         exit 1
     fi
 }
