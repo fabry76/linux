@@ -142,7 +142,8 @@ fi
 ###############################################
 apt-get install -y \
   cups \
-  printer-driver-all \
+  hplip \
+  printer-driver-gutenprint \
   printer-driver-cups-pdf \
   sane
 
