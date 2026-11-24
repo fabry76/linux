@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_PRIORITY=critical
+export APT_LISTCHANGES_FRONTEND=none
+export NEEDRESTART_SUSPEND=1
 
 ###############################################
 # Root check
@@ -34,6 +38,13 @@ write_if_changed() {
   printf "%s" "$content" > "$file"
 }
 
+apt_install() {
+  apt-get install -y \
+    -o Dpkg::Options::="--force-confdef" \
+    -o Dpkg::Options::="--force-confold" \
+    "$@"
+}
+
 ###############################################
 # Full Verbose Logging
 ###############################################
@@ -48,15 +59,21 @@ source "$GIT_DIR/questions.sh"
 run_installer_questions
 
 ###############################################
-# Dependencies for key management & repositories
+# Base dependencies + debconf preseed
 ###############################################
-apt-get install -y gpg curl
+apt-get update
+apt_install gpg curl debconf-utils
 install -d -m 0755 /etc/apt/keyrings
 
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true" \
+  | debconf-set-selections
+
 ###############################################
-# Initial Firmware, Drivers and Utilities
+# Intel media driver (only if an Intel GPU is present)
 ###############################################
-apt-get install -y intel-media-va-driver-non-free
+if grep -qs 0x8086 /sys/class/drm/card*/device/vendor; then
+  apt_install intel-media-va-driver-non-free
+fi
 
 ###############################################
 # Desktop Environment
@@ -94,34 +111,32 @@ for browser in "${BROWSERS[@]}"; do
 done
 
 ###############################################
-# Fonts & Icons
+# Packages from the Ubuntu archive (single apt call)
 ###############################################
-apt-get install -y fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
-apt-get install -y papirus-icon-theme
+PKGS=(
+  # Fonts & icons
+  fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode
+  fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji
+  papirus-icon-theme
 
-###############################################
-# Microsoft Fonts EULA
-###############################################
-apt-get install -y debconf-utils
+  # Multimedia
+  ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins-lv2
 
-echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true" \
-    | debconf-set-selections
+  # Common utilities
+  timeshift fastfetch unrar debsums starship nvme-cli rclone wakeonlan
 
-###############################################
-# Multimedia packages
-###############################################
-apt-get install -y \
-    -o Dpkg::Options::="--force-confdef" \
-    -o Dpkg::Options::="--force-confold" \
-    ffmpeg \
-    ffmpegthumbnailer \
-    ubuntu-restricted-extras \
-    lsp-plugins-lv2
+  # Printing & scanning
+  cups printer-driver-gutenprint printer-driver-cups-pdf sane
+  
+  # Firewall
+  ufw
+)
 
-##############################################
-# Common Utilities
-###############################################
-apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rclone wakeonlan
+if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+  PKGS+=(cifs-utils)
+fi
+
+apt_install "${PKGS[@]}"
 
 ###############################################
 # Office
@@ -138,54 +153,18 @@ if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
 fi
 
 ###############################################
-# Printing & Scanning
+# Printing configuration
 ###############################################
-apt-get install -y \
-  cups \
-  printer-driver-gutenprint \
-  printer-driver-cups-pdf \
-  sane
-
 usermod -aG lpadmin "$TARGET_USER"
 systemctl enable cups
 
 ###############################################
 # Firewall
 ###############################################
-apt-get install -y ufw
-
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow 5353/udp
 ufw --force enable
-
-###############################################
-# Network Manager only
-###############################################
-NETPLAN_FILE="/etc/netplan/99-NetworkManager.yaml"
-
-NETPLAN_CONTENT=$(cat << 'EOF'
-network:
-  version: 2
-  renderer: NetworkManager
-EOF
-)
-
-write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
-
-# Enable NetworkManager
-systemctl enable NetworkManager
-
-# Disable systemd-networkd
-systemctl disable systemd-networkd.service 2>/dev/null || true
-systemctl disable systemd-networkd.socket 2>/dev/null || true
-systemctl disable systemd-networkd-wait-online.service 2>/dev/null || true
-
-# Netplan 
-chown root:root /etc/netplan/99-NetworkManager.yaml
-chmod 600 /etc/netplan/99-NetworkManager.yaml
-netplan generate
-netplan apply
 
 ###############################################
 # GRUB
@@ -209,17 +188,14 @@ locale-gen
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    apt-get install -y cifs-utils
     bash "$GIT_DIR/fastgate.sh"
 fi
 
 ###############################################
 # Hardening
 ###############################################
-if [ -f "$SCRIPT_DIR/hard_deb.sh" ]; then
-  if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]]; then
+if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]] && [ -f "$SCRIPT_DIR/hard_ubu.sh" ]; then
     bash "$SCRIPT_DIR/hard_ubu.sh"
-  fi
 fi
 
 ###############################################
@@ -228,7 +204,28 @@ fi
 apt-get -y autoremove
 apt-get clean
 
-echo "System installation completed."
+###############################################
+# Network Manager only
+###############################################
+NETPLAN_FILE="/etc/netplan/99-NetworkManager.yaml"
+
+NETPLAN_CONTENT=$(cat << 'EOF'
+network:
+  version: 2
+  renderer: NetworkManager
+EOF
+)
+
+write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
+chown root:root "$NETPLAN_FILE"
+chmod 600 "$NETPLAN_FILE"
+
+systemctl enable NetworkManager
+systemctl disable systemd-networkd.service 2>/dev/null || true
+systemctl disable systemd-networkd.socket 2>/dev/null || true
+systemctl disable systemd-networkd-wait-online.service 2>/dev/null || true
+
+netplan generate
 
 ###############################################
 # User session script
