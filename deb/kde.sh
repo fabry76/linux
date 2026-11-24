@@ -152,7 +152,6 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     ###############################################
     # KDE Plasma base
     ###############################################
-
     sudo apt install -y \
         plasma-desktop \
         plasma-browser-integration- \
@@ -187,7 +186,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
         kclock \
         kamoso \
         qalculate-qt \
-        qbittorrent
+        transmission-qt
 
     systemctl set-default graphical.target
 
