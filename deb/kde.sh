@@ -155,6 +155,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     sudo apt install -y \
         plasma-desktop \
+        plasma-browser-integration- \
         plasma-workspace \
         kwin-wayland \
         sddm \
