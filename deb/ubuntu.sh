@@ -82,12 +82,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$SNAP_BROWSER"
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$SNAP_BROWSER"
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER"
         ;;
 esac
 
