@@ -1,4 +1,11 @@
+#!/usr/bin/env bash
 set -euo pipefail
+
+export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_PRIORITY=critical
+export APT_LISTCHANGES_FRONTEND=none
+# Skip needrestart during provisioning; reboot at the end instead.
+export NEEDRESTART_SUSPEND=1
 
 ###############################################
 # Root check
@@ -106,73 +113,88 @@ apt-get update
 apt-get -y upgrade
 
 ###############################################
-# Install dependencies for key management
+# Dependencies for key management + debconf preseed
 ###############################################
-apt-get install -y curl
+apt-get install -y curl debconf-utils
 install -d -m 0755 /etc/apt/keyrings
 
-###############################################
-# Base system & firmware
-###############################################
-apt-get install -y intel-media-va-driver-non-free nvme-cli
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true" \
+  | debconf-set-selections
 
 ###############################################
-# Desktop & GNOME utilities
+# Packages from the Ubuntu archive (single apt call)
 ###############################################
-apt-get install -y \
-  gnome-shell-extension-manager \
-  gnome-weather \
-  gnome-calendar \
-  gnome-tweaks \
-  gnome-snapshot \
-  gnome-sound-recorder \
+PKGS=(
+  # Base system & firmware
+  nvme-cli
+
+  # Desktop & GNOME utilities
+  gnome-shell-extension-manager
+  gnome-weather
+  gnome-calendar
+  gnome-tweaks
+  gnome-snapshot
+  gnome-sound-recorder
   showtime
 
-###############################################
-# Applications & Utilities
-###############################################
-apt-get install -y \
-  vim \
-  htop \
-  fastfetch \
-  curl \
-  timeshift \
-  apt-show-versions \
-  rclone \
-  unrar \
-  starship \
-  debsums \
+  # Applications & Utilities
+  vim
+  htop
+  fastfetch
+  timeshift
+  apt-show-versions
+  rclone
+  unrar
+  starship
+  debsums
   wakeonlan
+
+  # Multimedia and Extra
+  ffmpeg
+  ffmpegthumbnailer
+  ubuntu-restricted-extras
+  fonts-firacode
+  lsp-plugins-lv2
+
+  # Firewall
+  gufw
+
+  # Printing & Scanning
+  cups
+  printer-driver-all
+  printer-driver-cups-pdf
+  sane
+  simple-scan
+)
+
+# Intel media driver only when an Intel GPU is present (useless in most VMs)
+if grep -qs 0x8086 /sys/class/drm/card*/device/vendor; then
+  PKGS+=(intel-media-va-driver-non-free)
+fi
+
+if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+  PKGS+=(cifs-utils)
+fi
+
+apt-get install -y "${PKGS[@]}"
 
 ###############################################
 # Other apps
 ###############################################
 bash "$SCRIPT_DIR/vscode.sh"
 bash "$SCRIPT_DIR/brave.sh"
-#bash "$SCRIPT_DIR/chrome.sh"
+bash "$SCRIPT_DIR/nextcloud.sh"
 
-###############################################
-# Multimedia and Extra
-###############################################
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-
-apt-get install -y \
-  ffmpeg \
-  ffmpegthumbnailer \
-  ubuntu-restricted-extras \
-  fonts-firacode \
-  lsp-plugins-lv2
-  
 ###############################################
 # Snaps
 ###############################################
-snap install pinta onlyoffice-desktopeditors fragments
+snap wait system seed.loaded
+echo "Installing snaps (can take several minutes, no progress shown)..."
+snap install pinta fragments
 
 ###############################################
 # Firewall
 ###############################################
-apt-get install -y gufw
-
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow mdns
@@ -181,13 +203,6 @@ ufw --force enable
 ###############################################
 # Printing & Scanning
 ###############################################
-apt-get install -y \
-  cups \
-  printer-driver-all \
-  printer-driver-cups-pdf \
-  sane \
-  simple-scan
-
 usermod -aG lpadmin "$TARGET_USER"
 systemctl enable cups
 
@@ -213,29 +228,13 @@ locale-gen
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    apt-get install -y cifs-utils
     bash "$GIT_DIR/fastgate.sh"
 fi
 
 ###############################################
 # Hardening
 ###############################################
-write_if_changed /etc/modprobe.d/disable-protocols.conf "$(cat << 'EOF'
-install dccp /bin/false
-install sctp /bin/false
-install rds /bin/false
-install tipc /bin/false
-
-blacklist dccp
-blacklist sctp
-blacklist rds
-blacklist tipc
-EOF
-)"
-
-sysctl --system
-echo
-echo "Hardening completed."
+bash "$SCRIPT_DIR/hard_ubu.sh"
 
 ###############################################
 # Cleanup
@@ -244,7 +243,7 @@ apt-get -y autoremove
 apt-get clean
 
 echo
-echo "Installation completed."
+echo "Installation completed. Reboot recommended."
 
 ###############################################
 # User session script
