@@ -73,7 +73,7 @@ if [[ "$DISTRO" == "debian" ]]; then
     ###############################################
 
     BROWSER_APP=""
-    TORRENT_APP="org.qbittorrent.qBittorrent"
+    TORRENT_APP="org.kde.ktorrent"
 
     FLATPAK_APPS=(
         org.gtk.Gtk3theme.Breeze
@@ -185,28 +185,30 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
         skanpage \
         kclock \
         kamoso \
-        qalculate-qt \
-        transmission-qt
+        qalculate-qt
 
     systemctl set-default graphical.target
 
     ###############################################
-    # Browser selection - Snap
+    # Snaps
     ###############################################
-
     case "$SNAP_BROWSER" in
-        1|2)
-            snap wait system seed.loaded
-            echo "Installing snap browser (can take several minutes, no progress shown)..."
-            ;;&
-        1) snap install firefox ;;
-        2) snap install brave ;;
-        0) ;;
+        0|1|2) ;;
         *)
             echo "ERROR: Invalid Snap browser selection: $SNAP_BROWSER" >&2
             exit 1
             ;;
     esac
+
+    snap wait system seed.loaded
+    echo "Installing snaps (can take several minutes, no progress shown)..."
+
+    case "$SNAP_BROWSER" in
+        1) snap install firefox ;;
+        2) snap install brave ;;
+    esac
+
+    snap install ktorrent
 
 else
     echo "ERROR: Unsupported distribution: $DISTRO" >&2

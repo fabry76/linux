@@ -64,7 +64,7 @@ flatpak remote-add --if-not-exists \
 # Variables
 ###############################################
 BROWSER_APP=""
-TORRENT_APP="org.qbittorrent.qBittorrent"
+TORRENT_APP="org.kde.ktorrent"
 
 FLATPAK_APPS=(
     org.gtk.Gtk3theme.Breeze
