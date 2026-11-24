@@ -100,25 +100,6 @@ apt-get install -y fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacod
 apt-get install -y papirus-icon-theme
 
 ###############################################
-# Office
-###############################################
-if [[ "$INSTALL_OFFICE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/nextcloud.sh"
-fi
-
-###############################################
-# Visual Studio Code
-###############################################
-if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
-    bash "$SCRIPT_DIR/vscode.sh"
-fi
-
-##############################################
-# Common Utilities
-###############################################
-apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rclone wakeonlan
-
-###############################################
 # Microsoft Fonts EULA
 ###############################################
 apt-get install -y debconf-utils
@@ -136,6 +117,25 @@ apt-get install -y \
     ffmpegthumbnailer \
     ubuntu-restricted-extras \
     lsp-plugins-lv2
+
+##############################################
+# Common Utilities
+###############################################
+apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rclone wakeonlan
+
+###############################################
+# Office
+###############################################
+if [[ "$INSTALL_OFFICE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/nextcloud.sh"
+fi
+
+###############################################
+# Visual Studio Code
+###############################################
+if [[ "$INSTALL_VSCODE" =~ ^[Yy]$ ]]; then
+    bash "$SCRIPT_DIR/vscode.sh"
+fi
 
 ###############################################
 # Printing & Scanning
