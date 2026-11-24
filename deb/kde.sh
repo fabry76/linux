@@ -1,125 +1,177 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
 
-###############################################
-# Args
-###############################################
-TARGET_USER="$1"
-BROWSER_SELECTION="${2:-0}"
+export DEBIAN_FRONTEND=noninteractive
 
 ###############################################
-# DEBIAN
+# Arguments and environment validation
 ###############################################
-if [[ "$DISTRO" == "debian" ]]; then
 
-    FLATPAK_BROWSER="$BROWSER_SELECTION"
+TARGET_USER="${1:?Missing TARGET_USER (first argument)}"
+INSTALL_FLATPAK="${2:-n}"
+DISTRO="${DISTRO:?DISTRO is not defined (the calling script must export it)}"
+
+if [[ "$EUID" -ne 0 ]]; then
+    echo "ERROR: This script must be run as root (sudo)." >&2
+    exit 1
+fi
+
+TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
+
+if [[ -z "$TARGET_HOME" ]]; then
+    echo "ERROR: User $TARGET_USER not found." >&2
+    exit 1
+fi
+
+###############################################
+# Execute commands as the target user
+###############################################
+
+# Set the correct HOME environment variable when running commands
+# as the target user. This prevents user configuration files from
+# being created under /root.
+run_as_user() {
+    runuser -u "$TARGET_USER" -- env HOME="$TARGET_HOME" "$@"
+}
+
+###############################################
+# KDE Plasma base packages
+###############################################
+
+KDE_PKGS=(
+    plasma-desktop
+    plasma-browser-integration-
+    plasma-workspace
+    sddm
+    dolphin
+    kate
+    kdialog
+    kfind
+    konsole
+    ark
+    udisks2
+    upower
+    isoimagewriter
+    kolourpaint
+    gwenview
+    okular
+    okular-extra-backends
+    kcharselect
+    kcolorchooser
+    filelight
+    krecorder
+    plasma-workspace-wallpapers
+    inotify-tools
+    libnotify-bin
+    mpv
+    print-manager
+    skanpage
+    kclock
+    kamoso
+    qalculate-qt
+)
+
+
+###############################################
+# Distribution-specific packages
+###############################################
+
+case "$DISTRO" in
+    debian)
+        ;;
+    ubuntu)
+        KDE_PKGS+=(
+            kwin-wayland
+            sddm-theme-breeze
+            xserver-xorg
+        )
+        ;;
+    *)
+        echo "ERROR: Unsupported distribution: $DISTRO" >&2
+        exit 1
+        ;;
+esac
+
+
+###############################################
+# Install KDE Plasma packages
+###############################################
+
+apt-get install -y "${KDE_PKGS[@]}"
+
+# Set the graphical target as the default boot target.
+systemctl set-default graphical.target
+
+
+###############################################
+# Optional Flatpak installation
+# Supported on Debian and Ubuntu.
+###############################################
+
+if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
 
     ###############################################
-    # KDE Plasma base
+    # Install Flatpak and KDE integration packages
     ###############################################
-    apt-get install -y \
-        plasma-desktop \
-        plasma-browser-integration- \
-        plasma-workspace \
-        sddm \
-        dolphin \
-        kate \
-        kdialog \
-        kfind \
-        konsole \
-        ark \
-        udisks2 \
-        upower \
-        isoimagewriter \
-        kolourpaint \
-        gwenview \
-        okular \
-        okular-extra-backends \
-        kcharselect \
-        kcolorchooser \
-        filelight \
-        krecorder \
-        plasma-workspace-wallpapers \
-        inotify-tools \
-        libnotify-bin \
-        mpv \
-        print-manager \
-        skanpage \
-        kclock \
-        kamoso \
-        qalculate-qt
 
-    systemctl set-default graphical.target
-
-    ###############################################
-    # KDE Flatpak base setup
-    ###############################################
     apt-get install -y \
         flatpak \
         plasma-discover-backend-flatpak \
         xdg-desktop-portal-kde \
         kde-config-flatpak
 
-    flatpak remote-add --if-not-exists \
+
+    ###############################################
+    # Configure Flathub repository
+    ###############################################
+
+    # Add Flathub system-wide if the repository does not exist.
+    flatpak remote-add --if-not-exists --system \
         flathub \
         https://dl.flathub.org/repo/flathub.flatpakrepo
 
+
     ###############################################
-    # Variables
+    # Flatpak application definitions
     ###############################################
-    BROWSER_APP=""
+
+    BROWSER_APP="io.gitlab.librewolf-community"
     TORRENT_APP="org.kde.ktorrent"
 
     FLATPAK_APPS=(
         org.gtk.Gtk3theme.Breeze
         "$TORRENT_APP"
+        "$BROWSER_APP"
     )
 
-    ###############################################
-    # Browser selection
-    ###############################################
-    case "$FLATPAK_BROWSER" in
-        1)
-            BROWSER_APP="io.gitlab.librewolf-community"
-            FLATPAK_APPS+=(io.gitlab.librewolf-community)
-            ;;
-        2)
-            BROWSER_APP="com.brave.Browser"
-            FLATPAK_APPS+=(com.brave.Browser)
-            ;;
-        3)
-            BROWSER_APP="org.mozilla.firefox"
-            FLATPAK_APPS+=(org.mozilla.firefox)
-            ;;
-        0)
-            ;;
-    esac
 
     ###############################################
-    # Install Flatpaks
+    # Install Flatpak applications
     ###############################################
-    flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
+
+    # Install the selected applications system-wide.
+    flatpak install -y --noninteractive --system flathub "${FLATPAK_APPS[@]}"
+
 
     ###############################################
-    # Browser override
+    # LibreWolf security overrides
     ###############################################
-    if [ -n "$BROWSER_APP" ]; then
-        runuser -u "$TARGET_USER" -- bash -c "
-            flatpak override --user '$BROWSER_APP' \
-            --nofilesystem=host \
-            --filesystem=xdg-download \
-            --nodevice=all \
-            --nosocket=x11 \
-            --nosocket=pcsc \
-            --nosocket=cups
-        "
-    fi
+
+    run_as_user flatpak override --user "$BROWSER_APP" \
+        --nofilesystem=host \
+        --filesystem=xdg-download \
+        --nodevice=all \
+        --nosocket=x11 \
+        --nosocket=pcsc \
+        --nosocket=cups
+
 
     ###############################################
-    # BitTorrent override
+    # KTorrent security overrides
     ###############################################
-    runuser -u "$TARGET_USER" -- bash -c "
-        flatpak override --user '$TORRENT_APP' \
+
+    run_as_user flatpak override --user "$TORRENT_APP" \
         --nofilesystem=host \
         --nofilesystem=home \
         --filesystem=xdg-download \
@@ -130,77 +182,10 @@ if [[ "$DISTRO" == "debian" ]]; then
         --nosocket=ssh-auth \
         --nosocket=x11 \
         --nosocket=fallback-x11
-    "
 
-###############################################
-# UBUNTU
-###############################################
-elif [[ "$DISTRO" == "ubuntu" ]]; then
-
-    SNAP_BROWSER="$BROWSER_SELECTION"
-
-    ###############################################
-    # KDE Plasma base
-    ###############################################
-    sudo apt install -y \
-        plasma-desktop \
-        plasma-browser-integration- \
-        plasma-workspace \
-        kwin-wayland \
-        sddm \
-        sddm-theme-breeze \
-        xserver-xorg \
-        dolphin \
-        konsole \
-        kate \
-        udisks2 \
-        upower \
-        kdialog \
-        kfind \
-        ark \
-        isoimagewriter \
-        kolourpaint \
-        gwenview \
-        okular \
-        okular-extra-backends \
-        kcharselect \
-        kcolorchooser \
-        filelight \
-        krecorder \
-        plasma-workspace-wallpapers \
-        inotify-tools \
-        libnotify-bin \
-        mpv \
-        print-manager \
-        skanpage \
-        kclock \
-        kamoso \
-        qalculate-qt
-
-    systemctl set-default graphical.target
-
-    ###############################################
-    # Snaps
-    ###############################################
-    case "$SNAP_BROWSER" in
-        0|1|2) ;;
-        *)
-            echo "ERROR: Invalid Snap browser selection: $SNAP_BROWSER" >&2
-            exit 1
-            ;;
-    esac
-
-    snap wait system seed.loaded
-    echo "Installing snaps (can take several minutes, no progress shown)..."
-
-    case "$SNAP_BROWSER" in
-        1) snap install firefox ;;
-        2) snap install brave ;;
-    esac
-
-    snap install ktorrent
-
-else
-    echo "ERROR: Unsupported distribution: $DISTRO" >&2
-    exit 1
 fi
+
+
+###############################################
+# End of KDE Plasma installation
+###############################################

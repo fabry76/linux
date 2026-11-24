@@ -73,44 +73,15 @@ ask_browsers() {
 }
 
 ###############################################
-# Flatpak browser
+# Flatpak support
 ###############################################
 
-ask_flatpak_browser() {
+ask_flatpak() {
     while :; do
-        echo "Which Flatpak browser would you like to install?"
-        echo "0) None"
-        echo "1) LibreWolf (io.gitlab.librewolf-community)"
-        echo "2) Brave (com.brave.Browser)"
-        echo "3) Firefox (org.mozilla.firefox)"
-        echo
-
-        read -rp "Choice [0-3]: " FLATPAK_BROWSER
-
-        [[ "$FLATPAK_BROWSER" =~ ^[0-3]$ ]] && break
-
-        echo "Please enter a number between 0 and 3."
-    done
-    echo
-}
-
-###############################################
-# Snap browser
-###############################################
-
-ask_snap_browser() {
-    while :; do
-        echo "Which Snap browser would you like to install?"
-        echo "0) None"
-        echo "1) Firefox"
-        echo "2) Brave"
-        echo
-
-        read -rp "Choice [0-2]: " SNAP_BROWSER
-
-        [[ "$SNAP_BROWSER" =~ ^[0-2]$ ]] && break
-
-        echo "Please enter a number between 0 and 2."
+        read -rp "Do you want to install Flatpak support? (Y/n): " INSTALL_FLATPAK
+        INSTALL_FLATPAK="${INSTALL_FLATPAK:-Y}"
+        [[ "$INSTALL_FLATPAK" =~ ^([Yy]|[Nn])$ ]] && break
+        echo "Please answer y or n."
     done
     echo
 }
@@ -257,8 +228,6 @@ ask_hostname() {
 run_installer_questions() {
 
     # Initialize distro-specific variables
-    FLATPAK_BROWSER=0
-    SNAP_BROWSER=0
     NEW_HOSTNAME=""
 
     # Hostname: Fedora and Ubuntu only
@@ -268,22 +237,7 @@ run_installer_questions() {
 
     ask_desktop
     ask_browsers
-
-    # Browser package manager depends on distribution
-    case "$DISTRO" in
-        fedora|debian)
-            ask_flatpak_browser
-            ;;
-
-        ubuntu)
-            ask_snap_browser
-            ;;
-
-        *)
-            echo "WARNING: No browser package manager configured for $DISTRO."
-            ;;
-    esac
-
+    ask_flatpak
     ask_office
     ask_vscode
     ask_fastgate
