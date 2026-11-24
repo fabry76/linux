@@ -94,6 +94,12 @@ for browser in "${BROWSERS[@]}"; do
 done
 
 ###############################################
+# Fonts & Icons
+###############################################
+apt-get install -y fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
+apt-get install -y papirus-icon-theme
+
+###############################################
 # Office
 ###############################################
 if [[ "$INSTALL_OFFICE" =~ ^[Yy]$ ]]; then
@@ -113,16 +119,24 @@ fi
 apt-get install -y timeshift fastfetch unrar fwupd debsums starship nvme-cli rclone wakeonlan
 
 ###############################################
-# Multimedia & Extras
+# Microsoft Fonts EULA
 ###############################################
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt-get install -y ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins-lv2
+
+export DEBIAN_FRONTEND=noninteractive
+
+printf '%s\n' \
+    "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+    | debconf-set-selections
 
 ###############################################
-# Fonts & Icons
+# Multimedia packages
 ###############################################
-apt-get install -y fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
-apt-get install -y papirus-icon-theme
+
+apt-get install -y \
+    ffmpeg \
+    ffmpegthumbnailer \
+    ubuntu-restricted-extras \
+    lsp-plugins-lv2
 
 ###############################################
 # Printing & Scanning
