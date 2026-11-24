@@ -121,7 +121,7 @@ apt-get install -y ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins
 # Fonts & Icons
 ###############################################
 apt-get install -y fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
-apt-get install -y papirus-icon-theme yaru-theme-icon
+apt-get install -y papirus-icon-theme
 
 ###############################################
 # Printing & Scanning
