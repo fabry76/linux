@@ -69,6 +69,11 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
+# System update command
+###############################################
+"$SCRIPT_DIR/ubuntu_update.sh"
+
+###############################################
 # Questions
 ###############################################
 source "$GIT_DIR/questions.sh"
