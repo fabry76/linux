@@ -152,5 +152,3 @@ EOF
 
 write_if_changed /usr/local/sbin/update "$UPDATE_SCRIPT"
 chmod 755 /usr/local/sbin/update
-
-echo "System update command configured."
