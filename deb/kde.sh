@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -216,7 +215,6 @@ if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
         --nosocket=fallback-x11
 
 fi
-
 
 ###############################################
 # End of KDE Plasma installation
