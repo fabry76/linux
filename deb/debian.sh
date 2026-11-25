@@ -196,6 +196,7 @@ apt-get install -y papirus-icon-theme
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf
 systemctl enable cups
+systemctl disable cups-browsed
 usermod -aG lpadmin "$TARGET_USER"
 
 ###############################################
@@ -221,7 +222,6 @@ apt-get install -y ufw
 
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow 5353/udp
 ufw --force enable
 
 ###############################################
@@ -271,6 +271,22 @@ if [ -f "$SCRIPT_DIR/hard_deb.sh" ]; then
     bash "$SCRIPT_DIR/hard_deb.sh"
   fi
 fi
+
+################################################
+# Lid switch
+################################################
+LOGIND_LID_CONF="/etc/systemd/logind.conf.d/no-lid-suspend.conf"
+
+LOGIND_LID_CONTENT="$(cat <<'EOF'
+[Login]
+HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
+EOF
+)"
+
+install -d -m 0755 "$(dirname "$LOGIND_LID_CONF")"
+write_if_changed "$LOGIND_LID_CONF" "$LOGIND_LID_CONTENT"
+chmod 0644 "$LOGIND_LID_CONF"
 
 ###############################################
 # Cleanup

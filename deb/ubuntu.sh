@@ -234,13 +234,13 @@ fi
 ###############################################
 usermod -aG lpadmin "$TARGET_USER"
 systemctl enable cups
+systemctl disable cups-browsed
 
 ###############################################
 # Firewall
 ###############################################
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow 5353/udp
 ufw --force enable
 
 ###############################################
@@ -278,6 +278,22 @@ if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]] && \
    [ -f "$SCRIPT_DIR/hard_ubu.sh" ]; then
     bash "$SCRIPT_DIR/hard_ubu.sh"
 fi
+
+################################################
+# Lid switch
+################################################
+LOGIND_LID_CONF="/etc/systemd/logind.conf.d/no-lid-suspend.conf"
+
+LOGIND_LID_CONTENT="$(cat <<'EOF'
+[Login]
+HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
+EOF
+)"
+
+install -d -m 0755 "$(dirname "$LOGIND_LID_CONF")"
+write_if_changed "$LOGIND_LID_CONF" "$LOGIND_LID_CONTENT"
+chmod 0644 "$LOGIND_LID_CONF"
 
 ###############################################
 # Cleanup
