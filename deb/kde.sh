@@ -82,7 +82,7 @@ KDE_PKGS=(
     # KDE applications
     kclock
     kamoso
-    qalculate-qt
+    kalk
 
     # Plasma assets
     plasma-workspace-wallpapers

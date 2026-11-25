@@ -44,7 +44,7 @@ dnf install -y \
     breeze-gtk \
     kinfocenter \
     kdegraphics-thumbnailers \
-    qalculate-qt
+    kalk
 
 systemctl enable plasmalogin
 systemctl set-default graphical.target
