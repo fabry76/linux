@@ -43,7 +43,6 @@ KDE_PKGS=(
     plasma-desktop
     plasma-browser-integration-
     plasma-workspace
-    sddm
     dolphin
     kate
     kdialog
@@ -79,14 +78,19 @@ KDE_PKGS=(
 
 case "$DISTRO" in
     debian)
+        KDE_PKGS+=(
+            sddm
+        )
         ;;
+
     ubuntu)
         KDE_PKGS+=(
-            kwin-wayland
+            sddm
             sddm-theme-breeze
             xserver-xorg
         )
         ;;
+
     *)
         echo "ERROR: Unsupported distribution: $DISTRO" >&2
         exit 1
