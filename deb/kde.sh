@@ -83,19 +83,24 @@ case "$DISTRO" in
         ;;
 
     ubuntu)
-        KDE_PKGS+=(
-            sddm
-            sddm-theme-breeze
-            xserver-xorg
-            plymouth
-            plymouth-label
-            plymouth-theme-spinner
-            plymouth-theme-ubuntu-text
-            libqt6location6
-            qml6-module-qtlocation
-            qt6-location-plugins
-        )
-        ;;
+    KDE_PKGS+=(
+        # Display manager
+        sddm
+        sddm-theme-breeze
+
+        # SDDM X11 greeter
+        xserver-xorg
+
+        # Ubuntu Plasma 6.7 timezone QML dependency
+        qml6-module-qtlocation
+
+        # Ubuntu boot splash
+        plymouth
+        plymouth-label
+        plymouth-theme-spinner
+        plymouth-theme-ubuntu-text
+    )
+    ;;
 
     *)
         echo "ERROR: Unsupported distribution: $DISTRO" >&2
