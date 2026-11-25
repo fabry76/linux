@@ -61,6 +61,7 @@ GNOME_PKGS=(
     gnome-tweaks
     gnome-snapshot
     gnome-sound-recorder
+    gnome-firmware
     showtime
 )
 
