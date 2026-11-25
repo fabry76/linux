@@ -111,6 +111,20 @@ apt-get install -y "${KDE_PKGS[@]}"
 # Set the graphical target as the default boot target.
 systemctl set-default graphical.target
 
+###############################################
+# Root GTK theme for privileged applications
+###############################################
+install -d -m 0755 /root/.config/gtk-3.0
+
+cat > /root/.config/gtk-3.0/settings.ini <<'EOF'
+[Settings]
+gtk-theme-name=Breeze-Dark
+gtk-application-prefer-dark-theme=true
+gtk-icon-theme-name=Papirus-Dark
+gtk-cursor-theme-name=breeze_cursors
+EOF
+
+chmod 644 /root/.config/gtk-3.0/settings.ini
 
 ###############################################
 # Optional Flatpak installation
