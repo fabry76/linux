@@ -137,5 +137,5 @@ fi
 # Ubuntu Snap applications
 ###############################################
 if [[ "$DISTRO" = "ubuntu" ]]; then
-    snap install fragments pinta
+    snap install fragments pinta snap-store
 fi
