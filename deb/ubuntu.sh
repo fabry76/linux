@@ -196,28 +196,23 @@ for ((attempt=1; attempt<=RESTRICTED_ATTEMPTS; attempt++)); do
     echo "Installing ubuntu-restricted-extras (attempt $attempt/$RESTRICTED_ATTEMPTS)..."
 
     if apt_install ubuntu-restricted-extras; then
-        echo "ubuntu-restricted-extras installed successfully."
+        echo "ubuntu-restricted-extras installation completed."
         break
     fi
 
-    if [ "$attempt" -eq "$RESTRICTED_ATTEMPTS" ]; then
-        echo
-        echo "ERROR: ubuntu-restricted-extras installation failed after $RESTRICTED_ATTEMPTS attempts."
+    if (( attempt == RESTRICTED_ATTEMPTS )); then
+        echo "ERROR: ubuntu-restricted-extras failed after $RESTRICTED_ATTEMPTS attempts. See $LOG_FILE." >&2
         exit 1
     fi
 
-    echo
-    echo "ubuntu-restricted-extras installation failed."
-    echo "Repairing incomplete package configuration..."
-
-    dpkg --configure -a || true
-    apt-get --fix-broken install -y || true
-
-    echo
-    echo "Waiting ${RESTRICTED_DELAY}s before retrying..."
+    echo "Waiting ${RESTRICTED_DELAY}s before recovering and retrying..."
     sleep "$RESTRICTED_DELAY"
 
-    echo "Retrying ubuntu-restricted-extras..."
+    if ! dpkg --force-confdef --force-confold --configure -a; then
+        echo "WARNING: Pending package configuration failed; trying APT repair." >&2
+        apt_install --fix-broken || \
+            echo "WARNING: APT repair failed; retrying the package install." >&2
+    fi
 done
 
 ###############################################
