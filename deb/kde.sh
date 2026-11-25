@@ -88,6 +88,10 @@ case "$DISTRO" in
             sddm
             sddm-theme-breeze
             xserver-xorg
+            plymouth
+            plymouth-label
+            plymouth-theme-spinner
+            plymouth-theme-ubuntu-text
         )
         ;;
 
