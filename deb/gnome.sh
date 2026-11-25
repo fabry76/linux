@@ -43,7 +43,6 @@ GNOME_PKGS=(
     network-manager
     gnome-tweaks
     gnome-shell-extension-manager
-    gnome-shell-extension-dash-to-panel
     gnome-shell-extension-system-monitor
     gnome-themes-extra
     gnome-sound-recorder
@@ -55,6 +54,7 @@ GNOME_PKGS=(
 case "$DISTRO" in
     debian)
         GNOME_PKGS+=(
+        gnome-shell-extension-dash-to-panel
         )
         ;;
 
