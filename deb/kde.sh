@@ -92,6 +92,9 @@ case "$DISTRO" in
             plymouth-label
             plymouth-theme-spinner
             plymouth-theme-ubuntu-text
+            libqt6location6
+            qml6-module-qtlocation
+            qt6-location-plugins
         )
         ;;
 
