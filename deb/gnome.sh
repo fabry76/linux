@@ -36,6 +36,7 @@ case "$DISTRO" in
     debian)
         apt-get install -y \
             gnome-core
+            gnome-shell-extension-system-monitor
         ;;
 
     ubuntu)
@@ -53,13 +54,13 @@ esac
 # Common GNOME applications
 ###############################################
 GNOME_PKGS=(
-    ptyxis
-    papers
-    showtime
-    gnome-tweaks
     gnome-shell-extension-manager
-    gnome-shell-extension-system-monitor
+    gnome-weather
+    gnome-calendar
+    gnome-tweaks
+    gnome-snapshot
     gnome-sound-recorder
+    showtime
 )
 
 apt-get install -y "${GNOME_PKGS[@]}"
