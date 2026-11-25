@@ -41,8 +41,7 @@ case "$DISTRO" in
 
     ubuntu)
         apt-get install -y \
-            ubuntu-desktop-minimal \
-            ptyxis
+            ubuntu-desktop-minimal
         ;;
 
     *)
