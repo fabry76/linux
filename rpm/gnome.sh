@@ -33,34 +33,15 @@ flatpak remote-add --if-not-exists \
 ###############################################
 # Variables
 ###############################################
-BROWSER_APP=""
+BROWSER_APP="io.gitlab.librewolf-community"
 TORRENT_APP="de.haeckerfelix.Fragments"
 
 FLATPAK_APPS=(
     com.github.tchx84.Flatseal
     com.github.PintaProject.Pinta
     "$TORRENT_APP"
+    "$BROWSER_APP"
 )
-
-###############################################
-# Browser selection
-###############################################
-case "$FLATPAK_BROWSER" in
-    1)
-        BROWSER_APP="io.gitlab.librewolf-community"
-        FLATPAK_APPS+=(io.gitlab.librewolf-community)
-        ;;
-    2)
-        BROWSER_APP="com.brave.Browser"
-        FLATPAK_APPS+=(com.brave.Browser)
-        ;;
-    3)
-        BROWSER_APP="org.mozilla.firefox"
-        FLATPAK_APPS+=(org.mozilla.firefox)
-        ;;
-    0)
-        ;;
-esac
 
 ###############################################
 # Install Flatpaks
