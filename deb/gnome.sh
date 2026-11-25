@@ -35,7 +35,7 @@ run_as_user() {
 case "$DISTRO" in
     debian)
         apt-get install -y \
-            gnome-core
+            gnome-core \
             gnome-shell-extension-system-monitor
         ;;
 
@@ -131,4 +131,11 @@ if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
         --nosocket=ssh-auth \
         --nosocket=x11 \
         --nosocket=fallback-x11
+fi
+
+###############################################
+# Ubuntu Snap applications
+###############################################
+if [[ "$DISTRO" = "ubuntu" ]]; then
+    snap install fragments pinta
 fi
