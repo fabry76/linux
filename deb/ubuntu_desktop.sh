@@ -16,10 +16,20 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ###############################################
-# Disable automatic apt timers during provisioning
+# APT preparation
 ###############################################
+# Stop automatic package activity
 systemctl stop apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
 systemctl stop apt-daily.service apt-daily-upgrade.service 2>/dev/null || true
+
+# Wait for any existing package operation to finish
+while fuser /var/lib/dpkg/lock-frontend \
+            /var/lib/dpkg/lock \
+            /var/cache/apt/archives/lock \
+            /var/cache/debconf/config.dat >/dev/null 2>&1; do
+    echo "Waiting for another package process to finish..."
+    sleep 2
+done
 
 ###############################################
 # Variables
