@@ -114,6 +114,8 @@ case "$DISTRO" in
 
             # Ubuntu Plasma 6.7 timezone QML dependency
             qml6-module-qtlocation
+            libqt6location6
+            qt6-location-plugins
 
             # Ubuntu boot splash
             plymouth
