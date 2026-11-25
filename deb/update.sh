@@ -95,7 +95,7 @@ if [[ -n "$UPGRADES" ]]; then
     echo -e "${YELLOW}Installing available system upgrades...${RESET}"
     echo
 
-    apt-get upgrade -y
+    apt upgrade
 
     done_msg "System packages updated."
 else
