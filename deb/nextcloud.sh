@@ -51,6 +51,7 @@ Types: deb
 URIs: https://download.nextcloud.com/office/repo/deb
 Suites: stable
 Components: main
+Architectures: amd64
 Signed-By: /etc/apt/keyrings/nextcloud-office.gpg
 EOF
 )"
