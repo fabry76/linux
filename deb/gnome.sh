@@ -25,42 +25,22 @@ fi
 ###############################################
 # Execute commands as the target user
 ###############################################
-# Set the correct HOME environment variable when running commands
-# as the target user. This prevents user configuration files from
-# being created under /root.
 run_as_user() {
     runuser -u "$TARGET_USER" -- env HOME="$TARGET_HOME" "$@"
 }
 
 ###############################################
-# GNOME common packages
-###############################################
-GNOME_PKGS=(
-    gnome-core
-    ptyxis
-    papers
-    showtime
-    network-manager
-    gnome-tweaks
-    gnome-shell-extension-manager
-    gnome-shell-extension-system-monitor
-    gnome-themes-extra
-    gnome-sound-recorder
-)
-
-###############################################
-# Distribution-specific packages
+# Distribution-specific GNOME base
 ###############################################
 case "$DISTRO" in
     debian)
-        GNOME_PKGS+=(
-        gnome-shell-extension-dash-to-panel
-        )
+        apt-get install -y \
+            gnome-core
         ;;
 
     ubuntu)
-        GNOME_PKGS+=(
-        )
+        apt-get install -y \
+            ubuntu-desktop-minimal
         ;;
 
     *)
@@ -70,21 +50,32 @@ case "$DISTRO" in
 esac
 
 ###############################################
-# Install GNOME packages
+# Common GNOME applications
 ###############################################
-apt-get install -y --no-install-recommends "${GNOME_PKGS[@]}"
+GNOME_PKGS=(
+    ptyxis
+    papers
+    showtime
+    gnome-tweaks
+    gnome-shell-extension-manager
+    gnome-shell-extension-system-monitor
+    gnome-sound-recorder
+)
 
-# Set the graphical target as the default boot target.
+apt-get install -y "${GNOME_PKGS[@]}"
+
+###############################################
+# Graphical target
+###############################################
 systemctl set-default graphical.target
 
 ###############################################
 # Optional Flatpak installation
-# Supported on Debian and Ubuntu.
 ###############################################
 if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
 
     ###############################################
-    # Install Flatpak and GNOME integration packages
+    # Flatpak and GNOME integration
     ###############################################
     apt-get install -y \
         flatpak \
@@ -92,64 +83,41 @@ if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
         gnome-software-plugin-flatpak
 
     ###############################################
-    # Configure Flathub repository
+    # Flathub
     ###############################################
-    # Add Flathub system-wide if the repository does not exist.
     flatpak remote-add --if-not-exists --system \
         flathub \
         https://dl.flathub.org/repo/flathub.flatpakrepo
 
     ###############################################
-    # Flatpak application definitions
+    # Flatpak applications
     ###############################################
-    BROWSER_APP=""
+    BROWSER_APP="io.gitlab.librewolf-community"
     TORRENT_APP="de.haeckerfelix.Fragments"
 
     FLATPAK_APPS=(
         com.github.tchx84.Flatseal
         com.github.PintaProject.Pinta
         "$TORRENT_APP"
+        "$BROWSER_APP"
     )
 
-    ###############################################
-    # Browser selection
-    ###############################################
-    case "$INSTALL_FLATPAK" in
-        1)
-            BROWSER_APP="io.gitlab.librewolf-community"
-            FLATPAK_APPS+=(io.gitlab.librewolf-community)
-            ;;
-        2)
-            BROWSER_APP="com.brave.Browser"
-            FLATPAK_APPS+=(com.brave.Browser)
-            ;;
-        3)
-            BROWSER_APP="org.mozilla.firefox"
-            FLATPAK_APPS+=(org.mozilla.firefox)
-            ;;
-    esac
-
-    ###############################################
-    # Install Flatpak applications
-    ###############################################
     flatpak install -y --noninteractive --system \
         flathub "${FLATPAK_APPS[@]}"
 
     ###############################################
-    # Browser security overrides
+    # LibreWolf security overrides
     ###############################################
-    if [[ -n "$BROWSER_APP" ]]; then
-        run_as_user flatpak override --user "$BROWSER_APP" \
-            --nofilesystem=host \
-            --filesystem=xdg-download \
-            --nodevice=all \
-            --nosocket=x11 \
-            --nosocket=pcsc \
-            --nosocket=cups
-    fi
+    run_as_user flatpak override --user "$BROWSER_APP" \
+        --nofilesystem=host \
+        --filesystem=xdg-download \
+        --nodevice=all \
+        --nosocket=x11 \
+        --nosocket=pcsc \
+        --nosocket=cups
 
     ###############################################
-    # BitTorrent security overrides
+    # Fragments security overrides
     ###############################################
     run_as_user flatpak override --user "$TORRENT_APP" \
         --nofilesystem=host \
@@ -163,7 +131,3 @@ if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
         --nosocket=x11 \
         --nosocket=fallback-x11
 fi
-
-###############################################
-# End of GNOME installation
-###############################################
