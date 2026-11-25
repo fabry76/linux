@@ -132,6 +132,34 @@ for browser in "${BROWSERS[@]}"; do
 done
 
 ###############################################
+# Ubuntu Restricted Extras
+###############################################
+RESTRICTED_ATTEMPTS=3
+RESTRICTED_DELAY=10
+
+for ((attempt=1; attempt<=RESTRICTED_ATTEMPTS; attempt++)); do
+    if apt-get install -y ubuntu-restricted-extras; then
+        break
+    fi
+
+    if [ "$attempt" -eq "$RESTRICTED_ATTEMPTS" ]; then
+        echo "ERROR: ubuntu-restricted-extras installation failed after $RESTRICTED_ATTEMPTS attempts."
+        exit 1
+    fi
+
+    echo
+    echo "ubuntu-restricted-extras installation failed."
+    echo "Waiting ${RESTRICTED_DELAY}s before retrying..."
+    sleep "$RESTRICTED_DELAY"
+
+    echo "Repairing incomplete package configuration..."
+    dpkg --configure -a || true
+
+    echo "Retrying ubuntu-restricted-extras installation ($((attempt + 1))/$RESTRICTED_ATTEMPTS)..."
+    echo
+done
+
+###############################################
 # Packages from the Ubuntu archive (single apt call)
 ###############################################
 PKGS=(
@@ -141,7 +169,7 @@ PKGS=(
   papirus-icon-theme
 
   # Multimedia
-  ffmpeg ffmpegthumbnailer ubuntu-restricted-extras lsp-plugins-lv2
+  ffmpeg ffmpegthumbnailer lsp-plugins-lv2
 
   # Common utilities
   timeshift fastfetch unrar debsums starship nvme-cli rclone wakeonlan
