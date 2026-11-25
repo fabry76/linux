@@ -41,7 +41,7 @@ case "$DISTRO" in
 
     ubuntu)
         apt-get install -y \
-            ubuntu-desktop-minimal
+            ubuntu-desktop-minimal \
             ptyxis
         ;;
 
@@ -63,6 +63,7 @@ GNOME_PKGS=(
     gnome-sound-recorder
     gnome-firmware
     showtime
+    gufw
 )
 
 apt-get install -y "${GNOME_PKGS[@]}"
