@@ -4,7 +4,7 @@ set -euo pipefail
 ###############################################
 # Root check
 ###############################################
-if [ "$EUID" -ne 0 ]; then
+if [[ "$EUID" -ne 0 ]]; then
     echo "Run as root (sudo)"
     exit 1
 fi
@@ -16,7 +16,7 @@ write_if_changed() {
     local file="$1"
     local content="$2"
 
-    if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+    if [[ -f "$file" ]] && printf "%s" "$content" | cmp -s - "$file"; then
         return 0
     fi
 
@@ -33,7 +33,7 @@ set -euo pipefail
 ###############################################
 # Root check
 ###############################################
-if [ "$EUID" -ne 0 ]; then
+if [[ "$EUID" -ne 0 ]]; then
     echo "Please run: sudo update"
     exit 1
 fi
@@ -77,7 +77,7 @@ echo "  $(date '+%A, %d %B %Y - %H:%M')"
 ###############################################
 step "Updating package repositories..."
 
-apt update
+apt-get update
 
 done_msg "Repositories updated."
 
@@ -88,14 +88,14 @@ step "Checking available system upgrades..."
 
 UPGRADES="$(apt list --upgradable 2>/dev/null | sed '1d')"
 
-if [ -n "$UPGRADES" ]; then
+if [[ -n "$UPGRADES" ]]; then
     echo
     echo "$UPGRADES"
     echo
     echo -e "${YELLOW}Installing available system upgrades...${RESET}"
     echo
 
-    apt upgrade -y
+    apt-get upgrade -y
 
     done_msg "System packages updated."
 else
@@ -112,9 +112,6 @@ if command -v snap >/dev/null 2>&1; then
     snap refresh
 
     done_msg "Snap packages updated."
-else
-    step "Snap"
-    echo -e "${YELLOW}Snap is not installed. Skipping.${RESET}"
 fi
 
 ###############################################
@@ -126,15 +123,12 @@ if command -v flatpak >/dev/null 2>&1; then
     flatpak update -y
 
     done_msg "Flatpak applications updated."
-else
-    step "Flatpak"
-    echo -e "${YELLOW}Flatpak is not installed. Skipping.${RESET}"
 fi
 
 ###############################################
 # Reboot check
 ###############################################
-if [ -f /var/run/reboot-required ]; then
+if [[ -f /var/run/reboot-required ]]; then
     echo
     echo -e "${YELLOW}${BOLD}⚠ A system reboot is required.${RESET}"
 fi
@@ -150,5 +144,10 @@ echo
 EOF
 )"
 
+###############################################
+# Install system command
+###############################################
 write_if_changed /usr/local/sbin/update "$UPDATE_SCRIPT"
+
+chown root:root /usr/local/sbin/update
 chmod 755 /usr/local/sbin/update
