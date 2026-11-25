@@ -18,7 +18,19 @@ write_if_changed() {
 }
 
 ###############################################
-# Repository
+# Ubuntu Firefox Snap
+###############################################
+if [ "$DISTRO" = "ubuntu" ] && \
+   command -v snap >/dev/null 2>&1 && \
+   snap list firefox >/dev/null 2>&1; then
+
+    echo "Firefox Snap is already installed."
+    echo "Keeping the Ubuntu Firefox Snap."
+    exit 0
+fi
+
+###############################################
+# Mozilla repository
 ###############################################
 install -d -m 0755 /etc/apt/keyrings
 
@@ -44,28 +56,6 @@ Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/mozilla.gpg
 EOF
 )"
-
-###############################################
-# Ubuntu: prefer Mozilla Firefox DEB
-###############################################
-if [ "$DISTRO" = "ubuntu" ]; then
-
-    write_if_changed /etc/apt/preferences.d/mozilla "$(cat <<'EOF'
-Package: firefox*
-Pin: origin packages.mozilla.org
-Pin-Priority: 1000
-
-Package: firefox*
-Pin: release o=Ubuntu
-Pin-Priority: -1
-EOF
-)"
-
-    # Remove Firefox Snap if already installed
-    if command -v snap >/dev/null 2>&1 && snap list firefox >/dev/null 2>&1; then
-        snap remove firefox
-    fi
-fi
 
 ###############################################
 # Installation
