@@ -10,13 +10,14 @@ export NEEDRESTART_SUSPEND=1
 # Root check
 ###############################################
 if [ "$EUID" -ne 0 ]; then
-  echo "Run as root (sudo)"
-  exit 1
+    echo "Run as root (sudo)"
+    exit 1
 fi
 
 ###############################################
 # APT preparation
 ###############################################
+
 # Stop automatic package activity
 systemctl stop apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
 systemctl stop apt-daily.service apt-daily-upgrade.service 2>/dev/null || true
@@ -35,8 +36,10 @@ done
 ###############################################
 TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
+
 DISTRO="ubuntu"
 export DISTRO
 
@@ -44,28 +47,30 @@ export DISTRO
 # Functions
 ###############################################
 write_if_changed() {
-  local file="$1"
-  local content="$2"
+    local file="$1"
+    local content="$2"
 
-  if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
-    return 0
-  fi
+    if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
+        return 0
+    fi
 
-  printf "%s" "$content" > "$file"
+    printf "%s" "$content" > "$file"
 }
 
 apt_install() {
-  apt-get install -y \
-    -o Dpkg::Options::="--force-confdef" \
-    -o Dpkg::Options::="--force-confold" \
-    "$@"
+    apt-get install -y \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
+        "$@"
 }
 
 ###############################################
 # Full Verbose Logging
 ###############################################
 LOG_FILE="$TARGET_HOME/install.log"
+
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
+
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
@@ -80,20 +85,24 @@ source "$GIT_DIR/questions.sh"
 run_installer_questions
 
 ###############################################
-# Base dependencies + debconf preseed
+# Base dependencies
 ###############################################
 apt-get update
 apt_install gpg curl debconf-utils
+
 install -d -m 0755 /etc/apt/keyrings
 
-echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true" \
-  | debconf-set-selections
+###############################################
+# Microsoft Core Fonts EULA
+###############################################
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+    | debconf-set-selections
 
 ###############################################
-# Intel media driver (only if an Intel GPU is present)
+# Intel media driver
 ###############################################
 if grep -qs 0x8086 /sys/class/drm/card*/device/vendor; then
-  apt_install intel-media-va-driver-non-free
+    apt_install intel-media-va-driver-non-free
 fi
 
 ###############################################
@@ -105,6 +114,7 @@ case "$DESKTOP_CHOICE" in
         echo "Installing KDE Plasma..."
         bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$INSTALL_FLATPAK"
         ;;
+
     2)
         echo
         echo "Installing GNOME..."
@@ -132,60 +142,83 @@ for browser in "${BROWSERS[@]}"; do
 done
 
 ###############################################
+# Packages from the Ubuntu archive
+###############################################
+PKGS=(
+    # Fonts & icons
+    fonts-crosextra-carlito
+    fonts-crosextra-caladea
+    fonts-firacode
+    fonts-noto-core
+    fonts-noto-cjk
+    fonts-noto-color-emoji
+    papirus-icon-theme
+
+    # Multimedia
+    ffmpeg
+    ffmpegthumbnailer
+    lsp-plugins-lv2
+
+    # Common utilities
+    timeshift
+    fastfetch
+    unrar
+    debsums
+    starship
+    nvme-cli
+    rclone
+    wakeonlan
+
+    # Printing & scanning
+    cups
+    printer-driver-gutenprint
+    printer-driver-cups-pdf
+    sane
+
+    # Firewall
+    ufw
+)
+
+if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
+    PKGS+=(cifs-utils)
+fi
+
+apt_install "${PKGS[@]}"
+
+###############################################
 # Ubuntu Restricted Extras
 ###############################################
 RESTRICTED_ATTEMPTS=3
 RESTRICTED_DELAY=10
 
 for ((attempt=1; attempt<=RESTRICTED_ATTEMPTS; attempt++)); do
-    if apt-get install -y ubuntu-restricted-extras; then
+    echo
+    echo "Installing ubuntu-restricted-extras (attempt $attempt/$RESTRICTED_ATTEMPTS)..."
+
+    if apt_install ubuntu-restricted-extras; then
+        echo "ubuntu-restricted-extras installed successfully."
         break
     fi
 
     if [ "$attempt" -eq "$RESTRICTED_ATTEMPTS" ]; then
+        echo
         echo "ERROR: ubuntu-restricted-extras installation failed after $RESTRICTED_ATTEMPTS attempts."
         exit 1
     fi
 
     echo
     echo "ubuntu-restricted-extras installation failed."
+    echo "Repairing incomplete package configuration..."
+
+    dpkg --configure -a || true
+    apt-get --fix-broken install -y || true
+
+    echo
     echo "Waiting ${RESTRICTED_DELAY}s before retrying..."
     sleep "$RESTRICTED_DELAY"
 
-    echo "Repairing incomplete package configuration..."
-    dpkg --configure -a || true
-
-    echo "Retrying ubuntu-restricted-extras installation ($((attempt + 1))/$RESTRICTED_ATTEMPTS)..."
-    echo
+    echo "Retrying ubuntu-restricted-extras..."
 done
-
-###############################################
-# Packages from the Ubuntu archive (single apt call)
-###############################################
-PKGS=(
-  # Fonts & icons
-  fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode
-  fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji
-  papirus-icon-theme
-
-  # Multimedia
-  ffmpeg ffmpegthumbnailer lsp-plugins-lv2
-
-  # Common utilities
-  timeshift fastfetch unrar debsums starship nvme-cli rclone wakeonlan
-
-  # Printing & scanning
-  cups printer-driver-gutenprint printer-driver-cups-pdf sane
-  
-  # Firewall
-  ufw
-)
-
-if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-  PKGS+=(cifs-utils)
-fi
-
-apt_install "${PKGS[@]}"
 
 ###############################################
 # Office
@@ -218,10 +251,13 @@ ufw --force enable
 ###############################################
 # GRUB
 ###############################################
-sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
+sed -i \
+    's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' \
+    /etc/default/grub
 
-sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"/' \
-  /etc/default/grub
+sed -i \
+    's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"/' \
+    /etc/default/grub
 
 update-grub
 
@@ -229,7 +265,7 @@ update-grub
 # Locale
 ###############################################
 grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
-  printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
+    printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
 
 locale-gen
 
@@ -243,7 +279,8 @@ fi
 ###############################################
 # Hardening
 ###############################################
-if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]] && [ -f "$SCRIPT_DIR/hard_ubu.sh" ]; then
+if [[ "$RUN_HARDENING" =~ ^[Yy]$ ]] && \
+   [ -f "$SCRIPT_DIR/hard_ubu.sh" ]; then
     bash "$SCRIPT_DIR/hard_ubu.sh"
 fi
 
@@ -258,7 +295,7 @@ apt-get clean
 ###############################################
 NETPLAN_FILE="/etc/netplan/99-NetworkManager.yaml"
 
-NETPLAN_CONTENT=$(cat << 'EOF'
+NETPLAN_CONTENT=$(cat <<'EOF'
 network:
   version: 2
   renderer: NetworkManager
@@ -266,10 +303,12 @@ EOF
 )
 
 write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
+
 chown root:root "$NETPLAN_FILE"
 chmod 600 "$NETPLAN_FILE"
 
 systemctl enable NetworkManager
+
 systemctl disable systemd-networkd.service 2>/dev/null || true
 systemctl disable systemd-networkd.socket 2>/dev/null || true
 systemctl disable systemd-networkd-wait-online.service 2>/dev/null || true
@@ -284,5 +323,7 @@ USER_SCRIPT="$GIT_DIR/user_customization.sh"
 if [ -f "$USER_SCRIPT" ]; then
     echo "Running user session script: $USER_SCRIPT"
 
-    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" bash "$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- \
+        env DESKTOP_CHOICE="$DESKTOP_CHOICE" \
+        bash "$USER_SCRIPT"
 fi
