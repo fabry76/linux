@@ -114,17 +114,24 @@ systemctl set-default graphical.target
 ###############################################
 # Root GTK theme for privileged applications
 ###############################################
-install -d -m 0755 /root/.config/gtk-3.0
+ROOT_GTK_DIR="/root/.config/gtk-3.0"
+ROOT_GTK_SETTINGS="$ROOT_GTK_DIR/settings.ini"
 
-cat > /root/.config/gtk-3.0/settings.ini <<'EOF'
+ROOT_GTK_CONTENT="$(cat <<'EOF'
 [Settings]
 gtk-theme-name=Breeze-Dark
 gtk-application-prefer-dark-theme=true
 gtk-icon-theme-name=Papirus-Dark
 gtk-cursor-theme-name=breeze_cursors
 EOF
+)"
 
-chmod 644 /root/.config/gtk-3.0/settings.ini
+install -d -m 0755 "$ROOT_GTK_DIR"
+
+write_if_changed "$ROOT_GTK_SETTINGS" "$ROOT_GTK_CONTENT"
+
+chown root:root "$ROOT_GTK_SETTINGS"
+chmod 0644 "$ROOT_GTK_SETTINGS"
 
 ###############################################
 # Optional Flatpak installation
