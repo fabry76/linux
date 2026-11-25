@@ -76,7 +76,7 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 ###############################################
 # System update command
 ###############################################
-bash "$SCRIPT_DIR/ubuntu_update.sh"
+bash "$SCRIPT_DIR/update_ubuntu.sh"
 
 ###############################################
 # Questions
