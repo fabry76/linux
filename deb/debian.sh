@@ -58,6 +58,11 @@ runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 
 ###############################################
+# System update command
+###############################################
+bash "$SCRIPT_DIR/update.sh"
+
+###############################################
 # Questions
 ###############################################
 source "$GIT_DIR/questions.sh"
