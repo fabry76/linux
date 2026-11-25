@@ -126,7 +126,7 @@ for browser in "${BROWSERS[@]}"; do
             bash "$SCRIPT_DIR/chrome.sh"
             ;;
         3)
-            snap install firefox
+            bash "$SCRIPT_DIR/firefox.sh"
             ;;
     esac
 done
