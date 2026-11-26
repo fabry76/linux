@@ -38,6 +38,9 @@ case "$DISTRO" in
             ptyxis+ \
             showtime+ \
             papers+ \
+            network-manager \
+            low-memory-monitor \
+            gnome-themes-extra \
             gnome-shell-extension-system-monitor \
             gnome-shell-extension-dash-to-panel
         ;;
