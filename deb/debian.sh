@@ -114,6 +114,15 @@ EOF
 )"
 
 ###############################################
+# Debian package exclusions
+###############################################
+cat > /etc/apt/preferences.d/no-firefox-esr <<'EOF'
+Package: firefox-esr
+Pin: release *
+Pin-Priority: -1
+EOF
+
+###############################################
 # Update Repositories
 ###############################################
 apt-get update
