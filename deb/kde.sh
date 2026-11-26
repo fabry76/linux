@@ -9,6 +9,8 @@ export DEBIAN_FRONTEND=noninteractive
 TARGET_USER="${1:?Missing TARGET_USER (first argument)}"
 INSTALL_FLATPAK="${2:-n}"
 DISTRO="${DISTRO:?DISTRO is not defined (the calling script must export it)}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GIT_DIR="$(dirname "$SCRIPT_DIR")"
 
 if [[ "$EUID" -ne 0 ]]; then
     echo "ERROR: This script must be run as root (sudo)." >&2
