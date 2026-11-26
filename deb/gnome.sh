@@ -33,6 +33,7 @@ GIT_DIR="$(dirname "$SCRIPT_DIR")"
 ###############################################
 case "$DISTRO" in
     debian)
+        apt-mark hold firefox-esr
         apt-get install -y \
             gnome-core \
             ptyxis+ \
