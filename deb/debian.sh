@@ -198,7 +198,6 @@ apt-get install -y papirus-icon-theme
 ###############################################
 apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf
 systemctl enable cups
-systemctl disable cups-browsed
 usermod -aG lpadmin "$TARGET_USER"
 
 ###############################################
