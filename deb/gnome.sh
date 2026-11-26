@@ -23,11 +23,10 @@ if [[ -z "$TARGET_HOME" ]]; then
 fi
 
 ###############################################
-# Execute commands as the target user
+# Paths
 ###############################################
-run_as_user() {
-    runuser -u "$TARGET_USER" -- env HOME="$TARGET_HOME" "$@"
-}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GIT_DIR="$(dirname "$SCRIPT_DIR")"
 
 ###############################################
 # Distribution-specific GNOME base
@@ -76,68 +75,15 @@ systemctl set-default graphical.target
 # Optional Flatpak installation
 ###############################################
 if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
-
-    ###############################################
-    # Flatpak and GNOME integration
-    ###############################################
-    apt-get install -y \
-        flatpak \
-        xdg-desktop-portal-gnome \
-        gnome-software-plugin-flatpak
-
-    ###############################################
-    # Flathub
-    ###############################################
-    flatpak remote-add --if-not-exists --system \
-        flathub \
-        https://dl.flathub.org/repo/flathub.flatpakrepo
-
-    ###############################################
-    # Flatpak applications
-    ###############################################
-    BROWSER_APP="io.gitlab.librewolf-community"
-    TORRENT_APP="de.haeckerfelix.Fragments"
-
-    FLATPAK_APPS=(
-        com.github.tchx84.Flatseal
-        com.github.PintaProject.Pinta
-        "$TORRENT_APP"
-        "$BROWSER_APP"
-    )
-
-    flatpak install -y --noninteractive --system \
-        flathub "${FLATPAK_APPS[@]}"
-
-    ###############################################
-    # LibreWolf security overrides
-    ###############################################
-    run_as_user flatpak override --user "$BROWSER_APP" \
-        --nofilesystem=host \
-        --filesystem=xdg-download \
-        --nodevice=all \
-        --nosocket=x11 \
-        --nosocket=pcsc \
-        --nosocket=cups
-
-    ###############################################
-    # Fragments security overrides
-    ###############################################
-    run_as_user flatpak override --user "$TORRENT_APP" \
-        --nofilesystem=host \
-        --nofilesystem=home \
-        --filesystem=xdg-download \
-        --nodevice=all \
-        --nosocket=pulseaudio \
-        --nosocket=cups \
-        --nosocket=pcsc \
-        --nosocket=ssh-auth \
-        --nosocket=x11 \
-        --nosocket=fallback-x11
+    bash "$GIT_DIR/flatpak.sh" "$TARGET_USER"
 fi
 
 ###############################################
 # Ubuntu Snap applications
 ###############################################
-if [[ "$DISTRO" = "ubuntu" ]]; then
-    snap install fragments pinta snap-store
+if [[ "$DISTRO" == "ubuntu" ]]; then
+    snap install \
+        fragments \
+        pinta \
+        snap-store
 fi
