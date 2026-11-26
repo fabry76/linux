@@ -2,109 +2,95 @@
 set -euo pipefail
 
 ###############################################
-# Args
+# Arguments and environment validation
 ###############################################
-TARGET_USER="$1"
-FLATPAK_BROWSER="${2:-0}"
+TARGET_USER="${1:?Missing TARGET_USER (first argument)}"
+INSTALL_FLATPAK="${2:-n}"
+
+if [[ "$EUID" -ne 0 ]]; then
+    echo "ERROR: This script must be run as root (sudo)." >&2
+    exit 1
+fi
+
+TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
+
+if [[ -z "$TARGET_HOME" ]]; then
+    echo "ERROR: User $TARGET_USER not found." >&2
+    exit 1
+fi
 
 ###############################################
-# KDE Plasma base
+# Paths
 ###############################################
-dnf install -y \
-    plasma-desktop \
-    plasma-login-manager \
-    kwin \
-    plasma-nm \
-    plasma-pa \
-    kscreen \
-    konsole \
-    dolphin \
-    ark \
-    spectacle \
-    kwrite \
-    plasma-systemmonitor \
-    isoimagewriter \
-    kolourpaint \
-    gwenview \
-    okular \
-    kcolorchooser \
-    krecorder \
-    mpv \
-    skanpage \
-    kclock \
-    kamoso \
-    plasma-print-manager \
-    filelight \
-    kcharselect \
-    kde-partitionmanager \
-    kwalletmanager5 \
-    pam-kwallet \
-    bluedevil \
-    kde-gtk-config \
-    breeze-gtk \
-    kinfocenter \
-    kdegraphics-thumbnailers \
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GIT_DIR="$(dirname "$SCRIPT_DIR")"
+
+###############################################
+# KDE Plasma packages
+###############################################
+KDE_PKGS=(
+    plasma-desktop
+    plasma-login-manager
+    kwin
+    plasma-nm
+    plasma-pa
+    kscreen
+
+    # KDE applications
+    konsole
+    dolphin
+    ark
+    spectacle
+    kwrite
+
+    # System
+    plasma-systemmonitor
+    plasma-print-manager
+    kde-partitionmanager
+    kwalletmanager5
+    pam-kwallet
+    bluedevil
+    kinfocenter
+
+    # Graphics / documents
+    isoimagewriter
+    kolourpaint
+    gwenview
+    okular
+    kcolorchooser
+    kcharselect
+    kdegraphics-thumbnailers
+
+    # KDE applications
+    krecorder
+    skanpage
+    kclock
+    kamoso
     kalk
+    filelight
 
+    # GTK integration
+    kde-gtk-config
+    breeze-gtk
+
+    # Multimedia
+    mpv
+)
+
+###############################################
+# Install KDE Plasma
+###############################################
+dnf install -y "${KDE_PKGS[@]}"
+
+###############################################
+# Display manager
+###############################################
 systemctl enable plasmalogin
 systemctl set-default graphical.target
 
 ###############################################
-# KDE Flatpak base setup
+# Optional Flatpak installation
 ###############################################
-dnf install -y \
-    plasma-discover-flatpak \
-    xdg-desktop-portal-kde
-
-flatpak remote-add --if-not-exists \
-    flathub \
-    https://dl.flathub.org/repo/flathub.flatpakrepo
-
-###############################################
-# Variables
-###############################################
-BROWSER_APP="io.gitlab.librewolf-community"
-TORRENT_APP="org.kde.ktorrent"
-
-FLATPAK_APPS=(
-        org.gtk.Gtk3theme.Breeze
-        "$TORRENT_APP"
-        "$BROWSER_APP"
-    )
-
-###############################################
-# Install Flatpaks
-###############################################
-flatpak install -y --system flathub "${FLATPAK_APPS[@]}"
-
-###############################################
-# Browser override
-###############################################
-if [ -n "$BROWSER_APP" ]; then
-    runuser -u "$TARGET_USER" -- bash -c "
-        flatpak override --user '$BROWSER_APP' \
-        --nofilesystem=host \
-        --filesystem=xdg-download \
-        --nodevice=all \
-        --nosocket=x11 \
-        --nosocket=pcsc \
-        --nosocket=cups
-    "
+if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
+    bash "$GIT_DIR/flatpak.sh" "$TARGET_USER"
 fi
-
-###############################################
-# BitTorrent override
-###############################################
-runuser -u "$TARGET_USER" -- bash -c "
-    flatpak override --user '$TORRENT_APP' \
-    --nofilesystem=host \
-    --nofilesystem=home \
-    --filesystem=xdg-download \
-    --nodevice=all \
-    --nosocket=pulseaudio \
-    --nosocket=cups \
-    --nosocket=pcsc \
-    --nosocket=ssh-auth \
-    --nosocket=x11 \
-    --nosocket=fallback-x11
-"
