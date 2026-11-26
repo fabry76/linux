@@ -34,16 +34,6 @@ if [[ -z "$TARGET_HOME" ]]; then
     exit 1
 fi
 
-case "$DESKTOP_ENV" in
-    kde|gnome)
-        ;;
-    *)
-        echo "ERROR: Unsupported desktop environment: $DESKTOP_ENV" >&2
-        echo "Supported values: kde, gnome" >&2
-        exit 1
-        ;;
-esac
-
 ###############################################
 # Execute commands as the target user
 ###############################################
@@ -177,7 +167,8 @@ run_as_user flatpak override \
     --nodevice=all \
     --nosocket=x11 \
     --nosocket=pcsc \
-    --nosocket=cups
+    --nosocket=cupsc \
+    --nosocket=fallback-x11
 
 ###############################################
 # Torrent application security overrides
