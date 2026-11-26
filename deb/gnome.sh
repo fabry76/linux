@@ -69,6 +69,7 @@ GNOME_PKGS=(
     gnome-firmware
     showtime
     gufw
+    virt-viewer
 )
 
 apt-get install -y "${GNOME_PKGS[@]}"

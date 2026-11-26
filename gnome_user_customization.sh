@@ -11,7 +11,7 @@ fi
 ###############################################
 # Fedora: extras
 ###############################################
-if [ "${DISTRO:-}" = "fedora" ]; then
+if [ "$DISTRO_ID" != "ubuntu" ]; then
 	ICON_DIR="$HOME/.local/share/icons"
 
 	# Tela icon theme installation
