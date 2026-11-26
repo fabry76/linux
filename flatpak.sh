@@ -7,7 +7,20 @@ export DEBIAN_FRONTEND=noninteractive
 # Arguments and environment validation
 ###############################################
 TARGET_USER="${1:?Missing TARGET_USER (first argument)}"
-DESKTOP_ENV="${2:?Missing DESKTOP_ENV (kde or gnome)}"
+DESKTOP_CHOICE="${DESKTOP_CHOICE:?DESKTOP_CHOICE is not defined}"
+
+case "$DESKTOP_CHOICE" in
+    1)
+        DESKTOP_ENV="kde"
+        ;;
+    2)
+        DESKTOP_ENV="gnome"
+        ;;
+    *)
+        echo "ERROR: Unsupported desktop choice: $DESKTOP_CHOICE" >&2
+        exit 1
+        ;;
+esac
 
 if [[ "$EUID" -ne 0 ]]; then
     echo "ERROR: This script must be run as root (sudo)." >&2
