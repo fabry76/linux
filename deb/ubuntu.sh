@@ -83,6 +83,7 @@ bash "$SCRIPT_DIR/update.sh"
 ###############################################
 source "$GIT_DIR/questions.sh"
 run_installer_questions
+export DESKTOP_CHOICE
 
 ###############################################
 # Base dependencies
