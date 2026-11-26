@@ -45,6 +45,8 @@ exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
 source "$GIT_DIR/questions.sh"
 run_installer_questions
 
+export DESKTOP_CHOICE
+
 ################################################
 # Repositories, plugins and mirrors
 ################################################
