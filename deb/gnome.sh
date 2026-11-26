@@ -66,7 +66,6 @@ GNOME_PKGS=(
     gnome-snapshot
     gnome-sound-recorder
     gnome-firmware
-    showtime
     gufw
     virt-viewer
 )
