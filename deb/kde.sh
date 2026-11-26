@@ -186,5 +186,5 @@ fi
 # Flatpak
 ###############################################
 if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
-    bash "$(dirname "${BASH_SOURCE[0]}")/flatpak.sh" "$TARGET_USER"
+    bash "$GIT_DIR/flatpak.sh" "$TARGET_USER"
 fi
