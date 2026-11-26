@@ -35,9 +35,8 @@ case "$DISTRO" in
     debian)
         apt-get install -y --no-install-recommends \
             gnome-core \
-            ptyxis+ \
-            showtime+ \
-            papers+ \
+            gnome-software-plugin-deb \
+            gnome-software-plugin-fwupd \
             network-manager \
             low-memory-monitor \
             gnome-themes-extra \
