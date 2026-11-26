@@ -35,7 +35,11 @@ case "$DISTRO" in
     debian)
         apt-get install -y \
             gnome-core \
-            gnome-shell-extension-system-monitor
+            ptyxis+ \
+            showtime+ \
+            papers+ \
+            gnome-shell-extension-system-monitor \
+            gnome-shell-extension-dash-to-panel
         ;;
 
     ubuntu)
