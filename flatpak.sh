@@ -167,7 +167,7 @@ run_as_user flatpak override \
     --nodevice=all \
     --nosocket=x11 \
     --nosocket=pcsc \
-    --nosocket=cupsc \
+    --nosocket=cups \
     --nosocket=fallback-x11
 
 ###############################################
