@@ -183,81 +183,8 @@ if [[ "$DISTRO" == "ubuntu" ]]; then
 fi
 
 ###############################################
-# Optional Flatpak installation
+# Flatpak
 ###############################################
 if [[ "$INSTALL_FLATPAK" =~ ^[Yy]$ ]]; then
-
-    ###############################################
-    # Flatpak and KDE integration
-    ###############################################
-    apt-get install -y \
-        flatpak \
-        plasma-discover-backend-flatpak \
-        xdg-desktop-portal-kde \
-        kde-config-flatpak
-
-    ###############################################
-    # Configure Flathub
-    ###############################################
-    flatpak remote-add \
-        --if-not-exists \
-        --system \
-        flathub \
-        https://dl.flathub.org/repo/flathub.flatpakrepo
-
-    ###############################################
-    # Flatpak application definitions
-    ###############################################
-    BROWSER_APP="io.gitlab.librewolf-community"
-    TORRENT_APP="org.kde.ktorrent"
-
-    FLATPAK_APPS=(
-        org.gtk.Gtk3theme.Breeze
-        "$TORRENT_APP"
-        "$BROWSER_APP"
-    )
-
-    ###############################################
-    # Install Flatpak applications
-    ###############################################
-    flatpak install \
-        -y \
-        --noninteractive \
-        --system \
-        flathub \
-        "${FLATPAK_APPS[@]}"
-
-    ###############################################
-    # LibreWolf security overrides
-    ###############################################
-    run_as_user flatpak override \
-        --user \
-        "$BROWSER_APP" \
-        --nofilesystem=host \
-        --filesystem=xdg-download \
-        --nodevice=all \
-        --nosocket=x11 \
-        --nosocket=pcsc \
-        --nosocket=cups
-
-    ###############################################
-    # KTorrent security overrides
-    ###############################################
-    run_as_user flatpak override \
-        --user \
-        "$TORRENT_APP" \
-        --nofilesystem=host \
-        --nofilesystem=home \
-        --filesystem=xdg-download \
-        --nodevice=all \
-        --nosocket=pulseaudio \
-        --nosocket=cups \
-        --nosocket=pcsc \
-        --nosocket=ssh-auth \
-        --nosocket=x11 \
-        --nosocket=fallback-x11
+    bash "$(dirname "${BASH_SOURCE[0]}")/flatpak.sh" "$TARGET_USER"
 fi
-
-###############################################
-# End of KDE Plasma installation
-###############################################
