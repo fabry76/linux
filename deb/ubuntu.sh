@@ -313,7 +313,7 @@ network:
 EOF
 )
 
-# Skipped when netplan is not installed (NetworkManager works on its own then)
+# Skipped when netplan is not installed
 if command -v netplan >/dev/null 2>&1; then
     install -d -m 0755 "$(dirname "$NETPLAN_FILE")"
     write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
