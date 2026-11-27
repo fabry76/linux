@@ -80,6 +80,7 @@ KDE_PKGS=(
     krecorder
     print-manager
     skanpage
+    kde-spectacle
 
     # KDE applications
     kclock

@@ -235,7 +235,10 @@ fi
 ###############################################
 usermod -aG lpadmin "$TARGET_USER"
 systemctl enable cups
-systemctl disable cups-browsed
+
+if [ -n "$(systemctl list-unit-files --no-legend cups-browsed.service)" ]; then
+    systemctl disable cups-browsed.service
+fi
 
 ###############################################
 # Firewall
@@ -297,14 +300,10 @@ write_if_changed "$LOGIND_LID_CONF" "$LOGIND_LID_CONTENT"
 chmod 0644 "$LOGIND_LID_CONF"
 
 ###############################################
-# Cleanup
-###############################################
-apt-get -y autoremove
-apt-get clean
-
-###############################################
 # Network Manager only
 ###############################################
+apt_install network-manager
+
 NETPLAN_FILE="/etc/netplan/99-NetworkManager.yaml"
 
 NETPLAN_CONTENT=$(cat <<'EOF'
@@ -314,10 +313,14 @@ network:
 EOF
 )
 
-write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
-
-chown root:root "$NETPLAN_FILE"
-chmod 600 "$NETPLAN_FILE"
+# Skipped when netplan is not installed (NetworkManager works on its own then)
+if command -v netplan >/dev/null 2>&1; then
+    install -d -m 0755 "$(dirname "$NETPLAN_FILE")"
+    write_if_changed "$NETPLAN_FILE" "$NETPLAN_CONTENT"
+    chown root:root "$NETPLAN_FILE"
+    chmod 600 "$NETPLAN_FILE"
+    netplan generate
+fi
 
 systemctl enable NetworkManager
 
@@ -325,7 +328,11 @@ systemctl disable systemd-networkd.service 2>/dev/null || true
 systemctl disable systemd-networkd.socket 2>/dev/null || true
 systemctl disable systemd-networkd-wait-online.service 2>/dev/null || true
 
-netplan generate
+###############################################
+# Cleanup
+###############################################
+apt-get -y autoremove
+apt-get clean
 
 ###############################################
 # User session script
