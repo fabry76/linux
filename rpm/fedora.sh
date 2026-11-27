@@ -16,7 +16,9 @@ TARGET_USER="${SUDO_USER:-${USER:-root}}"
 TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
+
 DISTRO="fedora"
+export DISTRO
 
 ###############################################
 # Functions
@@ -32,12 +34,100 @@ write_if_changed() {
   printf "%s" "$content" > "$file"
 }
 
+# install_fonts <label> <source dir> <destination dir>
+install_fonts() {
+  local label="$1"
+  local src="$2"
+  local dst="$3"
+  local changed=false
+  local fonts font dest
+
+  install -d -m 755 "$dst"
+
+  shopt -s nocaseglob
+  fonts=("$src"/*.ttf)
+  shopt -u nocaseglob
+
+  if [[ ! -e "${fonts[0]}" ]]; then
+    echo "WARNING: No $label TTF fonts found in $src"
+    return 0
+  fi
+
+  for font in "${fonts[@]}"; do
+    dest="$dst/$(basename "$font")"
+
+    if [[ ! -f "$dest" ]] || ! cmp -s "$font" "$dest"; then
+      install -m 644 "$font" "$dest"
+      changed=true
+    fi
+  done
+
+  if [[ "$changed" == true ]]; then
+    echo "Updating $label font cache..."
+    fc-cache -f "$dst"
+  else
+    echo "$label fonts already up to date."
+  fi
+}
+
+# Downloads the latest Starship release and verifies its SHA-256
+# checksum (published next to the tarball) before installing it.
+install_starship() {
+  local bin="/usr/local/bin/starship"
+  local base="https://github.com/starship/starship/releases/latest/download"
+  local asset="starship-x86_64-unknown-linux-gnu.tar.gz"
+  local curl_opts=(-fsSL --retry 5 --retry-delay 2 --retry-max-time 60
+                   --connect-timeout 15 --max-time 90)
+  local tmp expected actual
+
+  if [[ -x "$bin" ]]; then
+    echo "Starship already installed, skipping."
+    return 0
+  fi
+
+  tmp=$(mktemp -d)
+
+  if ! curl "${curl_opts[@]}" "$base/$asset" -o "$tmp/$asset" ||
+     ! curl "${curl_opts[@]}" "$base/$asset.sha256" -o "$tmp/$asset.sha256"; then
+    echo "WARNING: Could not download Starship; continuing without it."
+    rm -rf "$tmp"
+    return 0
+  fi
+
+  expected=$(awk '{print $1; exit}' "$tmp/$asset.sha256")
+  actual=$(sha256sum "$tmp/$asset" | awk '{print $1}')
+
+  if [[ -z "$expected" || "$expected" != "$actual" ]]; then
+    echo "WARNING: Starship checksum mismatch; skipping installation."
+    rm -rf "$tmp"
+    return 0
+  fi
+
+  if tar -xzf "$tmp/$asset" -C "$tmp" starship &&
+     install -m 755 "$tmp/starship" "$bin"; then
+    echo "Starship installed (checksum verified)."
+  else
+    echo "WARNING: Could not install Starship; continuing without it."
+  fi
+
+  rm -rf "$tmp"
+}
+
 ###############################################
 # Full Verbose Logging
 ###############################################
 LOG_FILE="$TARGET_HOME/install.log"
 runuser -u "$TARGET_USER" -- touch "$LOG_FILE"
 exec > >(runuser -u "$TARGET_USER" -- tee -a "$LOG_FILE") 2>&1
+
+###############################################
+# DNF configuration & system update
+###############################################
+if ! grep -q "^max_parallel_downloads=" /etc/dnf/dnf.conf; then
+    echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
+fi
+
+dnf upgrade -y --refresh
 
 ###############################################
 # Questions
@@ -56,11 +146,6 @@ fedora-workstation-repositories \
 https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-# Fast Mirror
-if ! grep -q "^fastestmirror=True" /etc/dnf/dnf.conf; then
-    echo "fastestmirror=True" >> /etc/dnf/dnf.conf
-fi
-
 ###############################################
 # Desktop Environment
 ###############################################
@@ -68,12 +153,12 @@ case "$DESKTOP_CHOICE" in
     1)
         echo
         echo "Installing KDE Plasma..."
-        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" $INSTALL_FLATPAK
+        bash "$SCRIPT_DIR/kde.sh" "$TARGET_USER" "$INSTALL_FLATPAK"
         ;;
     2)
         echo
         echo "Installing GNOME..."
-        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" $INSTALL_FLATPAK
+        bash "$SCRIPT_DIR/gnome.sh" "$TARGET_USER" "$INSTALL_FLATPAK"
         ;;
 esac
 
@@ -131,42 +216,20 @@ dnf install -y \
   nmap \
   rsync \
   smartmontools \
+  nvme-cli \
   traceroute \
   cabextract \
-  inotify-tools \
-  thermald
-  
+  inotify-tools
+
+# Thermal daemon (only on Intel CPUs)
+if grep -qs GenuineIntel /proc/cpuinfo; then
+    dnf install -y thermald
+fi
+
 ###############################################
 # Starship
 ###############################################
-STARSHIP_BIN="/usr/local/bin/starship"
-
-if [[ -x "$STARSHIP_BIN" ]]; then
-    echo "Starship already installed, skipping."
-else
-    if ! STARSHIP_LATEST=$(curl -fsSL --retry 5 --retry-delay 2 --retry-max-time 60 \
-        --connect-timeout 15 --max-time 90 \
-        https://api.github.com/repos/starship/starship/releases/latest \
-        | grep -oP '"tag_name": "\K[^"]+'); then
-        echo "WARNING: Could not determine the latest Starship release; skipping installation."
-    else
-        echo "Installing Starship ${STARSHIP_LATEST}..."
-
-        STARSHIP_URL="https://github.com/starship/starship/releases/download/${STARSHIP_LATEST}/starship-x86_64-unknown-linux-gnu.tar.gz"
-        TMP_DIR=$(mktemp -d)
-        trap 'rm -rf "$TMP_DIR"' EXIT
-
-        if curl -fsSL --retry 5 --retry-delay 2 --retry-max-time 60 \
-            --connect-timeout 15 --max-time 90 "$STARSHIP_URL" -o "$TMP_DIR/starship.tar.gz" &&
-            tar -xzf "$TMP_DIR/starship.tar.gz" -C "$TMP_DIR" &&
-            [[ -f "$TMP_DIR/starship" ]] &&
-            install -m 755 "$TMP_DIR/starship" "$STARSHIP_BIN"; then
-            echo "Starship ${STARSHIP_LATEST} installed."
-        else
-            echo "WARNING: Could not download or install Starship; continuing without it."
-        fi
-    fi
-fi
+install_starship
 
 ###############################################
 # Multimedia
@@ -177,14 +240,18 @@ dnf install -y @multimedia \
   --setopt=install_weak_deps=False \
   --exclude=PackageKit-gstreamer-plugin
 
-dnf install -y ffmpegthumbnailer intel-media-driver alsa-sof-firmware lsp-plugins-lv2 pipewire-module-filter-chain-lv2
+dnf install -y ffmpegthumbnailer alsa-sof-firmware lsp-plugins-lv2 pipewire-module-filter-chain-lv2
+
+# Intel media driver (only with an Intel GPU)
+if grep -qs 0x8086 /sys/class/drm/card*/device/vendor; then
+    dnf install -y intel-media-driver
+fi
 
 ###############################################
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
     dnf install -y cifs-utils
-    systemctl enable NetworkManager
     systemctl restart NetworkManager
     bash "$GIT_DIR/fastgate.sh"
 fi
@@ -196,81 +263,26 @@ dnf install -y \
   google-noto-sans-fonts \
   google-noto-serif-fonts \
   google-noto-color-emoji-fonts \
+  google-noto-sans-cjk-fonts \
+  google-noto-serif-cjk-fonts \
+  google-carlito-fonts \
+  google-crosextra-caladea-fonts \
   fira-code-fonts \
   liberation-fonts \
   papirus-icon-theme
 
-# Ubuntu fonts
-FONT_SRC="$TARGET_HOME/Fastgate/Varie/fonts/ubuntu"
-FONT_DST="/usr/local/share/fonts/ubuntu"
-
-install -d -m 755 "$FONT_DST"
-
-shopt -s nocaseglob
-
-if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
-    FONT_CHANGED=false
-
-    for font in "$FONT_SRC"/*.ttf; do
-        dest="$FONT_DST/$(basename "$font")"
-
-        if [[ ! -f "$dest" ]] || ! cmp -s "$font" "$dest"; then
-            install -m 644 "$font" "$dest"
-            FONT_CHANGED=true
-        fi
-    done
-
-    shopt -u nocaseglob
-
-    if [[ "$FONT_CHANGED" == true ]]; then
-        echo "Updating Ubuntu font cache..."
-        fc-cache -f "$FONT_DST"
-    else
-        echo "Ubuntu fonts already up to date."
-    fi
-else
-    shopt -u nocaseglob
-    echo "WARNING: No Ubuntu TTF fonts found in $FONT_SRC"
-fi
-
-# MS Core Fonts
-FONT_SRC="$TARGET_HOME/Fastgate/Varie/fonts/ms-fonts"
-FONT_DST="/usr/local/share/fonts/ms-fonts"
-
-install -d -m 755 "$FONT_DST"
-
-shopt -s nocaseglob
-
-if compgen -G "$FONT_SRC/*.ttf" > /dev/null; then
-    FONT_CHANGED=false
-
-    for font in "$FONT_SRC"/*.ttf; do
-        dest="$FONT_DST/$(basename "$font")"
-
-        if [[ ! -f "$dest" ]] || ! cmp -s "$font" "$dest"; then
-            install -m 644 "$font" "$dest"
-            FONT_CHANGED=true
-        fi
-    done
-    
-    shopt -u nocaseglob
-
-    if [[ "$FONT_CHANGED" == true ]]; then
-        echo "Updating MS font cache..."
-        fc-cache -f "$FONT_DST"
-    else
-        echo "MS fonts already up to date."
-    fi
-else
-    shopt -u nocaseglob
-    echo "WARNING: No MS TTF fonts found in $FONT_SRC"
-fi
+install_fonts "Ubuntu"   "$TARGET_HOME/Fastgate/Varie/fonts/ubuntu"   "/usr/local/share/fonts/ubuntu"
+install_fonts "MS Core"  "$TARGET_HOME/Fastgate/Varie/fonts/ms-fonts" "/usr/local/share/fonts/ms-fonts"
 
 ###############################################
 # Printing & Scanning
 ###############################################
 dnf install -y cups gutenprint sane-backends
 systemctl enable cups
+
+if [ -n "$(systemctl list-unit-files --no-legend cups-browsed.service)" ]; then
+    systemctl disable cups-browsed.service
+fi
 
 AIRSCAN_CONF="/etc/sane.d/airscan.conf"
 
@@ -307,18 +319,9 @@ HandleLidSwitch=ignore
 HandleLidSwitchExternalPower=ignore
 "
 
-if [ -f "$LOGIND_LID_CONF" ] &&
-   printf "%s" "$LOGIND_LID_CONTENT" | cmp -s - "$LOGIND_LID_CONF"; then
-
-    echo "Lid switch already configured, skipping."
-
-else
-
-    install -d -m 755 "$(dirname "$LOGIND_LID_CONF")"
-    write_if_changed "$LOGIND_LID_CONF" "$LOGIND_LID_CONTENT"
-    echo "Lid switch configured to ignore."
-
-fi
+install -d -m 755 "$(dirname "$LOGIND_LID_CONF")"
+write_if_changed "$LOGIND_LID_CONF" "$LOGIND_LID_CONTENT"
+chmod 644 "$LOGIND_LID_CONF"
 
 ###############################################
 # Hardening
@@ -334,8 +337,23 @@ fi
 ###############################################
 dnf install -y \
     NetworkManager-wifi \
-    iwlwifi-mvm-firmware \
     firewall-config
+
+# Intel Wi-Fi firmware (only with an Intel wireless card:
+# PCI vendor 0x8086, class 0x0280 = network controller)
+INTEL_WIFI=false
+for dev in /sys/bus/pci/devices/*; do
+    [ -r "$dev/vendor" ] && [ -r "$dev/class" ] || continue
+
+    if [[ "$(<"$dev/vendor")" == "0x8086" && "$(<"$dev/class")" == 0x0280* ]]; then
+        INTEL_WIFI=true
+        break
+    fi
+done
+
+if [ "$INTEL_WIFI" = true ]; then
+    dnf install -y iwlwifi-mvm-firmware
+fi
 
 firewall-offline-cmd --set-default-zone=drop || true
 
