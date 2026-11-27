@@ -46,7 +46,8 @@ case "$DISTRO" in
 
     ubuntu)
         apt-get install -y \
-            ubuntu-desktop-minimal
+            ubuntu-desktop-minimal \
+            language-selector-gnome
         ;;
 
     *)
@@ -91,5 +92,6 @@ if [[ "$DISTRO" == "ubuntu" ]]; then
     snap install \
         fragments \
         pinta \
-        snap-store
+        snap-store \
+        desktop-security-center
 fi
