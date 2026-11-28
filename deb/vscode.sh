@@ -17,6 +17,18 @@ write_if_changed() {
 }
 
 ###############################################
+# Ubuntu VS Code Snap
+###############################################
+if [ "$DISTRO" = "ubuntu" ] && command -v snap >/dev/null 2>&1; then
+    if snap list code >/dev/null 2>&1; then
+        echo "VS Code Snap is already installed."
+    else
+        snap install --classic code
+    fi
+    exit 0
+fi
+
+###############################################
 # Repository
 ###############################################
 

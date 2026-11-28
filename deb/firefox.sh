@@ -20,12 +20,12 @@ write_if_changed() {
 ###############################################
 # Ubuntu Firefox Snap
 ###############################################
-if [ "$DISTRO" = "ubuntu" ] && \
-   command -v snap >/dev/null 2>&1 && \
-   snap list firefox >/dev/null 2>&1; then
-
-    echo "Firefox Snap is already installed."
-    echo "Keeping the Ubuntu Firefox Snap."
+if [ "$DISTRO" = "ubuntu" ] && command -v snap >/dev/null 2>&1; then
+    if snap list firefox >/dev/null 2>&1; then
+        echo "Firefox Snap is already installed."
+    else
+        snap install firefox
+    fi
     exit 0
 fi
 
