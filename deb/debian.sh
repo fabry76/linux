@@ -198,7 +198,7 @@ fi
 ##############################################
 # Common Utilities and Configurations
 ###############################################
-apt_install vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone unattended-upgrades wakeonlan udisks2 upower
+apt_install vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone inotify-tools util-linux unattended-upgrades wakeonlan udisks2 upower
 
 if grep -qs GenuineIntel /proc/cpuinfo; then
     apt_install thermald
@@ -346,5 +346,5 @@ USER_SCRIPT="$GIT_DIR/user_customization.sh"
 if [ -f "$USER_SCRIPT" ]; then
     echo "Running user session script: $USER_SCRIPT"
 
-    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" bash "$USER_SCRIPT"
+    runuser -u "$TARGET_USER" -- env DESKTOP_CHOICE="$DESKTOP_CHOICE" DISTRO="$DISTRO" bash "$USER_SCRIPT"
 fi

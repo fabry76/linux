@@ -174,6 +174,8 @@ PKGS=(
     starship
     nvme-cli
     rclone
+    inotify-tools
+    util-linux
     wakeonlan
     udisks2
     upower
@@ -357,5 +359,6 @@ if [ -f "$USER_SCRIPT" ]; then
 
     runuser -u "$TARGET_USER" -- \
         env DESKTOP_CHOICE="$DESKTOP_CHOICE" \
+        DISTRO="$DISTRO" \
         bash "$USER_SCRIPT"
 fi
