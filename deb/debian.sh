@@ -60,6 +60,14 @@ write_if_changed() {
   WRITE_CHANGED=1
 }
 
+apt_install() {
+  apt-get install -y \
+    -o DPkg::Lock::Timeout=300 \
+    -o Dpkg::Options::="--force-confdef" \
+    -o Dpkg::Options::="--force-confold" \
+    "$@"
+}
+
 ###############################################
 # Full Verbose Logging
 ###############################################
@@ -83,7 +91,7 @@ export DESKTOP_CHOICE
 ###############################################
 # Dependencies for key management & repositories
 ###############################################
-apt-get install -y gpg curl
+apt_install gpg curl debconf-utils
 install -d -m 0755 /etc/apt/keyrings
 
 ###############################################
@@ -132,7 +140,11 @@ apt-get -y upgrade
 ###############################################
 # Initial Firmware, Drivers and Utilities
 ###############################################
-apt-get install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree firmware-sof-signed firmware-realtek intel-media-va-driver-non-free firmware-iwlwifi
+apt_install firmware-linux firmware-linux-nonfree firmware-misc-nonfree firmware-sof-signed firmware-realtek firmware-iwlwifi
+
+if grep -qs 0x8086 /sys/class/drm/card*/device/vendor; then
+    apt_install intel-media-va-driver-non-free
+fi
 
 ###############################################
 # Desktop Environment
@@ -186,27 +198,31 @@ fi
 ##############################################
 # Common Utilities and Configurations
 ###############################################
-apt-get install -y vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone thermald unattended-upgrades wakeonlan udisks2 upower
+apt_install vim htop fastfetch unrar plymouth-themes fwupd debsums starship nvme-cli rclone unattended-upgrades wakeonlan udisks2 upower
 
-systemctl enable thermald
+if grep -qs GenuineIntel /proc/cpuinfo; then
+    apt_install thermald
+    systemctl enable thermald
+fi
+
 plymouth-set-default-theme lines -R
 
 ###############################################
 # Multimedia
 ###############################################
-apt-get install -y ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly} lsp-plugins-lv2
+apt_install ffmpeg gstreamer1.0-libav gstreamer1.0-vaapi gstreamer1.0-plugins-{bad,ugly} lsp-plugins-lv2
 
 ###############################################
 # Fonts & Icons
 ###############################################
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
-apt-get install -y ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
-apt-get install -y papirus-icon-theme
+apt_install ttf-mscorefonts-installer fonts-ubuntu fonts-crosextra-carlito fonts-crosextra-caladea fonts-firacode fonts-noto
+apt_install papirus-icon-theme
 
 ###############################################
 # Printing & Scanning
 ###############################################
-apt-get install -y cups printer-driver-gutenprint printer-driver-cups-pdf
+apt_install cups printer-driver-gutenprint printer-driver-cups-pdf
 systemctl enable cups
 usermod -aG lpadmin "$TARGET_USER"
 
@@ -229,7 +245,7 @@ systemctl restart NetworkManager
 ###############################################
 # Firewall
 ###############################################
-apt-get install -y ufw
+apt_install ufw
 
 ufw default deny incoming
 ufw default allow outgoing
@@ -285,7 +301,7 @@ write_if_changed "$LOCALE_FILE" "$LOCALE_CONTENT"
 # Fastgate
 ###############################################
 if [[ "$RUN_FASTGATE" =~ ^[Yy]$ ]]; then
-    apt-get install -y cifs-utils
+    apt_install cifs-utils
     bash "$GIT_DIR/fastgate.sh"
 fi
 
