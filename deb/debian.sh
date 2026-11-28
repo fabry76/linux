@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 022
+
 export DEBIAN_FRONTEND=noninteractive
 
 ###############################################

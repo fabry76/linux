@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 022
 
 export DEBIAN_FRONTEND=noninteractive
 export DEBIAN_PRIORITY=critical
@@ -46,19 +47,25 @@ export DISTRO
 ###############################################
 # Functions
 ###############################################
+WRITE_CHANGED=0
+
 write_if_changed() {
     local file="$1"
     local content="$2"
+
+    WRITE_CHANGED=0
 
     if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
         return 0
     fi
 
     printf "%s" "$content" > "$file"
+    WRITE_CHANGED=1
 }
 
 apt_install() {
     apt-get install -y \
+        -o DPkg::Lock::Timeout=300 \
         -o Dpkg::Options::="--force-confdef" \
         -o Dpkg::Options::="--force-confold" \
         "$@"
@@ -251,23 +258,28 @@ ufw --force enable
 ###############################################
 # GRUB
 ###############################################
-sed -i \
-    's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' \
-    /etc/default/grub
+install -d -m 0755 /etc/default/grub.d
 
-sed -i \
-    's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"/' \
-    /etc/default/grub
+write_if_changed /etc/default/grub.d/99-custom.cfg "$(cat <<'EOF'
+GRUB_TIMEOUT_STYLE=hidden
+GRUB_TIMEOUT=3
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"
+EOF
+)"
 
-update-grub
+if [ "$WRITE_CHANGED" -eq 1 ]; then
+    update-grub
+fi
 
 ###############################################
 # Locale
 ###############################################
-grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
-    printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
+grep -qxF 'it_IT.UTF-8 UTF-8' /etc/locale.gen || \
+    echo 'it_IT.UTF-8 UTF-8' >> /etc/locale.gen
 
-locale-gen
+if ! locale -a | grep -qi '^it_IT\.utf-\?8$'; then
+    locale-gen
+fi
 
 ###############################################
 # Fastgate
