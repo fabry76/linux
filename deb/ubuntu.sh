@@ -169,6 +169,8 @@ PKGS=(
     nvme-cli
     rclone
     wakeonlan
+    udisks2
+    upower
 
     # Printing & scanning
     cups

@@ -125,22 +125,16 @@ BROWSER_APP="io.gitlab.librewolf-community"
 
 case "$DESKTOP_ENV" in
     kde)
-        TORRENT_APP="org.qbittorrent.qBittorrent"
-
         FLATPAK_APPS=(
             org.gtk.Gtk3theme.Breeze
-            "$TORRENT_APP"
             "$BROWSER_APP"
         )
         ;;
 
     gnome)
-        TORRENT_APP="de.haeckerfelix.Fragments"
-
         FLATPAK_APPS=(
             com.github.tchx84.Flatseal
             com.github.PintaProject.Pinta
-            "$TORRENT_APP"
             "$BROWSER_APP"
         )
         ;;
@@ -168,23 +162,6 @@ run_as_user flatpak override \
     --nosocket=x11 \
     --nosocket=pcsc \
     --nosocket=cups \
-    --nosocket=fallback-x11
-
-###############################################
-# Torrent application security overrides
-###############################################
-run_as_user flatpak override \
-    --user \
-    "$TORRENT_APP" \
-    --nofilesystem=host \
-    --nofilesystem=home \
-    --filesystem=xdg-download \
-    --nodevice=all \
-    --nosocket=pulseaudio \
-    --nosocket=cups \
-    --nosocket=pcsc \
-    --nosocket=ssh-auth \
-    --nosocket=x11 \
     --nosocket=fallback-x11
 
 ###############################################

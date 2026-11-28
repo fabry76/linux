@@ -42,6 +42,7 @@ GNOME_PKGS=(
     gnome-shell-extension-system-monitor
     gnome-sound-recorder
     virt-viewer
+    transmission
 )
 
 dnf install -y "${GNOME_PKGS[@]}"

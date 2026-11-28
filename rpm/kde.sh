@@ -26,9 +26,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_DIR="$(dirname "$SCRIPT_DIR")"
 
 ###############################################
-# KDE Plasma packages
+# KDE Plasma and application packages
 ###############################################
 KDE_PKGS=(
+    # KDE core
     plasma-desktop
     plasma-login-manager
     kwin
@@ -36,14 +37,28 @@ KDE_PKGS=(
     plasma-pa
     kscreen
 
-    # KDE applications
+    # KDE apps
     konsole
     dolphin
     ark
     spectacle
     kwrite
+    isoimagewriter
+    kolourpaint
+    gwenview
+    okular
+    kcolorchooser
+    kcharselect
+    krecorder
+    skanpage
+    kclock
+    kamoso
+    kalk
+    filelight
+    mpv
+    transmission-qt
 
-    # System
+    # KDE various
     plasma-systemmonitor
     plasma-print-manager
     kde-partitionmanager
@@ -51,30 +66,9 @@ KDE_PKGS=(
     pam-kwallet
     bluedevil
     kinfocenter
-
-    # Graphics / documents
-    isoimagewriter
-    kolourpaint
-    gwenview
-    okular
-    kcolorchooser
-    kcharselect
     kdegraphics-thumbnailers
-
-    # KDE applications
-    krecorder
-    skanpage
-    kclock
-    kamoso
-    kalk
-    filelight
-
-    # GTK integration
     kde-gtk-config
     breeze-gtk
-
-    # Multimedia
-    mpv
 )
 
 ###############################################

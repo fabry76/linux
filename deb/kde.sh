@@ -47,26 +47,21 @@ write_if_changed() {
 }
 
 ###############################################
-# KDE Plasma common packages
+# KDE Plasma and application packages
 ###############################################
 KDE_PKGS=(
+    # KDE core
     plasma-desktop
     plasma-browser-integration-
     plasma-workspace
 
-    # KDE applications
+    # KDE apps
     dolphin
     kate
     kdialog
     kfind
     konsole
     ark
-
-    # Storage / power
-    udisks2
-    upower
-
-    # Graphics / documents
     isoimagewriter
     kolourpaint
     gwenview
@@ -74,26 +69,21 @@ KDE_PKGS=(
     okular-extra-backends
     kcharselect
     kcolorchooser
+    kclock
+    kamoso
+    kalk
+    transmission-qt
+    mpv
 
-    # System utilities
+    # KDE various
+    plasma-workspace-wallpapers
     filelight
     krecorder
     print-manager
     skanpage
     kde-spectacle
-
-    # KDE applications
-    kclock
-    kamoso
-    kalk
-
-    # Plasma assets
-    plasma-workspace-wallpapers
-
-    # Utilities
     inotify-tools
     libnotify-bin
-    mpv
 )
 
 ###############################################

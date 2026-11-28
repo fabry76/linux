@@ -69,6 +69,7 @@ GNOME_PKGS=(
     gnome-firmware
     gufw
     virt-viewer
+    transmission
 )
 
 apt-get install -y "${GNOME_PKGS[@]}"
@@ -90,7 +91,6 @@ fi
 ###############################################
 if [[ "$DISTRO" == "ubuntu" ]]; then
     snap install \
-        fragments \
         pinta \
         snap-store \
         desktop-security-center

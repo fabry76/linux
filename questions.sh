@@ -239,10 +239,14 @@ run_installer_questions() {
         ask_desktop
     fi
 
-    ask_browsers
+    if [[ "$DISTRO" == "ubuntu" ]]; then
+        BROWSERS=("1" "3")
+    else
+        ask_browsers
+    fi
 
-    # Ubuntu GNOME uses Snap applications instead of Flatpak
-    if [[ "$DISTRO" == "ubuntu" && "$DESKTOP_CHOICE" == "2" ]]; then
+    # Ubuntu uses Snap applications instead of Flatpak
+    if [[ "$DISTRO" == "ubuntu" ]]; then
         INSTALL_FLATPAK="n"
     else
         ask_flatpak
