@@ -108,7 +108,7 @@ blacklist tipc
 EOF
 )"
 
-################################################
+###############################################
 # Sudoers hardening
 ###############################################
 chmod 750 /etc/sudoers.d
@@ -116,13 +116,42 @@ chown root:root /etc/sudoers.d
 find /etc/sudoers.d -type f -exec chown root:root {} \;
 find /etc/sudoers.d -type f -exec chmod 440 {} \;
 
-################################################
+###############################################
 # Restrict Core Dumps
 ###############################################
 write_if_changed /etc/security/limits.d/99-hardening.conf "$(cat << 'EOF'
 * hard core 0
 EOF
 )"
+
+###############################################
+# Restrictive default umask (AUTH-9328)
+###############################################
+if ! grep -qE '^UMASK[[:space:]]+027$' /etc/login.defs; then
+  if grep -q '^UMASK' /etc/login.defs; then
+    sed -i 's/^UMASK.*/UMASK           027/' /etc/login.defs
+  else
+    echo 'UMASK           027' >> /etc/login.defs
+  fi
+fi
+
+###############################################
+# Cron permissions (FILE-7524)
+###############################################
+chmod 600 /etc/crontab
+chmod 700 /etc/cron.d /etc/cron.daily /etc/cron.hourly /etc/cron.weekly /etc/cron.monthly
+
+###############################################
+# debsums weekly check via cron (PKGS-7370)
+# Only applies if the debsums package is installed
+###############################################
+if [ -f /etc/default/debsums ] && ! grep -q '^CRON_CHECK=weekly$' /etc/default/debsums; then
+  if grep -q '^CRON_CHECK=' /etc/default/debsums; then
+    sed -i 's/^CRON_CHECK=.*/CRON_CHECK=weekly/' /etc/default/debsums
+  else
+    echo 'CRON_CHECK=weekly' >> /etc/default/debsums
+  fi
+fi
 
 ###############################################
 # Apply settings
