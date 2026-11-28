@@ -3,6 +3,9 @@ set -euo pipefail
 umask 022
 
 export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_PRIORITY=critical
+export APT_LISTCHANGES_FRONTEND=none
+export NEEDRESTART_SUSPEND=1
 
 ###############################################
 # Root check
@@ -41,15 +44,20 @@ export DISTRO
 ###############################################
 # Functions
 ###############################################
+WRITE_CHANGED=0
+
 write_if_changed() {
   local file="$1"
   local content="$2"
+
+  WRITE_CHANGED=0
 
   if [ -f "$file" ] && printf "%s" "$content" | cmp -s - "$file"; then
     return 0
   fi
 
   printf "%s" "$content" > "$file"
+  WRITE_CHANGED=1
 }
 
 ###############################################
@@ -230,33 +238,48 @@ ufw --force enable
 ###############################################
 # GRUB
 ###############################################
-sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
-sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' /etc/default/grub
+install -d -m 0755 /etc/default/grub.d
 
-update-grub
+write_if_changed /etc/default/grub.d/99-custom.cfg "$(cat <<'EOF'
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TIMEOUT=3
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"
+EOF
+)"
+
+if [ "$WRITE_CHANGED" -eq 1 ]; then
+    update-grub
+fi
 
 ###############################################
 # Locale
 ###############################################
-grep -q "^it_IT.UTF-8 UTF-8" /etc/locale.gen || \
-  printf "it_IT.UTF-8 UTF-8\n" >> /etc/locale.gen
+grep -qxF 'it_IT.UTF-8 UTF-8' /etc/locale.gen || \
+    echo 'it_IT.UTF-8 UTF-8' >> /etc/locale.gen
 
-locale-gen
+if ! locale -a | grep -qi '^it_IT\.utf-\?8$'; then
+    locale-gen
+fi
 
-update-locale \
-LANG=en_US.UTF-8 \
-LANGUAGE=en_US:en \
-LC_CTYPE="en_US.UTF-8" \
-LC_NUMERIC=it_IT.UTF-8 \
-LC_TIME=it_IT.UTF-8 \
-LC_COLLATE="en_US.UTF-8" \
-LC_MONETARY=it_IT.UTF-8 \
-LC_MESSAGES="en_US.UTF-8" \
-LC_PAPER=it_IT.UTF-8 \
-LC_NAME=it_IT.UTF-8 \
-LC_ADDRESS=it_IT.UTF-8 \
-LC_TELEPHONE=it_IT.UTF-8 \
-LC_MEASUREMENT=it_IT.UTF-8
+LOCALE_FILE="/etc/default/locale"
+LOCALE_CONTENT="$(cat <<'EOF'
+LANG="en_US.UTF-8"
+LANGUAGE="en_US:en"
+LC_CTYPE="en_US.UTF-8"
+LC_NUMERIC="it_IT.UTF-8"
+LC_TIME="it_IT.UTF-8"
+LC_COLLATE="en_US.UTF-8"
+LC_MONETARY="it_IT.UTF-8"
+LC_MESSAGES="en_US.UTF-8"
+LC_PAPER="it_IT.UTF-8"
+LC_NAME="it_IT.UTF-8"
+LC_ADDRESS="it_IT.UTF-8"
+LC_TELEPHONE="it_IT.UTF-8"
+LC_MEASUREMENT="it_IT.UTF-8"
+EOF
+)"
+
+write_if_changed "$LOCALE_FILE" "$LOCALE_CONTENT"
 
 ###############################################
 # Fastgate
