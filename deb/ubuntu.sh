@@ -161,7 +161,6 @@ PKGS=(
     lsp-plugins-lv2
 
     # Common utilities
-    timeshift
     fastfetch
     unrar
     debsums

@@ -70,6 +70,7 @@ GNOME_PKGS=(
     gufw
     virt-viewer
     transmission
+    timeshift
 )
 
 apt-get install -y "${GNOME_PKGS[@]}"
