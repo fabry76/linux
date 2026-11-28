@@ -224,8 +224,8 @@ run_installer_questions() {
     # Initialize distro-specific variables
     NEW_HOSTNAME=""
 
-    # Hostname: Fedora and Ubuntu only
-    if [[ "$DISTRO" == "fedora" || "$DISTRO" == "ubuntu" ]]; then
+    # Hostname: Fedora only
+    if [[ "$DISTRO" == "fedora" ]]; then
         ask_hostname
     fi
 
