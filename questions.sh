@@ -229,7 +229,16 @@ run_installer_questions() {
         ask_hostname
     fi
 
-    ask_desktop
+    # Ubuntu's GNOME desktop is already installed by this package.
+    if [[ "$DISTRO" == "ubuntu" ]] &&
+       dpkg-query -W -f='${db:Status-Status}' ubuntu-desktop-minimal 2>/dev/null |
+           grep -qx "installed"; then
+        DESKTOP_CHOICE="2"
+        echo "Ubuntu GNOME is already installed; skipping desktop selection."
+    else
+        ask_desktop
+    fi
+
     ask_browsers
 
     # Ubuntu GNOME uses Snap applications instead of Flatpak
